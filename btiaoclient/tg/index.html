@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="shortcut icon" href="/btiao/bt.png"/>
+<title>【团购】便条网 - 加速信息传递，方便我们的生活！</title>
+<link rel="Stylesheet" type="text/css" href="tg.css"/>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=2E74E43c5b6863ea1b562f67fa3f7743"></script>
+<script src="../third/jquery/jquery.js" type="text/javascript"></script>
+<script src="../btiao.js" type="text/javascript"></script>
+<script src="map/util.js" type="text/javascript"></script>
+<script src="tg.js" type="text/javascript"></script>
+
+</head>
+<body onload="onload();"><div id="idChangePos"><p id="idPosBar">当前位置：<span id="idSelPos"></span>&nbsp;&nbsp;&nbsp;&nbsp;<button id="idSelPosOK">确定</button>&nbsp;&nbsp;<button id="idSelPosCancel">取消</button></p><div id="idMap"></div></div>
+<div id="idNavigator">
+	<div id="idNavgLeft" class="cNavgPart cFL">
+		<image id="idLogo" class="cFL" src="../bt.png" href="/"></image>
+		<p class="cInLine cNavgBigLine cFL">&nbsp;便条网 -> 团购智搜 ... <span id="idDataOrigin">(数据来自美团/拉手/糯米/窝窝网等)</span></p>
+	</div>
+	<div id="idNavgRight" class="cNavgPart cFR">
+		<p id="curCity" class="cNavgLine1 cTxtAlignC">北京</p>
+		<a class="cNavgLine2 cTxtAlignC" href="#">[切换城市]</a>
+	</div>
+	<div id="idNavgRight2" class="cCumFrom cNavgPart cFR">
+		<p class="cNavgLitLine"><span>团购从这里出发</span>
+		<span id="idPos">北苑家园望春园</span>
+		<a href="#" onclick="btiao.tgGlobal.changePos();">[更改位置]</a></p>
+	</div>
+</div>
+<div id="idRet2Top" title="返回到页面顶部">
+<div id="idRet2TopAim0"></div>
+<div id="idRet2TopAim1"></div>
+<div id="idRet2TopAim2"></div>
+</div>
+<div id="idContainer">
+	<div id="idSelectMode">
+		<div class="cSelMode" id="idSelModeFD">我们去腐败啦！</div> 
+		<div class="cSelMode" id="idSelModeDY">带(他/她/小孩)看新出的大片！</div>	
+		<!-- 
+		<div class="cSelMode">有没有实惠的美食？</div>
+		<div class="cSelMode">结婚纪念日享受情调的美食。</div>
+		<div class="cSelMode">带(他/她/小孩)看新出的大片！</div>		
+		<div class="cSelMode">周末出去转转了！</div>
+		<div class="cSelMode">当下最紧急的是记下我(们)美好的青春！</div> 
+		-->
+		<div class="cSelMode cSelModeUsed" id="idSelModeNormal">随便看看...</div>
+	</div>
+	<div id="idLastLook">
+	<p><span>最近看过的：</span><a id="idClearRecent" href="#">清空记录</a></p>
+	<div id="idAllLook"></div>
+	</div>
+	<div id="idAllTg">
+		<div id="idTgProgress"><p>切换当前位置，网站内部计算中，请您稍等几秒...</p><p id="idNoTgTip">抱歉，未查询到任何团购信息^_^</p></div>
+		<ul id="idTgList"><!--
+			<li class="cTgLi"><div class="cTgUnit"></div></li>
+			<li class="cTgLi"><div class="cTgUnit"></div></li>
+			<li class="cTgLi"><div class="cTgUnit"></div></li>
+			<li class="cTgLi"><div class="cTgUnit"></div></li>-->
+		</ul>
+	</div>
+	<div id="idAdv"></div>
+</div>
+<div id="idMoreTg">...</div>
+<div id="idFootor">
+© 2013 biantiao.org 版权所有
+</div>
+</body>
+</html>

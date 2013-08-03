@@ -1,0 +1,18 @@
+<project xmlns="http:// maven.apache. org/POM/4.0.0"xmlns:xsi="http://www .w3. org/2001/XMLSchema-instance"
+xsi:schemaLocation="http: //maven .apache .o rg/POM/4.0.0http: //m aven.apache . org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.btiao</groupId>
+	<artifactId>btiao.base</artifactId>
+	<packaging>jar</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>btiao.base</name>
+	<url>http://</url>
+	<dependencies>
+		<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>3.8.1</version>
+		<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

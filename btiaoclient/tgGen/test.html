@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="/jquery/jquery.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=2E74E43c5b6863ea1b562f67fa3f7743"></script>
+<script src="test.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+
+function add() {
+	var d = "xxxxxxxxxx";
+	for (var i=0; i<10; ++i) {
+		d += d;
+	}
+	d += d;
+	sendDist(d);
+}
+
+
+</script>
+</head>
+<body onload="onLoad()">
+<div id="out" style="width:800px;height:400px"></div>
+<div>
+	<label>p1.x:</label><input id="p1x"/>
+	<label>p1.y:</label><input id="p1y"/>
+	<label>p2.x:</label><input id="p2x"/>
+	<label>p2.y:</label><input id="p2y"/><br/>
+	<button onclick="add();">addtest</button>
+	<button onclick="printGeo(p1.x, p1.y,'p1');">p1</button>
+	<button onclick="printGeo(p2.x, p2.y,'p2');">p2</button>
+	<button onclick="gMap.clearOverlays();">clearMark</button>
+	<button onclick="next_p2();">next_p2</button>
+	<button onclick="getDistGJ(city,p1, p2);">GJ</button>
+	<button onclick="getDistZJ(city,p1, p2);">ZJ</button>
+	<button onclick="getDistOnly(city,p1, p2);">Dist</button>
+	<button onclick="initDB(city);">initdbBJ</button>
+	<button onclick="closeDB(city);">closedb</button>
+	<!--东经度：116.7，西经度：116.1，北纬度：40.25，南纬度：39.65 -->
+	<!--东经度：116.6，西经度：116.25，北纬度：40.15，南纬度：39.8 -->
+	<br/>
+	<button onclick="city='beijing';genAll(city,{x:116.25,y:39.8},500, {x:116.6,y:40.15},0,10);">get-1</button>
+	<button onclick="city='beijing';genAll(city,{x:116.25,y:39.8},500, {x:116.6,y:40.15},10,20);">get-2</button>
+	<button onclick="city='beijing';genAll(city,{x:116.25,y:39.8},500, {x:116.6,y:40.15},20,30);">get-3</button>
+	<button onclick="city='beijing';genAll(city,{x:116.25,y:39.8},500, {x:116.6,y:40.15},30,40);">get-4</button>
+	<button onclick="city='beijing';genAll(city,{x:116.25,y:39.8},500, {x:116.6,y:40.15},40,50);">get-5</button>
+	<button onclick="city='beijing';genAll(city,{x:116.25,y:39.8},500, {x:116.6,y:40.15},50,60);">get-6</button>
+	<br/>
+	<button onclick="city='beijingcc';genAll(city,{x:116.28,y:39.8},500, {x:116.55,y:40.07});">getallcc</button>
+	<button onclick="city='beijing2';genAll(city, p1, 500, 10);">getall2</button>
+	<button onclick="clearInc();">clearInc</button>
+</div>
+<div id="txtout" style="width:800px">
+</div>
+<div id="genAllProcess" style="width:800px">
+</div>
+<div id="txtoutdetail" style="width:800px">
+</div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+1、git btiao工程到本地，假设路径为D:\dev\git\btw\btiao
+2、将Catalina.zip解压到apache的conf下，出现路径conf\Catalina\localhost
+3、重启apache

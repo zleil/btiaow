@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/btiao/btiao.js" type="text/javascript"></script>
+<script src="/btiao/map/util.js" type="text/javascript"></script>
+<script type="text/javascript">
+function onLoad() {
+	btiao.map.util.loadMapJs("mapInitAfterAction");
+}
+function mapInitAfterAction() {
+	alert("map inited!");
+	
+	var map = new BMap.Map("container");
+	var point = new BMap.Point(116.404, 39.915);
+	map.centerAndZoom(point, 15);
+	
+	var myGeo = new BMap.Geocoder();
+	var dst = "海淀区复兴路69号卓展购物中心5-6楼(五棵松体育馆北门正对面)";
+	myGeo.getPoint(dst, function(point){
+		if (point) {
+			map.centerAndZoom(point, 16);
+			map.addOverlay(new BMap.Marker(point));
+		}
+	}, "北京市");
+	
+	var transit = new BMap.TransitRoute(map, {
+		renderOptions: {map: map, panel: "resultsOfBus"}    
+	});
+	transit.search("北苑家园", dst);
+}
+
+</script>
+</head>
+<body onload="onLoad();">
+<div id="container" style="width:500px;height:320px;"></div> 
+<div id="resultsOfBus"></div>
+</body>
+</html>

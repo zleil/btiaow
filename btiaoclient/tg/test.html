@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="shortcut icon" href="/btiao/bt.png"/>
+<title>【团购】便条网 - 加速信息传递，方便我们的生活！</title>
+<link rel="Stylesheet" type="text/css" href="/btiao/bt.css"/>
+<script src="../third/jquery/jquery.js" type="text/javascript"></script>
+<script src="../btiao.js" type="text/javascript"></script>
+<script src="map/util.js" type="text/javascript"></script>
+<script src="tg.js" type="text/javascript"></script>
+<script type="text/javascript">
+function getTg() {
+	var uLon = 116000000;
+	var uLat = 39900000;
+	var url = "GetTgs?handle=0&pgs=10&idx=0&city="+btGlobal.curTgCity+
+			"&uLon="+uLon+"&uLat="+uLat;
+	$.getScript(url, function() {
+		var result = rst.result;
+		if (result != 0) {
+			return;
+		}
+		
+		for (var idx=0; idx<rst.tgs.length; ++idx) {
+			var tgHtml = '<li class="cTgLi"><div class="cTgUnit">';
+			tgHtml += btGlobal.genTgHtml(rst.tgs[idx]);
+			tgHtml += '</div></li>';
+			$("#idTgList").append(tgHtml);
+		}
+	});
+}
+</script>
+</head>
+<body>
+<button onclick="getTg()">getTg</button>
+</body>
+</html>
