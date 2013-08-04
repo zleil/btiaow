@@ -8,7 +8,7 @@ public class App extends Application {
 	public Restlet createInboundRoot() {
 		Router router = new Router(getContext());
 		
-		router.attach("/{userId}", ResBTiaoUser.class);
+		router.attach("/users/{userId}", ResBTiaoUser.class);
 		return router;
 	}
 }
