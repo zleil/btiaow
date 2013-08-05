@@ -27,7 +27,7 @@ public class ResBTiaoUser extends ResBTBase {
 		if (!u.id.equals(uIdFromUrl)){
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
 		}
-		
+
 		UserMgr.instance().addUser(u);
 		return null;
 	}

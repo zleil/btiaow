@@ -49,12 +49,11 @@ public class JSONConvert {
 				Object value = valueStr2Obj(valueStr, typeName);
 				f.set(obj, value);
 			} catch (Exception e) {
-				String errMsg = e + 
-						"\n obj.className=" + obj.getClass().getName() +
-						"\n obj.toString=" + obj +
-						"\n json=" + jo;
-				log.error(errMsg);
-				return;
+//				String warnMsg = e + 
+//						"\n obj.className=" + obj.getClass().getName() +
+//						"\n obj.toString=" + obj +
+//						"\n json=" + jo;
+//				log.warn(errMsg);
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import org.restlet.data.Form;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
 import com.btiao.user.domain.BTiaoUser;
 import com.btiao.user.domain.BTiaoUserLogInfo;
@@ -17,12 +18,12 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 	
 	protected void pre() {
 		uIdFromUrl = this.getAttribute("userId");
-		loginId = this.getAttribute("loginId");
+		token = this.getAttribute("token");
 	}
 
 	/**
 	 * query login state, feature of administrator<br>
-	 * TODO item. 
+	 * TODO item.
 	 */
 	@Override
 	protected Object get(Form form) throws BTiaoExp {
@@ -32,8 +33,8 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 
 	/**
 	 * login operation.<br>
-	 * url: .../users/{userId}/{loginId}, loginId must equals to 0.<br>
-	 * @param arg contain passwd infomation.<br>
+	 * url: .../users/{userId}/auth/{token}, loginId must equals to 0.<br>
+	 * @param arg contain authorization information.<br>
 	 *        the type is BTiaoUser.<br>
 	 *        valid attributes contain: id,passwd,authType
 	 * @return user login token.<br>
@@ -41,17 +42,19 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 	 *         valid attributes: token
 	 */
 	@Override
+	@JsonCvtInfo(objClassName="com.btiao.user.domain.BTiaoUser")
 	protected Object put(Object arg) throws BTiaoExp {
 		BTiaoUser u = (BTiaoUser)arg;
 		
-		if (!u.id.equals(uIdFromUrl) &&
-			!loginId.equals(reserved_loginId)) {
+		if (!u.id.equals(uIdFromUrl) ||
+			!token.equals(reserved_loginId)) {
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
 		}
 		
 		String token = UserMgr.instance().login(u.id, u.passwd, u.authType);
 		
 		BTiaoUserLogInfo r = new BTiaoUserLogInfo();
+		r.token = token;
 		return r;
 	}
 
@@ -60,21 +63,30 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 	 */
 	@Override
 	protected Object post(Object arg) throws BTiaoExp {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
 	 * logout.
-	 * @param arg content userid and token.
-	 * @return always be null
+	 * @param arg content user-id and token.
+	 *        the type is BTiaoUserLogInfo.<br>
+	 *        valid attributes contain: uId,token
+	 * @return if it return, then always return null
+	 * @throws when error arises, must throw a BTiaoExp with an error code.<br>
 	 */
 	@Override
+	@JsonCvtInfo(objClassName="com.btiao.user.domain.BTiaoUserLogInfo")
 	protected Object del(Object arg) throws BTiaoExp {
-		// TODO Auto-generated method stub
+		BTiaoUserLogInfo info = (BTiaoUserLogInfo)arg;
+		
+		if (!uIdFromUrl.equals(info.uId)) {
+			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
+		}
+		
+		UserMgr.instance().logout(info.uId, info.token);
 		return null;
 	}
 
 	private String uIdFromUrl;
-	private String loginId;
+	private String token;
 }

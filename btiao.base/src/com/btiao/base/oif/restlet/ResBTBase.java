@@ -6,6 +6,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.restlet.data.Form;
+import org.restlet.data.Status;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
@@ -28,7 +29,15 @@ public abstract class ResBTBase extends ServerResource {
 		System.out.println(jo.get("a"));
 	}
 	
-	public Logger logger = LogManager.getRootLogger();
+	static public JSONObject setRstOfJRO(JSONObject jro, int code) {
+		try {
+			jro.put("errCode", code);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return jro;
+	}
 	
 	@Get(value="json")
 	public final JsonRepresentation btiaoGet() {
@@ -142,6 +151,8 @@ public abstract class ResBTBase extends ServerResource {
 	
 	private JsonRepresentation commonPPD(JsonRepresentation arg, OP op) {
 		JSONObject jro = new JSONObject(); //return object
+		
+		int errCode = ErrCode.SUCCESS;
 		setRstOfJRO(jro, ErrCode.SUCCESS);
 		
 		try {
@@ -155,10 +166,11 @@ public abstract class ResBTBase extends ServerResource {
 				
 				if (op == OP.get) {
 					Form form = this.getReference().getQueryAsForm();
+					opUserId = (String)form.getFirstValue(RestFilterBasicAuth.ARG_NAME_USER);
 					contentRet = get(form);
 				} else {
-					
-					
+					JSONObject opUsrInfo = (JSONObject)jao.get(RestFilterBasicAuth.OP_USER_INFO_NAME);
+					opUserId = (String)opUsrInfo.get(RestFilterBasicAuth.ARG_NAME_USER);
 					Object argObj = cvtJson2Obj(op, jao);
 					if (op == OP.del) {
 						contentRet = del(argObj);
@@ -169,10 +181,13 @@ public abstract class ResBTBase extends ServerResource {
 					}
 				}
 			} catch (BTiaoExp e) {
-				setRstOfJRO(jro, e.errNo);
+				errCode = e.errNo;
+				setRstOfJRO(jro, errCode);
 			} catch (Throwable e) {
 				e.printStackTrace();
-				setRstOfJRO(jro, ErrCode.UNKOWN_ERR);
+				
+				errCode = ErrCode.UNKOWN_ERR;
+				setRstOfJRO(jro, errCode);
 			}
 			
 			JSONObject content = new JSONObject();
@@ -180,19 +195,21 @@ public abstract class ResBTBase extends ServerResource {
 			setContentOfJRO(content, contentRet);
 		} catch (Exception e) {
 			e.printStackTrace();
-			setRstOfJRO(jro, ErrCode.WRONG_PARAM);
+			
+			errCode = ErrCode.WRONG_PARAM;
+			setRstOfJRO(jro, errCode);
 		}
-		
+
+		if (errCode != ErrCode.SUCCESS) {
+			this.setStatus(Status.CLIENT_ERROR_EXPECTATION_FAILED);
+		}
 		return new JsonRepresentation(jro);
 	}
 	
-	private JSONObject setRstOfJRO(JSONObject jro, int code) {
-		try {
-			jro.put("errCode", code);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return jro;
-	}
+	/**
+	 * the identity of the user who execute the HTTP method.
+	 */
+	protected String opUserId;
+	
+	protected Logger logger = LogManager.getRootLogger();
 }
