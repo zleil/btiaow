@@ -3,6 +3,7 @@ package com.btiao.base.oif.restlet;
 import org.json.JSONObject;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.data.Form;
 import org.restlet.data.Method;
 import org.restlet.data.Status;
 import org.restlet.ext.json.JsonRepresentation;
@@ -43,8 +44,10 @@ public class RestFilterBasicAuth extends Filter {
 	}
 	
 	protected int doHandleGet(Request request, Response response) {
-		String uId = (String)request.getAttributes().get(ARG_NAME_USER);
-		String token = (String)request.getAttributes().get(ARG_NAME_TOKEN);
+		Form form = request.getResourceRef().getQueryAsForm();
+		
+		String uId = (String)form.getFirstValue(OP_USER_INFO_NAME+"["+ARG_NAME_USER+"]");
+		String token = (String)form.getFirstValue(OP_USER_INFO_NAME+"["+ARG_NAME_TOKEN+"]");
 		
 		return commonProcess(uId, token, request, response);
 	}
@@ -59,6 +62,9 @@ public class RestFilterBasicAuth extends Filter {
 			JSONObject opUsrInfo = null;
 			
 			JSONObject jao = jr.getJsonObject();
+			
+			request.setEntity(new JsonRepresentation(jao));
+			
 			opUsrInfo = (JSONObject)jao.get(OP_USER_INFO_NAME);
 			
 			String uId = (String)opUsrInfo.get(ARG_NAME_USER);

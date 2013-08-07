@@ -1,8 +1,8 @@
 var userRoot = "/btiao/usrmgr";
 var logNodeName = "/auth";
 
-var loginUser;
-var token;
+var loginUser = "";
+var token = "";
 
 function putLogin() {
 	loginUser = $("#idLoginUser").attr("value");
@@ -19,23 +19,35 @@ function putLogin() {
 			authType:0 \
 		}',
 		success: function(d) {
+			if (d.errCode == 0) {
+				token = d.content.token;
+				$("#idToken").attr("value", token);
+				$("#idOut").append("token="+token);
+			}
+
 			$("#idOut").append("result="+d.errCode);
-			var retToken = d.content.token;
-			$("#idOut").append("token="+retToken);
 		}
 	});
 }
 
 function delLogout() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	
 	$.ajax({
 		type: "DELETE",
-		url: userRoot+"/users/zleil"+logNodeName+"/" + token,
+		url: userRoot+"/users/"+loginUser+logNodeName+"/" + token,
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
-			__opUsrInfo:{uId:'+loginUser+',token:'+token+'} \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
+			uId:"'+loginUser+'", \
+			token:"'+token+'" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
+			if (d.errCode == 0) {
+				token = "";
+			}
 		}
 	})
 }
@@ -46,7 +58,7 @@ function putUsr() {
 		url: userRoot+"/users/zleil",
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
-			__opUsrInfo:{uId:'+loginUser+',token:'+token+'}, \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
 			id: "zleil", \
 			nick: "习远, he is a good man!", \
 			passwd: "mypasswd", \
@@ -62,9 +74,9 @@ function getUsr() {
 		type: "GET",
 		url: userRoot+"/users/zleil",
 		contentType: "application/json; charset=UTF-8",
-		data: '{ \
-			__opUsrInfo:{uId:'+loginUser+',token:'+token+'}, \
-		}',
+		data: {
+			__opUsrInfo: {uId: loginUser, token: token}
+		},
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode+
 					"\ncontent.id="+d.content.id+
@@ -78,7 +90,7 @@ function postUsr() {
 		url: userRoot+"/users/zleil",
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
-			__opUsrInfo:{uId:'+loginUser+',token:'+token+'}, \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
 			id: "zleil", \
 			nick: "习远2, he is a good man!" \
 		}',
@@ -93,7 +105,8 @@ function delUsr() {
 		url: userRoot+"/users/zleil",
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
-			__opUsrInfo:{uId:'+loginUser+',token:'+token+'} \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"} \
+			uId:"'+loginUser+'" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);

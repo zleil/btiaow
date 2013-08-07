@@ -68,6 +68,7 @@ public class UserMgr implements UserService {
 		List<BTiaoUserLogInfo> infos = uId2LogInfo.get(uId);
 		if (infos == null) {
 			infos = new ArrayList<BTiaoUserLogInfo>();
+			uId2LogInfo.put(uId, infos);
 		}
 		
 		if (infos.size() >= MAX_LOGIN_NUM_PER_USER) {
@@ -119,7 +120,6 @@ public class UserMgr implements UserService {
 		List<BTiaoUserLogInfo> infos = uId2LogInfo.get(uId);
 		if (infos != null) for (BTiaoUserLogInfo info : infos){
 			if (info.token.equals(token)) {
-				infos.remove(info);
 				return true;
 			}
 		}

@@ -47,7 +47,16 @@ public abstract class ResBTBase extends ServerResource {
 	
 	@Put(value="json:json")
 	public JsonRepresentation btiaoPut(JsonRepresentation arg) {
-		pre();
+		pre(); 
+		
+		if (arg == null) {
+			try {
+				arg = new JsonRepresentation(this.getRequest().getEntity());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return commonPPD(arg, OP.put);
 	}
 	
@@ -159,16 +168,18 @@ public abstract class ResBTBase extends ServerResource {
 			Object contentRet = null;
 			
 			try {
-				JSONObject jao = null;
-				if (arg != null) {
-					jao = arg.getJsonObject();
-				}
-				
 				if (op == OP.get) {
 					Form form = this.getReference().getQueryAsForm();
 					opUserId = (String)form.getFirstValue(RestFilterBasicAuth.ARG_NAME_USER);
 					contentRet = get(form);
 				} else {
+					JSONObject jao = null;
+					if (arg != null) {
+						jao = arg.getJsonObject();
+					} else {
+						throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
+					}
+					
 					JSONObject opUsrInfo = (JSONObject)jao.get(RestFilterBasicAuth.OP_USER_INFO_NAME);
 					opUserId = (String)opUsrInfo.get(RestFilterBasicAuth.ARG_NAME_USER);
 					Object argObj = cvtJson2Obj(op, jao);
