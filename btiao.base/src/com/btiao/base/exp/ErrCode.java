@@ -8,4 +8,9 @@ public class ErrCode {
 	static public int AUTH_FAILED = 4;
 	static public int REACHED_MAX_LOGIN_PER_USER = 5;
 	static public int MAY_LOGOUTED = 6;
+	
+	static public int NEO4J_ADD_DUPLICATE_REL = 100;
+	
+	static public int INTERNEL_ERROR = 1000;
+	
 }

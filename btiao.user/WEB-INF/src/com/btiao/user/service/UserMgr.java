@@ -1,14 +1,22 @@
 package com.btiao.user.service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.service.UserService;
+import com.btiao.base.utils.BTiaoLog;
+import com.btiao.infomodel.InfoMBaseService;
+import com.btiao.infomodel.InfoMService;
+import com.btiao.infomodel.RelType;
 import com.btiao.user.domain.BTiaoUser;
 import com.btiao.user.domain.BTiaoUserLogInfo;
 
@@ -42,7 +50,7 @@ public class UserMgr implements UserService {
 	 * then the token will be invalid.<br>
 	 */
 	//TODO to be implement.
-	static private long TIMEOUT = 60*10; 
+	static private long TIMEOUT = 60*10;
 	
 	/**
 	 * super user identiy.<br>
@@ -65,34 +73,32 @@ public class UserMgr implements UserService {
 			throw new BTiaoExp(ErrCode.AUTH_FAILED, null);
 		}
 		
-		List<BTiaoUserLogInfo> infos = uId2LogInfo.get(uId);
-		if (infos == null) {
-			infos = new ArrayList<BTiaoUserLogInfo>();
-			uId2LogInfo.put(uId, infos);
-		}
-		
+		BTiaoUser u = new BTiaoUser(uId);
+
+		//TODO this can't really constrain the max login number.
+		//we should implement this constrain in the info model.
+		Collection<?> infos = 
+				InfoMService.instance().getRelObject(u, getUserLoginRel(), BTiaoUserLogInfo.class);
 		if (infos.size() >= MAX_LOGIN_NUM_PER_USER) {
 			throw new BTiaoExp(ErrCode.REACHED_MAX_LOGIN_PER_USER, null);
 		}
 		
-		BTiaoUserLogInfo info = new BTiaoUserLogInfo();
-		info.uId = uId;
+		String token = genToken();
+		BTiaoUserLogInfo info = new BTiaoUserLogInfo(uId, token);
 		info.startTime = System.currentTimeMillis();
 		info.endTime = 0;
-		info.token = genToken();
 		
-		infos.add(info);
+		InfoMBaseService.instance().add(info);
+		InfoMBaseService.instance().addRel(u, info, getUserLoginRel());
 		return info.token;
 	}
 	
-	public synchronized void logout(String uId, String token) {
-		List<BTiaoUserLogInfo> infos = uId2LogInfo.get(uId);
-		if (infos != null) for (BTiaoUserLogInfo info : infos){
-			if (info.token.equals(token)) {
-				infos.remove(info);
-				return;
-			}
-		}
+	public synchronized void logout(String uId, String token) throws BTiaoExp {
+		BTiaoUser u = new BTiaoUser(uId);
+		
+		BTiaoUserLogInfo info = new BTiaoUserLogInfo(uId, token);
+		
+		InfoMService.instance().delBFromeA(u, info, getUserLoginRel());
 	}
 	
 	public synchronized void addUser(BTiaoUser u) throws BTiaoExp {
@@ -100,36 +106,41 @@ public class UserMgr implements UserService {
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
 		}
 		
-		uId2Usr.put(u.id, u);
+		InfoMBaseService.instance().add(u);
 	}
 	
 	public synchronized void delUser(String uId) throws BTiaoExp {
-		uId2Usr.remove(uId);
+		BTiaoUser u = new BTiaoUser(uId);
+		InfoMBaseService.instance().del(u);
 	}
 	
 	public synchronized void updateUser(BTiaoUser u) throws BTiaoExp {
-		uId2Usr.put(u.id, u);
+		InfoMBaseService.instance().mdf(u);
 	}
 	
 	public synchronized BTiaoUser getUser(String uId) throws BTiaoExp {
-		return uId2Usr.get(uId);
+		BTiaoUser u = new BTiaoUser(uId);
+		InfoMBaseService.instance().get(u);
+		return u;
 	}
 	
 	@Override
 	public boolean baseAuth(String uId, String token) {
-		List<BTiaoUserLogInfo> infos = uId2LogInfo.get(uId);
-		if (infos != null) for (BTiaoUserLogInfo info : infos){
-			if (info.token.equals(token)) {
-				return true;
-			}
+		BTiaoUserLogInfo info = new BTiaoUserLogInfo(uId, token);
+		try {
+			InfoMBaseService.instance().get(info);
+		} catch (BTiaoExp e) {
+			return false;
 		}
 		
-		return false;
+		return true;
 	}
 	
 	public boolean auth(String uId, String passwd, int authType) {
-		BTiaoUser u = uId2Usr.get(uId);
-		if (u == null) {
+		BTiaoUser u = new BTiaoUser(uId);
+		try {
+			InfoMBaseService.instance().get(u);
+		} catch (BTiaoExp e) {
 			return false;
 		}
 		
@@ -148,12 +159,20 @@ public class UserMgr implements UserService {
 		addRootUser();
 	}
 	
+	private RelType getUserLoginRel() {
+		return new RelType("login");
+	}
+	
 	private void addRootUser() {
-		BTiaoUser u = new BTiaoUser();
-		u.id = ROOT_USER_ID;
+		BTiaoUser u = new BTiaoUser(ROOT_USER_ID);
 		u.nick = "super user";
 		u.passwd = passwdHash(ROOT_USER_PASSWD);
-		uId2Usr.put(ROOT_USER_ID, u);
+
+		try {
+			InfoMBaseService.instance().add(u);
+		} catch (BTiaoExp e) {
+			
+		}
 	}
 	
 	private String genToken() {
@@ -179,10 +198,7 @@ public class UserMgr implements UserService {
 		return id.startsWith("_mgr");
 	}
 	
-	private Random random = new Random(System.currentTimeMillis());
+	private SecureRandom random = new SecureRandom();
 	
-	private Map<String,BTiaoUser> uId2Usr = new HashMap<String,BTiaoUser>();
-	
-	private Map<String,List<BTiaoUserLogInfo>> uId2LogInfo = 
-			new HashMap<String,List<BTiaoUserLogInfo>>();
+	Logger log = BTiaoLog.get();
 }

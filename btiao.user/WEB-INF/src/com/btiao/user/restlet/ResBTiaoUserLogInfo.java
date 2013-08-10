@@ -53,8 +53,7 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 		
 		String token = UserMgr.instance().login(u.id, u.passwd, u.authType);
 		
-		BTiaoUserLogInfo r = new BTiaoUserLogInfo();
-		r.token = token;
+		BTiaoUserLogInfo r = new BTiaoUserLogInfo("", token);
 		return r;
 	}
 

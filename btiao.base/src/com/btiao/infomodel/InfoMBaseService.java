@@ -3,7 +3,7 @@ package com.btiao.infomodel;
 import com.btiao.base.exp.BTiaoExp;
 
 public abstract class InfoMBaseService {
-	static public InfoMBaseService instance() {
+	static public synchronized InfoMBaseService instance() {
 		if (inst == null) {
 			inst = new InfoModelServiceImplNeo4j();
 		}
@@ -18,64 +18,71 @@ public abstract class InfoMBaseService {
 	 * @param u object infomation.
 	 * @throws BTiaoExp
 	 */
-	public abstract void add(Object u) throws BTiaoExp;
+	public abstract void add(InfoMObject u) throws BTiaoExp;
 	
 	/**
 	 * query the infomation of one object from info model.<br>
 	 * if the object does not exist in info model, a exception will be throwed.<br>
-	 * @param u the object key attribute must be setted in this argument.
+	 * @param u the object key attribute must be setted in this argument.<br>
+	 *          other attributes may not be setted.
 	 * @throws BTiaoExp
 	 */
-	public abstract void get(Object u) throws BTiaoExp;
+	public abstract void get(InfoMObject u) throws BTiaoExp;
 	
 	/**
 	 * delete a object exists in info model.<br>
 	 * if there are some constrain which forbid this action, <br>
 	 * then a exception will be throwed.<br>
-	 * @param u
+	 * @param u only the key attribute of u must be setted.
 	 * @throws BTiaoExp
 	 */
-	public abstract void del(Object u) throws BTiaoExp;
+	public abstract void del(InfoMObject u) throws BTiaoExp;
 	
 	/**
-	 * modify the infomation of one object from info model.<br>
+	 * modify the information of specified object in info model fully as object 'u'.<br>
 	 * if the object does not exist in info model, a exception will be throwed.<br>
-	 * @param u the object key attribute must be setted in this argument.
+	 * @param u 
 	 * @throws BTiaoExp
 	 */
-	public abstract void mdf(Object u) throws BTiaoExp;
+	public abstract void mdf(InfoMObject u) throws BTiaoExp;
 	
 	/**
 	 * make a relation ship between object o1 and o2.<br>
-	 * @param o1
-	 * @param o2
+	 * @param o1 only the key attribute must be setted.
+	 * @param o2 only the key attribute must be setted.
 	 * @param r
 	 * @throws BTiaoExp
 	 */
-	public abstract void addRel(Object o1, Object o2, RelType r) throws BTiaoExp;
+	public abstract void addRel(InfoMObject o1, InfoMObject o2, RelType r) throws BTiaoExp;
 
 	/**
 	 * check whether there is a relation ship between object o1 and o2.<br>
-	 * @param o1
-	 * @param o2
+	 * @param o1 only the key attribute must be setted.
+	 * @param o2 only the key attribute must be setted.
 	 * @param r
 	 * @return return true if there has the specified ship, otherwise return false
 	 * @throws BTiaoExp
 	 */
-	public abstract boolean hasRel(Object o1, Object o2, RelType r) throws BTiaoExp;
+	public abstract boolean hasRel(InfoMObject o1, InfoMObject o2, RelType r) throws BTiaoExp;
 	
 	/**
 	 * delete the relation ship between object o1 and o2.
-	 * @param o1
-	 * @param o2
+	 * @param o1 only the key attribute must be setted.
+	 * @param o2 only the key attribute must be setted.
 	 * @param r
 	 * @throws BTiaoExp
 	 */
-	public abstract void delRel(Object o1, Object o2, RelType r) throws BTiaoExp;
+	public abstract void delRel(InfoMObject o1, InfoMObject o2, RelType r) throws BTiaoExp;
+	
+	public abstract void begin();
+	
+	public abstract void end();
 	
 	//public abstract void setRelProp(Object o1, Object o2, RelType r) throws BTiaoExp;
 	
 	//public abstract void delRelProp(Object o1, Object o2, RelType r) throws BTiaoExp;
 	
 	//public abstract void getRelProp(Object o1, Object o2, RelType r) throws BTiaoExp;
+	
+	protected InfoMBaseService(){}
 }

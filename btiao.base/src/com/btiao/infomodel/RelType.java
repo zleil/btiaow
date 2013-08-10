@@ -1,9 +1,12 @@
 package com.btiao.infomodel;
 
 public class RelType {
-	public final String name;
 	public RelType(String n) {
 		name = n;
+	}
+	
+	public String name() {
+		return name;
 	}
 	
 	public boolean equals(Object o) {
@@ -20,4 +23,10 @@ public class RelType {
 	public String toString() {
 		return "rel<"+name+">";
 	}
+	
+	/**
+	 * relation ship name.<br>
+	 * in the info model, two object can only has at most one ship with one name.<br>
+	 */
+	public final String name;
 }
