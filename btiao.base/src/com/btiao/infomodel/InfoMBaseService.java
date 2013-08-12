@@ -51,7 +51,7 @@ public abstract class InfoMBaseService {
 	public abstract void mdf(InfoMObject u) throws BTiaoExp;
 	
 	/**
-	 * make a relation ship between object o1 and o2.<br>
+	 * make a uni-direction relation ship from object o1 to o2.<br>
 	 * @param o1 only the key attribute must be setted.
 	 * @param o2 only the key attribute must be setted.
 	 * @param r

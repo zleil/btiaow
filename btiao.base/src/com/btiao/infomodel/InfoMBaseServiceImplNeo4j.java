@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -17,7 +16,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
-
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.utils.BTiaoLog;
@@ -55,6 +53,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		TestObj u = new TestObj("zleil", "zhanglei", 31);
 		InfoMBaseService base = InfoMBaseService.instance();
 		
+		// check add node
 		base.begin();
 		try {
 			base.add(u);
@@ -69,61 +68,33 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		assert(uu.age == u.age);
 		assert(uu.desc.equals(u.desc));
 		
-		TestObj2 u2 = new TestObj2("zl", 3, "", 55);
-		RelType r = new RelType("employ");
 		base.begin();
 		try {
-			base.add(u2);
+			base.del(u);
 			
 			base.success();
-		} catch (BTiaoExp e) {
-			base.failed();
-			assert(false);			
 		} finally {
 			base.finish();
 		}
 		
-		TestObj2 uu2 = new TestObj2("zl", 3, "", 0);
-		assert(base.get(uu2));
+		uu = new TestObj("zleil", null, 0);
+		assert(!base.get(uu));
 		
 		base.begin();
 		try {
-			base.addRel(u, u2, r);
+			base.add(u);
 			
 			base.success();
-		} catch (BTiaoExp e) {
-			base.failed();
-			assert(false);			
 		} finally {
 			base.finish();
 		}
 		
-		assert(base.hasRel(u, u2, new RelType("employ")));
-		assert(!base.hasRel(u, u2, new RelType("employxx")));
+		uu = new TestObj("zleil", null, 0);
+		base.get(uu);
+		assert(uu.age == u.age);
+		assert(uu.desc.equals(u.desc));
 		
-		base.begin();
-		try {
-			base.delRel(u, u2, r);
-		} catch (BTiaoExp e) {
-			base.failed();
-			assert(false);
-		} finally {
-			base.finish();
-		}
-		assert(!base.hasRel(u, u2, new RelType("employ")));
-		
-		base.begin();
-		try {
-			base.del(u2);
-		} catch (BTiaoExp e) {
-			base.failed();
-			assert(false);	
-		} finally {
-			base.finish();
-		}
-		uu2 = new TestObj2("zl", 3, "", 0);
-		assert(!base.get(uu2));
-		
+		//check mdf node
 		u.age = 32;
 		u.desc = "new desc";
 
@@ -141,6 +112,72 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		assert(uu.age == u.age);
 		assert(uu.desc.equals(u.desc));
 		
+		//check addRel
+		TestObj2 u2 = new TestObj2("zl", 3, "fffx", 55);
+		RelType r = new RelType("employ");
+		base.begin();
+		try {
+			base.add(u2);
+			
+			base.success();
+		} catch (BTiaoExp e) {
+			base.failed();
+			assert(false);			
+		} finally {
+			base.finish();
+		}
+		
+		TestObj2 uu2 = new TestObj2("zl", 3, "", 0);
+		assert(base.get(uu2));
+		assert(uu2.age == u2.age);
+		assert(uu2.desc.equals(u2.desc));
+		
+		base.begin();
+		try {
+			base.addRel(u, u2, r);
+			
+			base.success();
+		} catch (BTiaoExp e) {
+			base.failed();
+			assert(false);
+		} finally {
+			base.finish();
+		}
+		
+		assert(base.hasRel(u, u2, new RelType("employ")));
+		assert(!base.hasRel(u, u2, new RelType("employxx")));
+		
+		//check delRel
+		base.begin();
+		try {
+			base.delRel(u, u2, r);
+			base.delRel(u, u2, r); //del not exist one should success
+			//assert(!base.hasRel(u, u2, new RelType("employ")));
+			
+			base.success();
+		} catch (BTiaoExp e) {
+			base.failed();
+			assert(false);
+		} finally {
+			base.finish();
+		}
+		assert(!base.hasRel(u, u2, new RelType("employ")));
+		
+		//check del node
+		base.begin();
+		try {
+			base.del(u2);
+			
+			base.success();
+		} catch (BTiaoExp e) {
+			base.failed();
+			assert(false);	
+		} finally {
+			base.finish();
+		}
+		uu2 = new TestObj2("zl", 3, "", 0);
+		assert(!base.get(uu2));
+		
 		base.begin();
 		try {
 			base.del(u);
@@ -151,11 +188,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		}
 		
 		uu = new TestObj("zleil", null, 0);
-		try {
-			base.get(uu);
-		} catch (BTiaoExp e){
-			assert(e.errNo == ErrCode.OBJ_NOT_IN_INFO_MODEL);
-		}
+		assert(!base.get(uu));
 	
 		try {
 			assert(false);
@@ -231,7 +264,8 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			throw new BTiaoExp(ErrCode.ADD_DUP_REL_TO_INFO_MODEL, new Throwable(errMsg));
 		}
 		
-		n1.createRelationshipTo(n2, new RelTypeNeo4j(r));
+		RelTypeNeo4j rel = new RelTypeNeo4j(r);
+		n1.createRelationshipTo(n2, rel);
 	}
 
 	@Override
@@ -402,21 +436,18 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	 * @throws BTiaoExp 
 	 */
 	private Relationship getRelShip(Node n1, Node n2, RelType r, Class<?> n2Clz) throws BTiaoExp {
-		Relationship ship = n1.getSingleRelationship(new RelTypeNeo4j(r), Direction.OUTGOING );
-		if (ship == null) {
-			return null;
+		Iterable<Relationship> ships = n1.getRelationships(new RelTypeNeo4j(r), Direction.OUTGOING);
+		Iterator<Relationship> it = ships.iterator();
+		while (it.hasNext()) {
+			Relationship ship = it.next();
+			Node relNode = ship.getEndNode();
+			
+			if (isSameNode(relNode, n2, n2Clz)) {
+				return ship;
+			}
 		}
 		
-		Node relNode = ship.getEndNode();
-		if (relNode == null) {
-			return null;
-		}
-		
-		if (isSameNode(relNode, n2, n2Clz)) {
-			return ship;
-		} else {
-			return null;
-		}
+		return null;
 	}
 	
 	private Collection<String> getKeys(Class<?> clz) {
