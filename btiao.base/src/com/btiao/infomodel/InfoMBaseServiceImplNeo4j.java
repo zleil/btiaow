@@ -22,7 +22,149 @@ import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.utils.BTiaoLog;
 
-public class InfoModelServiceImplNeo4j extends InfoMBaseService {
+public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
+	static public void main(String[] args) throws BTiaoExp {
+		class TestObj extends InfoMObject {
+			TestObj(String id, String desc, int age) {
+				this.id = id;
+				this.desc = desc;
+				this.age = age;
+			}
+			@InfoMObjAttrDesc(key=true)
+			public String id;
+			public String desc;
+			public int age;
+		}
+		class TestObj2 extends InfoMObject {
+			TestObj2(String id, int id2, String desc, int age) {
+				this.id = id;
+				this.id2 = id2;
+				this.desc = desc;
+				this.age = age;
+			}
+			@InfoMObjAttrDesc(key=true)
+			public String id;
+			@InfoMObjAttrDesc(key=true)
+			public int id2;
+			public String desc;
+			public int age;
+		}
+		Neo4jMgr.instance().clearDB();
+		Neo4jMgr.instance().init();
+		
+		TestObj u = new TestObj("zleil", "zhanglei", 31);
+		InfoMBaseService base = InfoMBaseService.instance();
+		
+		base.begin();
+		try {
+			base.add(u);
+			
+			base.success();
+		} finally {
+			base.finish();
+		}
+		
+		TestObj uu = new TestObj("zleil", null, 0);
+		base.get(uu);
+		assert(uu.age == u.age);
+		assert(uu.desc.equals(u.desc));
+		
+		TestObj2 u2 = new TestObj2("zl", 3, "", 55);
+		RelType r = new RelType("employ");
+		base.begin();
+		try {
+			base.add(u2);
+			
+			base.success();
+		} catch (BTiaoExp e) {
+			base.failed();
+			assert(false);			
+		} finally {
+			base.finish();
+		}
+		
+		TestObj2 uu2 = new TestObj2("zl", 3, "", 0);
+		assert(base.get(uu2));
+		
+		base.begin();
+		try {
+			base.addRel(u, u2, r);
+			
+			base.success();
+		} catch (BTiaoExp e) {
+			base.failed();
+			assert(false);			
+		} finally {
+			base.finish();
+		}
+		
+		assert(base.hasRel(u, u2, new RelType("employ")));
+		assert(!base.hasRel(u, u2, new RelType("employxx")));
+		
+		base.begin();
+		try {
+			base.delRel(u, u2, r);
+		} catch (BTiaoExp e) {
+			base.failed();
+			assert(false);
+		} finally {
+			base.finish();
+		}
+		assert(!base.hasRel(u, u2, new RelType("employ")));
+		
+		base.begin();
+		try {
+			base.del(u2);
+		} catch (BTiaoExp e) {
+			base.failed();
+			assert(false);	
+		} finally {
+			base.finish();
+		}
+		uu2 = new TestObj2("zl", 3, "", 0);
+		assert(!base.get(uu2));
+		
+		u.age = 32;
+		u.desc = "new desc";
+
+		base.begin();
+		try {
+			base.mdf(u);
+			
+			base.success();
+		} finally {
+			base.finish();
+		}
+		
+		uu = new TestObj("zleil", null, 0);
+		base.get(uu);
+		assert(uu.age == u.age);
+		assert(uu.desc.equals(u.desc));
+		
+		base.begin();
+		try {
+			base.del(u);
+			
+			base.success();
+		} finally {
+			base.finish();
+		}
+		
+		uu = new TestObj("zleil", null, 0);
+		try {
+			base.get(uu);
+		} catch (BTiaoExp e){
+			assert(e.errNo == ErrCode.OBJ_NOT_IN_INFO_MODEL);
+		}
+	
+		try {
+			assert(false);
+			System.out.println("please use VM argument -ea");
+		} catch (Throwable e) {
+			System.out.println("success!");
+		}
+	}
+	
 	static class AttrValue {
 		public AttrValue(String name, Object value) {
 			this.name = name;
@@ -35,20 +177,30 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 
 	@Override
 	public void add(InfoMObject u) throws BTiaoExp {
+		Node n = getNodeFromIdx(u);
+		if (n != null) {
+			throw new BTiaoExp(ErrCode.ADD_DUP_OBJ_TO_INFO_MODEL, null);
+		}
+		
 		Node node = db.createNode();
 		setNodeAttrs(node, u);
 		addNode2Idx( node, u);
 	}
 
 	@Override
-	public void get(InfoMObject u) throws BTiaoExp {
-		Node n = getNode(u);
+	public boolean get(InfoMObject u) throws BTiaoExp {
+		Node n = getNodeFromIdx(u);
+		if (n == null) {
+			return false;
+		}
+		
 		setObjAttrs(u, n);
+		return true;
 	}
 
 	@Override
 	public void del(InfoMObject u) throws BTiaoExp {
-		Node n = getNode(u);
+		Node n = getNodeFromIdx(u);
 		if (n != null) {
 			n.delete();
 		}
@@ -56,24 +208,27 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 
 	@Override
 	public void mdf(InfoMObject u) throws BTiaoExp {
-		InfoMObject uu = u.clone();
-		Node n = getNode(uu);
+		Node n = getNodeFromIdx(u);
+		if (n == null) {
+			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, null);
+		}
+		
 		setNodeAttrs(n, u);
 	}
 
 	@Override
 	public void addRel(InfoMObject o1, InfoMObject o2, RelType r) throws BTiaoExp {
-		Node n1 = getNode(o1);
-		Node n2 = getNode(o2);
+		Node n1 = getNodeFromIdx(o1);
+		Node n2 = getNodeFromIdx(o2);
 		
 		if (n1 == null || n2 == null) {
 			String errMsg = "addRel failed!n1="+n1+",n2="+n2+",o1="+o1+",o2="+o2+",r="+r;
 			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, new Throwable(errMsg));
 		}
 		
-		if (hasRel(o1, o2, r)) {
+		if (getRelShip(n1, n2, r, o2.getClass()) != null) {
 			String errMsg = "addRel failed!o1="+o2+",o2="+o2+",r="+r;
-			throw new BTiaoExp(ErrCode.NEO4J_ADD_DUPLICATE_REL, new Throwable(errMsg));
+			throw new BTiaoExp(ErrCode.ADD_DUP_REL_TO_INFO_MODEL, new Throwable(errMsg));
 		}
 		
 		n1.createRelationshipTo(n2, new RelTypeNeo4j(r));
@@ -81,10 +236,10 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 
 	@Override
 	public boolean hasRel(InfoMObject o1, InfoMObject o2, RelType r) throws BTiaoExp {
-		Node n1 = getNode(o1);
-		Node n2 = getNode(o1);
+		Node n1 = getNodeFromIdx(o1);
+		Node n2 = getNodeFromIdx(o2);
 		
-		if (n1 == null || n2 == null) {
+		if (n1 == null || n2 == null || r == null) {
 			String errMsg = "hasRel failed!n1="+n1+",n2="+n2+",o1="+o1+",o2="+o2+",r="+r;
 			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, new Throwable(errMsg));
 		}
@@ -95,8 +250,8 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 
 	@Override
 	public void delRel(InfoMObject o1, InfoMObject o2, RelType r) throws BTiaoExp {
-		Node n1 = getNode(o1);
-		Node n2 = getNode(o1);
+		Node n1 = getNodeFromIdx(o1);
+		Node n2 = getNodeFromIdx(o2);
 		
 		Relationship ship = getRelShip(n1, n2, r, o2.getClass());
 		if (ship != null) {
@@ -111,12 +266,23 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 	}
 
 	@Override
-	public void end() {
+	public void finish() {
 		Transaction tx = (Transaction)thVar.get();
 		tx.finish();
 	}
 	
-	Node getNode(InfoMObject o) throws BTiaoExp {
+	@Override
+	public void success() {
+		Transaction tx = (Transaction)thVar.get();
+		tx.success();
+	}
+	
+	@Override
+	public void failed() {
+		;
+	}
+	
+	Node getNodeFromIdx(InfoMObject o) throws BTiaoExp {
 		Index<Node> idx = getIdx(o);
 		AttrValue kv = getKeyInfo(o);
 		return idx.get(kv.name, kv.value).getSingle();
@@ -126,7 +292,7 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 		Field[] fs = o.getClass().getFields();
 		for (Field f : fs) {
 			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
-			if (!an.store()) {
+			if (an != null && !an.store()) {
 				continue;
 			}
 			
@@ -147,7 +313,7 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 		Field[] fs = o.getClass().getFields();
 		for (Field f : fs) {
 			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
-			if (!an.store()) {
+			if (an != null && !an.store()) {
 				continue;
 			}
 			
@@ -163,7 +329,8 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 	}
 	
 	private Index<Node> getIdx(InfoMObject o) {
-		return db.index().forNodes(o.getClass().getName());
+		String idxName = o.getClass().getName();
+		return db.index().forNodes(idxName);
 	}
 	
 	private void addNode2Idx(Node n, InfoMObject o) throws BTiaoExp {
@@ -179,7 +346,7 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 		Field[] fs = o.getClass().getFields();
 		for (Field f : fs) {
 			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
-			if (!an.key()) {
+			if (an == null || !an.key()) {
 				continue;
 			}
 			
@@ -235,27 +402,21 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 	 * @throws BTiaoExp 
 	 */
 	private Relationship getRelShip(Node n1, Node n2, RelType r, Class<?> n2Clz) throws BTiaoExp {
-		Iterable<Relationship> ships = n1.getRelationships(Direction.OUTGOING);
-		if (ships != null) {
-			Iterator<Relationship> it = ships.iterator();
-			while (it.hasNext()) {
-				Relationship ship = it.next();
-				if (!ship.isType(new RelTypeNeo4j(r))) {
-					continue;
-				}
-
-				Node relNode = ship.getEndNode();
-				if (relNode == null) {
-					continue;
-				}
-				
-				if (isSameNode(relNode, n2, n2Clz)) {
-					return ship;
-				}
-			}
+		Relationship ship = n1.getSingleRelationship(new RelTypeNeo4j(r), Direction.OUTGOING );
+		if (ship == null) {
+			return null;
 		}
 		
-		return null;
+		Node relNode = ship.getEndNode();
+		if (relNode == null) {
+			return null;
+		}
+		
+		if (isSameNode(relNode, n2, n2Clz)) {
+			return ship;
+		} else {
+			return null;
+		}
 	}
 	
 	private Collection<String> getKeys(Class<?> clz) {
@@ -264,7 +425,7 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 		Field[] fs = clz.getFields();
 		for (Field f : fs) {
 			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
-			if (!an.key()) {
+			if (an == null || !an.key()) {
 				continue;
 			}
 			
@@ -290,7 +451,7 @@ public class InfoModelServiceImplNeo4j extends InfoMBaseService {
 	
 	Logger log = BTiaoLog.get();
 	
-	GraphDatabaseService db;
+	GraphDatabaseService db = Neo4jMgr.instance().db();
 
 	ThreadLocal<Transaction> thVar = new ThreadLocal<Transaction>();
 }

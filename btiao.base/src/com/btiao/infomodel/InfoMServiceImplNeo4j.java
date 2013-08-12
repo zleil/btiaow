@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -17,7 +18,7 @@ public class InfoMServiceImplNeo4j extends InfoMService {
 	public Collection<?> getRelObject(InfoMObject o1, RelType r, Class<?> o2Type)  throws BTiaoExp {
 		List<InfoMObject> ret = new ArrayList<InfoMObject>();
 		
-		Node n1 = base.getNode(o1);
+		Node n1 = base.getNodeFromIdx(o1);
 		Iterable<Relationship> relIt = n1.getRelationships();
 		if (relIt != null) {
 			Iterator<Relationship> it = relIt.iterator();
@@ -53,10 +54,20 @@ public class InfoMServiceImplNeo4j extends InfoMService {
 	}
 
 	@Override
-	public void end() {
-		base.end();
+	public void finish() {
+		base.finish();
 	}
 	
-	private InfoModelServiceImplNeo4j base = 
-			(InfoModelServiceImplNeo4j)InfoMBaseService.instance();
+	@Override
+	public void success() {
+		base.success();
+	}
+	
+	@Override
+	public void failed() {
+		base.failed();
+	}
+
+	private InfoMBaseServiceImplNeo4j base = 
+			(InfoMBaseServiceImplNeo4j)InfoMBaseService.instance();
 }

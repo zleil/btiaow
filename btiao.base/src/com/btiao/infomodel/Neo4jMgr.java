@@ -27,6 +27,29 @@ public class Neo4jMgr {
 		});
 	}
 	
+	public void clearDB() {
+		clearFile(DB_PATH);
+	}
+	
+	public void clearFile(String filename) {
+		File dir = new File(filename);
+		if (!dir.exists()) {
+			return;
+		}
+		
+		if (dir.isFile()) {
+			dir.delete();
+			return;
+		}
+		
+		String[] fns = dir.list();
+		if (fns != null) for (String fn : fns) {
+			clearFile(filename+File.separator+fn);
+		}
+		
+		dir.delete();
+	}
+	
 	public GraphDatabaseService db() {
 		return graphDb;
 	}

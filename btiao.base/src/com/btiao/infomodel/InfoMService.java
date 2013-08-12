@@ -34,7 +34,11 @@ public abstract class InfoMService {
 	
 	public abstract void begin();
 	
-	public abstract void end();
+	public abstract void finish();
+	
+	public abstract void success();
+	
+	public abstract void failed();
 	
 	protected InfoMService(){}
 }
