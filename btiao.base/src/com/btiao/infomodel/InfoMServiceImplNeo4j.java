@@ -29,8 +29,9 @@ public class InfoMServiceImplNeo4j extends InfoMService {
 				}
 				
 				try {
+					Node n2 = ship.getEndNode();
 					InfoMObject o2 = (InfoMObject)o2Type.newInstance();
-					base.setObjAttrs(o2, n1);
+					base.setObjAttrs(o2, n2);
 					
 					ret.add(o2);
 				} catch (Exception e) {

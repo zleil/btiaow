@@ -3,17 +3,13 @@ package com.btiao.user.restlet;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
-
 import com.btiao.base.oif.restlet.RestFilterBasicAuth;
 import com.btiao.base.service.BTiaoServiceMgr;
 import com.btiao.base.service.UserService;
-import com.btiao.infomodel.Neo4jMgr;
 import com.btiao.user.service.UserMgr;
 
 public class App extends Application {
 	public Restlet createInboundRoot() {
-		initBTiaoBase();
-		
 		BTiaoServiceMgr.instance().regService(UserService.class.getName(), 
 				UserMgr.instance());
 		
@@ -24,9 +20,5 @@ public class App extends Application {
 		RestFilterBasicAuth authFilter = new RestFilterBasicAuth();
 		authFilter.setNext(router);
 		return authFilter;
-	}
-	
-	private void initBTiaoBase() {
-		Neo4jMgr.instance().init();
 	}
 }

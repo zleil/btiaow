@@ -53,9 +53,11 @@ function delLogout() {
 }
 
 function putUsr() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "PUT",
-		url: userRoot+"/users/zleil",
+		url: userRoot+"/users/__n",
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
@@ -70,6 +72,8 @@ function putUsr() {
 	});
 }
 function getUsr() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "GET",
 		url: userRoot+"/users/zleil",
@@ -85,6 +89,8 @@ function getUsr() {
 	})
 }
 function postUsr() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "POST",
 		url: userRoot+"/users/zleil",
@@ -100,12 +106,14 @@ function postUsr() {
 	});
 }
 function delUsr() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "DELETE",
 		url: userRoot+"/users/zleil",
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
-			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"} \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
 			uId:"'+loginUser+'" \
 		}',
 		success: function(d) {

@@ -1,6 +1,9 @@
 package com.btiao.base.oif.restlet;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import com.btiao.base.exp.BTiaoExp;
@@ -23,7 +26,7 @@ public class JSONConvert {
 		JSONObject jo = new JSONObject();
 		jo.put("attr1", oo.attr1);
 		jo.put("attr2", oo.attr2);
-		cvt.json2obj(jo, o);
+		cvt.json2obj(jo, o, new ArrayList<String>());
 		System.out.println(o);
 		assert(oo.toString().equals(o.toString()));
 		
@@ -34,7 +37,7 @@ public class JSONConvert {
 		assert(joo.get("attr2").equals(oo.attr2));
 	}
 	
-	public void json2obj(JSONObject jo, Object obj) {
+	public void json2obj(JSONObject jo, Object obj, Collection<String> attrList) {
 		Field[] fields = obj.getClass().getFields();
 		for (Field f : fields) {
 			String name = f.getName();
@@ -48,6 +51,8 @@ public class JSONConvert {
 				String valueStr = valueObj.toString();
 				Object value = valueStr2Obj(valueStr, typeName);
 				f.set(obj, value);
+				
+				attrList.add(name);
 			} catch (Exception e) {
 //				String warnMsg = e + 
 //						"\n obj.className=" + obj.getClass().getName() +

@@ -88,8 +88,19 @@ public class UserMgr implements UserService {
 		info.startTime = System.currentTimeMillis();
 		info.endTime = 0;
 		
-		InfoMBaseService.instance().add(info);
-		InfoMBaseService.instance().addRel(u, info, getUserLoginRel());
+		base.begin();
+		try {
+			base.add(info);
+			base.addRel(u, info, getUserLoginRel());
+			
+			base.success();
+		} catch (Throwable e) {
+			base.failed();
+			throw e;
+		} finally {
+			base.finish();
+		}
+
 		return info.token;
 	}
 	
@@ -98,7 +109,17 @@ public class UserMgr implements UserService {
 		
 		BTiaoUserLogInfo info = new BTiaoUserLogInfo(uId, token);
 		
-		InfoMService.instance().delBFromeA(u, info, getUserLoginRel());
+		InfoMService.instance().begin();
+		try {
+			InfoMService.instance().delBFromeA(u, info, getUserLoginRel());
+			
+			InfoMService.instance().success();
+		} catch (BTiaoExp e) {
+			InfoMService.instance().failed();
+			throw e;
+		} finally {
+			InfoMService.instance().finish();
+		}
 	}
 	
 	public synchronized void addUser(BTiaoUser u) throws BTiaoExp {
@@ -106,34 +127,76 @@ public class UserMgr implements UserService {
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
 		}
 		
-		InfoMBaseService.instance().add(u);
+		InfoMBaseService.instance().begin();
+		try {
+			InfoMBaseService.instance().add(u);
+			
+			InfoMBaseService.instance().success();
+		} catch (BTiaoExp e) {
+			InfoMBaseService.instance().failed();
+			throw e;
+		} finally {
+			InfoMBaseService.instance().finish();
+		}
 	}
 	
 	public synchronized void delUser(String uId) throws BTiaoExp {
 		BTiaoUser u = new BTiaoUser(uId);
-		InfoMBaseService.instance().del(u);
+		
+		InfoMBaseService.instance().begin();
+		try {
+			InfoMBaseService.instance().del(u);
+			
+			InfoMBaseService.instance().success();
+		} catch (BTiaoExp e) {
+			InfoMBaseService.instance().failed();
+			throw e;
+		} finally {
+			InfoMBaseService.instance().finish();
+		}
 	}
 	
-	public synchronized void updateUser(BTiaoUser u) throws BTiaoExp {
-		InfoMBaseService.instance().mdf(u);
+	public synchronized void updateUser(BTiaoUser u, Collection<String> attrs) throws BTiaoExp {
+		InfoMBaseService.instance().begin();
+		try {
+			BTiaoUser newAttr = (BTiaoUser)u.clone();
+			if (!InfoMBaseService.instance().get(u)) {
+				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(u.toString()));
+			}
+			
+			u.update(newAttr, attrs);
+			InfoMBaseService.instance().mdf(u);
+			
+			InfoMBaseService.instance().success();
+		} catch (BTiaoExp e) {
+			InfoMBaseService.instance().failed();
+			throw e;
+		} finally {
+			InfoMBaseService.instance().finish();
+		}
 	}
 	
 	public synchronized BTiaoUser getUser(String uId) throws BTiaoExp {
 		BTiaoUser u = new BTiaoUser(uId);
-		InfoMBaseService.instance().get(u);
-		return u;
+		if (InfoMBaseService.instance().get(u)) {
+			return u;
+		} else {
+			String errMsg = "getUser,uId="+uId;
+			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(errMsg));
+		}
 	}
 	
 	@Override
 	public boolean baseAuth(String uId, String token) {
 		BTiaoUserLogInfo info = new BTiaoUserLogInfo(uId, token);
 		try {
-			InfoMBaseService.instance().get(info);
+			return InfoMBaseService.instance().get(info);
 		} catch (BTiaoExp e) {
+			String errMsg = e + "\n" + "uid="+uId+",token="+token;
+			System.err.println(errMsg);
+			log.error(errMsg);
 			return false;
 		}
-		
-		return true;
 	}
 	
 	public boolean auth(String uId, String passwd, int authType) {
@@ -168,10 +231,19 @@ public class UserMgr implements UserService {
 		u.nick = "super user";
 		u.passwd = passwdHash(ROOT_USER_PASSWD);
 
+		base.begin();
 		try {
-			InfoMBaseService.instance().add(u);
-		} catch (BTiaoExp e) {
+			base.add(u);
 			
+			base.success();
+		} catch (Throwable e) {
+			base.failed();
+			
+			String errMsg = "add super user failed!";
+			System.err.println(errMsg);
+			log.error(errMsg);
+		} finally {
+			base.finish();
 		}
 	}
 	
@@ -201,4 +273,6 @@ public class UserMgr implements UserService {
 	private SecureRandom random = new SecureRandom();
 	
 	Logger log = BTiaoLog.get();
+	
+	InfoMBaseService base = InfoMBaseService.instance();
 }

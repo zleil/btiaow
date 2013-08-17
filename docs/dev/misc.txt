@@ -1,0 +1,102 @@
+Rest API specification
+
+1. all API will be hold at the position "{BASE}/"
+   {BASE} is the root of BTIAOW application in the web server, 
+   Generally, {BASE} will be "/btiao", but you can not, so 
+   do not reference all the position with absolutely path. 
+   
+2. all the object will be hold under the "BASE/", and object can have sub-object.
+   we use constant string '__s' to split the object and its sub-objects.
+   
+3. module is a object, all the domain object must be the children or descendants
+of the module.
+
+4. the URL of the object.
+   every object have a type identity, we name "{TYPEID}", and it will be contained
+in the URL. So, the URL of objects maybe like this:
+      "{BASE}/m/{MODULEID}/__s/{TYPEID}/{objId}/.../__s/{TYPEID}/{objId}"
+      and 'm' is the module objects's TYPEID.
+      and {objId} must not be prefixed by '__s'.
+   the following are some examples of the object's position.
+   example 1: user object in user management module
+      we define the user management module object's "TYPEID" is 'usrmgr'.
+      we define the user object's "TYPEID" is 'users'.
+      so, the URL of one user object is "{BASE}/m/usrmgr/__s/users/{user-object-id}"
+
+5. the URL of the method of one object if it has. just like this,
+      "{BASE}/m/{MODULEID}/__s/{TYPEID}/{objId}/{method-name}"
+      and all the IDs must not prefixed by '__'
+
+6. how to create a object?
+NOTE: we use '__n' as a special object identity, 
+      it can be just used in create action.
+      
+PUT http://host/{BTIAO}/m/{MODULEID}/__s/{TYPEID}/__n
+Accept: application/json; charset=UTF-8
+Content-Type: application/json
+{
+	"__opUsrInfo":{"uId":"loginUser","token":"token"}
+	"objAttr1":"value1",
+	"objAttr2":"value2"
+	...
+}
+
+200: OK or error
+Content-Type: application/json
+{
+	"errCode":0,
+	"content":{}
+}
+
+6. how to mdf a object?
+   it must be implemented in this way that only the specified attribute 
+will be changed.
+
+POST http://host/{BTIAO}/m/{MODULEID}/__s/{TYPEID}/{objId}
+Accept: application/json; charset=UTF-8
+Content-Type: application/json
+{
+	"__opUsrInfo":{"uId":"loginUser","token":"token"}
+	"objAttr1":"value1",
+	"objAttr2":"value2"
+	...
+}
+
+200: OK or error
+Content-Type: application/json
+{
+	"errCode":0,
+	"content":{}
+}
+
+7. how to delete a object?
+
+DELETE http://host/{BTIAO}/m/{MODULEID}/__s/{TYPEID}/{objId}
+Accept: application/json; charset=UTF-8
+Content-Type: application/json
+{
+	"__opUsrInfo":{"uId":"loginUser","token":"token"}
+}
+
+200: OK or error
+Content-Type: application/json
+{
+	"errCode":0,
+	"content":{}
+}
+
+8. how to query a object?
+
+GET http://host/{BTIAO}/m/{MODULEID}/__s/{TYPEID}/{objId}
+Accept: application/json; charset=UTF-8
+Content-Type: application/json
+{
+	"__opUsrInfo":{"uId":"loginUser","token":"token"}
+}
+
+200: OK or error
+Content-Type: application/json
+{
+	"errCode":0,
+	"content":{"attr1":"value1",...}
+}

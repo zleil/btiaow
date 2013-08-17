@@ -1,5 +1,7 @@
 package com.btiao.user.restlet;
 
+import java.util.Collection;
+
 import org.restlet.data.Form;
 
 import com.btiao.base.exp.BTiaoExp;
@@ -24,7 +26,7 @@ public class ResBTiaoUser extends ResBTBase {
 	@JsonCvtInfo(objClassName="com.btiao.user.domain.BTiaoUser")
 	protected Object put(Object arg) throws BTiaoExp {
 		BTiaoUser u = (BTiaoUser)arg;
-		if (!u.id.equals(uIdFromUrl)){
+		if (!uIdFromUrl.equals(OBJID_WHEN_CREATE)){
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
 		}
 
@@ -34,14 +36,13 @@ public class ResBTiaoUser extends ResBTBase {
 
 	@Override
 	@JsonCvtInfo(objClassName="com.btiao.user.domain.BTiaoUser")
-	protected Object post(Object arg) throws BTiaoExp {
+	protected Object post(Object arg, Collection<String> attrs) throws BTiaoExp {
 		BTiaoUser u = (BTiaoUser)arg;
 		if (!u.id.equals(uIdFromUrl)){
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
 		}
 		
-		UserMgr.instance().delUser(u.id);
-		UserMgr.instance().addUser(u);
+		UserMgr.instance().updateUser(u, attrs);
 		return null;
 	}
 

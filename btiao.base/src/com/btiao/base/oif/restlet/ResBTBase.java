@@ -1,6 +1,11 @@
 package com.btiao.base.oif.restlet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -16,6 +21,7 @@ import org.restlet.resource.ServerResource;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.utils.BTiaoLog;
 
 public abstract class ResBTBase extends ServerResource {
 	static private enum OP {
@@ -38,6 +44,8 @@ public abstract class ResBTBase extends ServerResource {
 		
 		return jro;
 	}
+	
+	static public String OBJID_WHEN_CREATE = "__n";
 	
 	@Get(value="json")
 	public final JsonRepresentation btiaoGet() {
@@ -106,7 +114,7 @@ public abstract class ResBTBase extends ServerResource {
 	 * @throws BTiaoExp if process failed, must throw the excepion with <br>
 	 *         an error code assigned in the exception object.
 	 */
-	protected abstract Object post(Object arg) throws BTiaoExp;
+	protected abstract Object post(Object arg, Collection<String> attrList) throws BTiaoExp;
 	
 	/**
 	 * del process.
@@ -128,13 +136,22 @@ public abstract class ResBTBase extends ServerResource {
 		
 	}
 	
-	private Object cvtJson2Obj(OP op, JSONObject jo) throws Exception {
+	private Object cvtJson2Obj(OP op, JSONObject jo, Collection<String> attrList) 
+	throws Exception {
 		if (jo == null) {
 			return null;
 		}
 		
-		Class<?>[] parameterTypes = {Object.class};
-		Method method = this.getClass().getDeclaredMethod(op.toString(), parameterTypes);
+		Method method = null;
+		
+		
+		if (op == OP.post) {
+			Class<?>[] parameterTypes = {Object.class, Collection.class};
+			method = this.getClass().getDeclaredMethod(op.toString(), parameterTypes);
+		} else {
+			Class<?>[] parameterTypes = {Object.class};
+			method = this.getClass().getDeclaredMethod(op.toString(), parameterTypes);
+		}
 		
 		JsonCvtInfo annot = method.getAnnotation(JsonCvtInfo.class);
 		if (annot == null) {
@@ -145,7 +162,7 @@ public abstract class ResBTBase extends ServerResource {
 		Class<?> clz = this.getClass();
 		//objclassname在web应用内，必须使用web应用的类加载器才能加载到此类
 		Object obj = clz.getClassLoader().loadClass(objClassName).newInstance();
-		new JSONConvert().json2obj(jo, obj);
+		new JSONConvert().json2obj(jo, obj, attrList);
 		return obj;
 	}
 	
@@ -182,11 +199,13 @@ public abstract class ResBTBase extends ServerResource {
 					
 					JSONObject opUsrInfo = (JSONObject)jao.get(RestFilterBasicAuth.OP_USER_INFO_NAME);
 					opUserId = (String)opUsrInfo.get(RestFilterBasicAuth.ARG_NAME_USER);
-					Object argObj = cvtJson2Obj(op, jao);
+					
+					Collection<String> attrList = new ArrayList<String>();
+					Object argObj = cvtJson2Obj(op, jao, attrList);
 					if (op == OP.del) {
 						contentRet = del(argObj);
 					} else if (op == OP.post) {
-						contentRet = post(argObj);
+						contentRet = post(argObj, attrList);
 					} else if (op == OP.put) {
 						contentRet = put(argObj);
 					}
@@ -194,25 +213,31 @@ public abstract class ResBTBase extends ServerResource {
 			} catch (BTiaoExp e) {
 				errCode = e.errNo;
 				setRstOfJRO(jro, errCode);
-			} catch (Throwable e) {
-				e.printStackTrace();
 				
+				BTiaoLog.logExp(log, e);
+			} catch (Throwable e) {
 				errCode = ErrCode.UNKOWN_ERR;
 				setRstOfJRO(jro, errCode);
+				
+				BTiaoLog.logExp(log, e);
 			}
 			
 			JSONObject content = new JSONObject();
 			jro.put("content", content);
 			setContentOfJRO(content, contentRet);
 		} catch (Exception e) {
-			e.printStackTrace();
-			
 			errCode = ErrCode.WRONG_PARAM;
 			setRstOfJRO(jro, errCode);
+			
+			BTiaoLog.logExp(log, e);
 		}
 
 		if (errCode != ErrCode.SUCCESS) {
-			this.setStatus(Status.CLIENT_ERROR_EXPECTATION_FAILED);
+			if (errCode == ErrCode.OBJ_NOT_IN_INFO_MODEL) {
+				this.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+			} else {
+				this.setStatus(Status.CLIENT_ERROR_EXPECTATION_FAILED);
+			}
 		}
 		return new JsonRepresentation(jro);
 	}
@@ -222,5 +247,5 @@ public abstract class ResBTBase extends ServerResource {
 	 */
 	protected String opUserId;
 	
-	protected Logger logger = LogManager.getRootLogger();
+	protected Logger log = BTiaoLog.get();
 }

@@ -5,6 +5,7 @@ import com.btiao.base.exp.BTiaoExp;
 public abstract class InfoMBaseService {
 	static public synchronized InfoMBaseService instance() {
 		if (inst == null) {
+			Neo4jMgr.instance().init();
 			inst = new InfoMBaseServiceImplNeo4j();
 		}
 		return inst;

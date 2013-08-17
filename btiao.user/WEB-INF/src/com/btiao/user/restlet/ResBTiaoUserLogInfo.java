@@ -1,5 +1,7 @@
 package com.btiao.user.restlet;
 
+import java.util.Collection;
+
 import org.restlet.data.Form;
 
 import com.btiao.base.exp.BTiaoExp;
@@ -61,7 +63,7 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 	 * not to be implemented!
 	 */
 	@Override
-	protected Object post(Object arg) throws BTiaoExp {
+	protected Object post(Object arg, Collection<String> attrList) throws BTiaoExp {
 		return null;
 	}
 

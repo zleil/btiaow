@@ -48,7 +48,6 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			public int age;
 		}
 		Neo4jMgr.instance().clearDB();
-		Neo4jMgr.instance().init();
 		
 		TestObj u = new TestObj("zleil", "zhanglei", 31);
 		InfoMBaseService base = InfoMBaseService.instance();
@@ -59,6 +58,9 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			base.add(u);
 			
 			base.success();
+		} catch (Throwable e) {
+			base.failed();
+			assert(false);
 		} finally {
 			base.finish();
 		}
@@ -73,6 +75,9 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			base.del(u);
 			
 			base.success();
+		} catch (Throwable e) {
+			base.failed();
+			assert(false);
 		} finally {
 			base.finish();
 		}
@@ -85,6 +90,9 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			base.add(u);
 			
 			base.success();
+		} catch (Throwable e) {
+			base.failed();
+			assert(false);
 		} finally {
 			base.finish();
 		}
@@ -103,6 +111,9 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			base.mdf(u);
 			
 			base.success();
+		} catch (Throwable e) {
+			base.failed();
+			assert(false);
 		} finally {
 			base.finish();
 		}
@@ -120,9 +131,9 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			base.add(u2);
 			
 			base.success();
-		} catch (BTiaoExp e) {
+		} catch (Throwable e) {
 			base.failed();
-			assert(false);			
+			assert(false);
 		} finally {
 			base.finish();
 		}
@@ -137,7 +148,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			base.addRel(u, u2, r);
 			
 			base.success();
-		} catch (BTiaoExp e) {
+		} catch (Throwable e) {
 			base.failed();
 			assert(false);
 		} finally {
@@ -155,7 +166,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			//assert(!base.hasRel(u, u2, new RelType("employ")));
 			
 			base.success();
-		} catch (BTiaoExp e) {
+		} catch (Throwable e) {
 			base.failed();
 			assert(false);
 		} finally {
@@ -169,9 +180,9 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			base.del(u2);
 			
 			base.success();
-		} catch (BTiaoExp e) {
+		} catch (Throwable e) {
 			base.failed();
-			assert(false);	
+			assert(false);
 		} finally {
 			base.finish();
 		}
@@ -183,6 +194,9 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			base.del(u);
 			
 			base.success();
+		} catch (Throwable e) {
+			base.failed();
+			assert(false);
 		} finally {
 			base.finish();
 		}
