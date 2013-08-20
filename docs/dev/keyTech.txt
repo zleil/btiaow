@@ -1,0 +1,11 @@
+1. pure-web video/speech media input technology.
+   apache Cordova, the latest version at 2013/8/18 is 3.0 .
+   see http://cordova.apache.org/
+   
+2. neo4j, graph database.
+   see http://neo4j.org
+   
+3. restful server
+   see restlet.org
+   
+4. 
