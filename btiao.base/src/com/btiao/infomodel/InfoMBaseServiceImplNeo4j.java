@@ -16,6 +16,8 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
+
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.utils.BTiaoLog;
@@ -244,7 +246,26 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		setObjAttrs(u, n);
 		return true;
 	}
-
+	
+	@Override
+	public Collection<? extends InfoMObject> getAll(
+			Class<? extends InfoMObject> objClz) throws BTiaoExp {
+		IndexHits<Node> ns = getNodesFromIdx(objClz);
+		List<InfoMObject> objs = new ArrayList<InfoMObject>();
+		for (Node n : ns) {
+			try {
+				InfoMObject obj = objClz.newInstance();
+				setObjAttrs(obj, n);
+				objs.add(obj);
+			} catch (Exception e) {
+				String errMsg = "getAll of " + objClz.getName() + " failed!";
+				log.error(errMsg);
+				System.err.println(errMsg);
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public void del(InfoMObject u) throws BTiaoExp {
 		Node n = getNodeFromIdx(u);
@@ -291,7 +312,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			String errMsg = "hasRel failed!n1="+n1+",n2="+n2+",o1="+o1+",o2="+o2+",r="+r;
 			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, new Throwable(errMsg));
 		}
-
+	
 		Relationship ship = getRelShip(n1, n2, r, o2.getClass());
 		return ship != null;
 	}
@@ -336,6 +357,14 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		return idx.get(kv.name, kv.value).getSingle();
 	}
 	
+
+	private IndexHits<Node> getNodesFromIdx(Class<? extends InfoMObject> objClz) throws BTiaoExp {
+		Index<Node> idx = getIdx(objClz);
+		AttrValue kv = getKeyInfo(objClz);
+		IndexHits<Node> ns = idx.query(kv.name, "*");
+		return ns;
+	}
+	
 	private void setNodeAttrs(Node n, InfoMObject o) throws BTiaoExp {
 		Field[] fs = o.getClass().getFields();
 		for (Field f : fs) {
@@ -376,9 +405,13 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		}
 	}
 	
-	private Index<Node> getIdx(InfoMObject o) {
-		String idxName = o.getClass().getName();
+	private Index<Node> getIdx(Class<?extends InfoMObject> clz) {
+		String idxName = clz.getName();
 		return db.index().forNodes(idxName);
+	}
+	
+	private Index<Node> getIdx(InfoMObject o) {
+		return getIdx(o.getClass());
 	}
 	
 	private void addNode2Idx(Node n, InfoMObject o) throws BTiaoExp {
@@ -411,6 +444,14 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		
 		return r;
 	}
+	private AttrValue getKeyInfo(Class<?extends InfoMObject> clz) throws BTiaoExp {
+		try {
+			InfoMObject obj = clz.newInstance();
+			return getKeyInfo(obj);
+		} catch (Exception e) {
+			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, e);
+		}
+	}
 	private AttrValue getKeyInfo(InfoMObject o) throws BTiaoExp {
 		StringBuilder nameStr = new StringBuilder();
 		StringBuilder valueStr = new StringBuilder();
@@ -431,7 +472,13 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			nameStr.append(name);
 			nameStr.append(sep);
 			
-			String value = kv.getValue().toString();			
+			String value = null;
+			Object objVal = kv.getValue();
+			if (objVal != null) {
+				value = objVal.toString();
+			} else {
+				value = "null";
+			}
 			value.replace(sep, "\\.");
 			
 			valueStr.append(value);

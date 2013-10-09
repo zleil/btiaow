@@ -9,6 +9,8 @@ import java.util.Collection;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.restlet.data.Form;
 import org.restlet.data.Status;
@@ -166,12 +168,28 @@ public abstract class ResBTBase extends ServerResource {
 		return obj;
 	}
 	
-	private JSONObject setContentOfJRO(JSONObject jro, Object contentRet) {
+	@SuppressWarnings("unchecked")
+	private JSONObject setJsonContent(JSONObject jro, Object contentRet) {
 		if (contentRet == null) {
 			return jro;
 		}
 		
-		new JSONConvert().obj2json(contentRet, jro);
+		try {
+			JSONConvert cvt = new JSONConvert();
+			if (contentRet instanceof Collection) {
+				JSONArray content = new JSONArray();
+				jro.put("content", content);
+				cvt.array2json((Collection<Object>)contentRet, content);
+			} else {
+				JSONObject content = new JSONObject();
+				jro.put("content", content);
+				cvt.obj2json(contentRet, content);
+			}
+		} catch (JSONException e) {
+			String errMsg = e.toString() + "\nsetJsonContent failed!";
+			log.error(errMsg);
+		}
+		
 		return jro;
 	}
 	
@@ -222,9 +240,7 @@ public abstract class ResBTBase extends ServerResource {
 				BTiaoLog.logExp(log, e);
 			}
 			
-			JSONObject content = new JSONObject();
-			jro.put("content", content);
-			setContentOfJRO(content, contentRet);
+			setJsonContent(jro, contentRet);
 		} catch (Exception e) {
 			errCode = ErrCode.WRONG_PARAM;
 			setRstOfJRO(jro, errCode);

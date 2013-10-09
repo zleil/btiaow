@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
@@ -60,6 +61,14 @@ public class JSONConvert {
 //						"\n json=" + jo;
 //				log.warn(errMsg);
 			}
+		}
+	}
+	
+	public void array2json(Collection<Object> objs, JSONArray array) {
+		for (Object obj : objs) {
+			JSONObject jo = new JSONObject();
+			array.put(jo);
+			obj2json(obj, jo);
 		}
 	}
 	

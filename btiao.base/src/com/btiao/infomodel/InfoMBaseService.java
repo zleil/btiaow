@@ -1,5 +1,7 @@
 package com.btiao.infomodel;
 
+import java.util.Collection;
+
 import com.btiao.base.exp.BTiaoExp;
 
 public abstract class InfoMBaseService {
@@ -32,6 +34,8 @@ public abstract class InfoMBaseService {
 	 * @throws BTiaoExp 
 	 */
 	public abstract boolean get(InfoMObject u) throws BTiaoExp;
+	
+	public abstract Collection<?extends InfoMObject> getAll(Class<?extends InfoMObject> objClz) throws BTiaoExp;
 	
 	/**
 	 * delete a object exists in info model.<br>

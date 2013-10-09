@@ -14,6 +14,7 @@ public class App extends Application {
 				UserMgr.instance());
 		
 		Router router = new Router(getContext());
+		router.attach("/users", ResBTiaoAllUser.class);
 		router.attach("/users/{userId}", ResBTiaoUser.class);
 		router.attach("/users/{userId}/auth/{token}", ResBTiaoUserLogInfo.class);
 		

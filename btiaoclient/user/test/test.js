@@ -88,6 +88,23 @@ function getUsr() {
 		}
 	})
 }
+function getAllUsr() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "GET",
+		url: userRoot+"/users",
+		contentType: "application/json; charset=UTF-8",
+		data: {
+			__opUsrInfo: {uId: loginUser, token: token}
+		},
+		success: function(d) {
+			$("#idOut").append("result="+d.errCode+
+					"\ncontent.id="+d.content.id+
+					"\ncontent.nick="+d.content.nick);
+		}
+	})
+}
 function postUsr() {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
@@ -130,5 +147,7 @@ function onload() {
 	
 	$("#idLogin").click(putLogin);
 	$("#idLogout").click(delLogout);
+	
+	$("#idGetAll").click(getAllUsr);
 }
 
