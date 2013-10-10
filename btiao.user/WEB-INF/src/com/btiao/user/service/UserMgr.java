@@ -88,11 +88,11 @@ public class UserMgr implements UserService {
 
 		//TODO this can't really constrain the max login number.
 		//we should implement this constrain in the info model.
-		Collection<?> infos = 
-				InfoMService.instance().getRelObject(u, getUserLoginRel(), BTiaoUserLogInfo.class);
-		if (infos.size() >= MAX_LOGIN_NUM_PER_USER) {
-			throw new BTiaoExp(ErrCode.REACHED_MAX_LOGIN_PER_USER, null);
-		}
+//		Collection<?> infos = 
+//				InfoMService.instance().getRelObject(u, getUserLoginRel(), BTiaoUserLogInfo.class);
+//		if (infos.size() >= MAX_LOGIN_NUM_PER_USER) {
+//			throw new BTiaoExp(ErrCode.REACHED_MAX_LOGIN_PER_USER, null);
+//		}
 		
 		String token = genToken();
 		BTiaoUserLogInfo info = new BTiaoUserLogInfo(uId, token);

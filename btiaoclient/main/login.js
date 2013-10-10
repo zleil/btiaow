@@ -1,23 +1,37 @@
 (function(){
-if (!window.onload) {
-	window.__zleilinits = [];
-	window.onload = function() {
-		for (var initfunc in window.__zleilinits) {
-			(window.__zleilinits[initfunc])(); 
-		}
-	};
-}
-
 var userRoot = "/btiao/usrmgr";
 var logNodeName = "/auth";
 
+function getDevUserId() {
+	var devUserId = retriveDevId();
+	if (!!devUserId) {
+		return devUserId;
+	}
+	
+	devUserId = genDevUserId();
+	storeDevUserId(devUserId);
+	return devUserId;
+}
+function storeDevUserId(devUserId) {
+	if (localStorage) {
+		localStorage["btiao.devUserId"] = devUserId;
+	}
+}
+function retriveDevId() {
+	if (localStorage) {
+		return localStorage["btiao.devUserId"];
+	} else {
+		return undefined;
+	}
+}
 function genDevUserId() {
 	var myDate = new Date();
-	return "007_" + myDate.getTime();
+	var devUserId = "007_" + myDate.getTime();
+	return devUserId;
 }
 
 function devLogin() {
-	var loginUser = genDevUserId();
+	var loginUser = getDevUserId();
 	var usrPasswd = loginUser;
 	
 	$.ajax({
@@ -65,8 +79,11 @@ function devLogout() {
 	})
 }
 
-var init = function() {
+var oldInit = window.onload;
+window.onload = function() {
 	$("#btDevLogin").click(devLogin);
+	if (!!oldInit) {
+		(oldInit)();
+	}
 }
-window.__zleilinits.push(init);
 })();

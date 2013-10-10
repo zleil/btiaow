@@ -263,7 +263,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 				System.err.println(errMsg);
 			}
 		}
-		return null;
+		return objs;
 	}
 	
 	@Override

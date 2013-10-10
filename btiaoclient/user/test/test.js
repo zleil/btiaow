@@ -99,9 +99,10 @@ function getAllUsr() {
 			__opUsrInfo: {uId: loginUser, token: token}
 		},
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode+
-					"\ncontent.id="+d.content.id+
-					"\ncontent.nick="+d.content.nick);
+			$("#idOut").append("<br>result="+d.errCode);
+			for (var o in d.content) {
+				$("#idOut").append("\n{id="+d.content[o].id+",nick="+d.content[o].nick+"},");
+			}
 		}
 	})
 }
