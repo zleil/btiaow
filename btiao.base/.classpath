@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/third/lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/third/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="/third/lib/jaxen-1.1-beta-6.jar"/>
+	<classpathentry kind="lib" path="/third/lib/jaxme-api-0.3.jar"/>
+	<classpathentry kind="lib" path="/third/lib/jsr173_1.0_api.jar"/>
+	<classpathentry kind="lib" path="/third/lib/log4j-1.2-api-2.0-beta8.jar"/>
+	<classpathentry kind="lib" path="/third/lib/log4j-api-2.0-beta8.jar"/>
+	<classpathentry kind="lib" path="/third/lib/log4j-core-2.0-beta8.jar"/>
+	<classpathentry kind="lib" path="/third/lib/msv-20030807.jar"/>
+	<classpathentry exported="true" kind="lib" path="/third/lib/org.json.jar"/>
+	<classpathentry kind="lib" path="/third/lib/org.restlet.ext.json.jar"/>
+	<classpathentry kind="lib" path="/third/lib/org.restlet.ext.servlet.jar"/>
+	<classpathentry kind="lib" path="/third/lib/org.restlet.ext.xstream.jar"/>
+	<classpathentry kind="lib" path="/third/lib/org.restlet.jar"/>
+	<classpathentry kind="lib" path="/third/lib/pull-parser-2.1.10.jar"/>
+	<classpathentry kind="lib" path="/third/lib/relaxngDatatype-20030807.jar"/>
+	<classpathentry kind="lib" path="/third/lib/xpp3-1.1.3.3.jar"/>
+	<classpathentry kind="lib" path="/third/lib/xsdlib-20030807.jar"/>
+	<classpathentry kind="var" path="TOMCAT_HOME/lib/servlet-api.jar"/>
+	<classpathentry kind="var" path="TOMCAT_HOME/lib/jasper.jar"/>
+	<classpathentry kind="var" path="TOMCAT_HOME/lib/jsp-api.jar"/>
+	<classpathentry kind="var" path="TOMCAT_HOME/lib/el-api.jar"/>
+	<classpathentry kind="var" path="TOMCAT_HOME/lib/annotations-api.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/neo4j-kernel-1.9.2.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/neo4j-graph-algo-1.9.2.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/neo4j-graph-matching-1.9.2.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/neo4j-jmx-1.9.2.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/geronimo-jta_1.1_spec-1.1.1.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/neo4j-lucene-index-1.9.2.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/lucene-core-3.6.2.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/concurrentlinkedhashmap-lru-1.3.1.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/neo4j-cypher-1.9.2.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/neo4j-shell-1.9.2.jar"/>
+	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/neo4j-udc-1.9.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
