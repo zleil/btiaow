@@ -78,17 +78,17 @@
         </div>
         <ul data-role="listview" data-divider-theme="b" data-inset="true">
             <li data-theme="e">
-                <a href="#page1" data-transition="slide">
+                <a href="#pgDetail" data-transition="slide">
                     3升纯净水促销，买一送一！
                 </a>
             </li>
             <li data-theme="c">
-                <a href="#page1" data-transition="slide">
+                <a href="#pgDetail" data-transition="slide">
                     北冰洋买一送一，今日限量10瓶！
                 </a>
             </li>
             <li data-theme="e">
-                <a href="#page1" data-transition="slide">
+                <a href="#pgDetail" data-transition="slide">
                     可爱多，现价2￥(原价3￥)
                 </a>
             </li>
@@ -118,6 +118,75 @@
                     </a>
                 </li>
             </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Home -->
+<div data-role="page" id="pgDetail">
+    <div data-theme="b" data-role="header">
+        <a data-role="button" href="#pgFirst" class="ui-btn-left">
+            返回
+        </a>
+        <h3>
+            6#0105
+        </h3>
+    </div>
+    <div data-role="content">
+        <h2>
+            正文
+        </h2>
+        <div data-role="collapsible-set">
+            <div data-role="collapsible">
+                <h3>
+                    我要评价
+                </h3>
+                <div data-role="navbar" data-iconpos="right">
+                    <ul style="font-size:8px;">
+                        <li>
+                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
+                                非常好
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
+                                好
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
+                                一般
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
+                                不满意
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
+                                垃圾
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div data-role="fieldcontain">
+                    <textarea name="" id="textarea1" placeholder=""></textarea>
+                </div>
+            </div>
+        </div>
+        <div data-role="collapsible-set">
+            <div data-role="collapsible" data-collapsed="false">
+                <h3>
+                    咨询
+                </h3>
+                <div data-role="fieldcontain">
+                    <textarea name="" id="textarea4" placeholder=""></textarea>
+                </div>
+                <a data-role="button" href="#page1">
+                    提交
+                </a>
+            </div>
         </div>
     </div>
 </div>
