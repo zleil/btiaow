@@ -3,19 +3,19 @@ package com.btiao.tg;
 import java.util.Map;
 
 public class TgShop {
-	public long longitude; //¾­¶È£¬·Å´ó1000*1000±¶
-	public long latitude; //Î¬¶È£¬·Å´ó1000*1000±¶
+	public long longitude; //ç»åº¦ï¼Œæ”¾å¤§1000*1000å€
+	public long latitude; //ç»´åº¦ï¼Œæ”¾å¤§1000*1000å€
 	
-	public String addr; //µØÖ·
-	public String name; //Ãû³Æ
-	public String desc; //¼ò½é
+	public String addr; //åœ°å€
+	public String name; //åç§°
+	public String desc; //ç®€ä»‹
 	
-	public String tel; //µç»°
+	public String tel; //ç”µè¯
 	
-	public String city; //³ÇÊĞ
-	public String area; //ÇøÃû
-	public String shopArea; //ÉÌÇøÃû
+	public String city; //åŸå¸‚
+	public String area; //åŒºå
+	public String shopArea; //å•†åŒºå
 	
-	public byte star; //ÆÀ¼ÛĞÇÊı£¬×î¶à5ĞÇ£¬×îÉÙ1ĞÇ
-	public Map<Integer,Integer> labelInfo; //ÆÀ¼Û±êÇ©×´Ì¬£¬ÔŞ³ÉµÄÈËÊı
+	public byte star; //è¯„ä»·æ˜Ÿæ•°ï¼Œæœ€å¤š5æ˜Ÿï¼Œæœ€å°‘1æ˜Ÿ
+	public Map<Integer,Integer> labelInfo; //è¯„ä»·æ ‡ç­¾çŠ¶æ€ï¼Œèµæˆçš„äººæ•°
 }
