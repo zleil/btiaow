@@ -77,6 +77,20 @@ public class CommonMgr {
 		}
 	}
 	
+	public void addObjectRel(String relName, InfoMObject from, InfoMObject to) throws BTiaoExp {
+		base.begin();
+		try {
+			base.addRel(from, to, new RelType(relName));
+			
+			base.success();
+		} catch (Throwable e) {
+			base.failed();
+			throw e;
+		} finally {
+			base.finish();
+		}
+	}
+	
 	public void addInfoObject(InfoMObject info) throws BTiaoExp {
 		base.begin();
 		try {

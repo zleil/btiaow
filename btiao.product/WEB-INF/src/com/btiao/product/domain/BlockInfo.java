@@ -17,14 +17,15 @@ public class BlockInfo extends InfoMObject {
 	}
 	
 	@InfoMObjAttrDesc(key=true)
-	public String id;
-	public String type;
-	public String posId;
+	public String id = "";
 	
-	public String desc;
+	public String type = "";
+	public String posId = "";
+	
+	public String desc = "";
 	public int price;
 	public int oldPrice;
-	public String imageUrl;
+	public String imageUrl = "";
 	
 	public int evaluteValue;
 }
