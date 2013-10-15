@@ -1,15 +1,8 @@
 package com.btiao.user.service;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import org.apache.log4j.Logger;
-
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.service.UserService;
@@ -225,7 +218,7 @@ public class UserMgr implements UserService {
 		}
 		
 		if (authType != 0) {
-			return false; //µ±Ç°½öÖ§³ÖÎª0µÄÈÏÖ¤
+			return false; //ï¿½ï¿½Ç°ï¿½ï¿½Ö§ï¿½ï¿½Îª0ï¿½ï¿½ï¿½ï¿½Ö¤
 		}
 		
 		if (u.id.startsWith("007_")) {
@@ -269,7 +262,7 @@ public class UserMgr implements UserService {
 	}
 	
 	private String genToken() {
-		//TODO ºÜÈÝÒ×Ã¶¾Ù¹¥»÷£¬Òª¿¼ÂÇ¶ÔµÇÂ¼ÏÞÁ÷£¬²¢¼Ó´ótoken³¤¶È
+		//TODO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½Ù¹ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ç¶Ôµï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½tokenï¿½ï¿½ï¿½ï¿½
 		return ""+random.nextLong();
 	}
 	

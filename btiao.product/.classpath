@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="WEB-INF/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/third"/>
+	<classpathentry kind="lib" path="/third/lib/neo4j-cypher-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/third/lib/neo4j-graph-algo-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/third/lib/neo4j-graph-matching-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/third/lib/neo4j-jmx-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/third/lib/neo4j-kernel-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/third/lib/neo4j-lucene-index-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/third/lib/neo4j-shell-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/third/lib/neo4j-udc-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/third/lib/org.restlet.ext.json.jar"/>
+	<classpathentry kind="lib" path="/third/lib/org.restlet.ext.servlet.jar"/>
+	<classpathentry kind="lib" path="/third/lib/org.restlet.ext.xstream.jar"/>
+	<classpathentry kind="lib" path="/third/lib/org.restlet.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/btiao.base"/>
+	<classpathentry kind="output" path="WEB-INF/classes"/>
+</classpath>

@@ -13,6 +13,8 @@ public class App extends Application {
 		BTiaoServiceMgr.instance().regService(UserService.class.getName(), 
 				UserMgr.instance());
 		
+		System.out.println("hello ---------");
+		
 		Router router = new Router(getContext());
 		router.attach("/users", ResBTiaoAllUser.class);
 		router.attach("/users/{userId}", ResBTiaoUser.class);

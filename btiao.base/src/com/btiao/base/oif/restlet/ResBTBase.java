@@ -57,7 +57,7 @@ public abstract class ResBTBase extends ServerResource {
 	
 	@Put(value="json:json")
 	public JsonRepresentation btiaoPut(JsonRepresentation arg) {
-		pre(); 
+		pre();
 		
 		if (arg == null) {
 			try {

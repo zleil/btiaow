@@ -140,6 +140,46 @@ function delUsr() {
 	})
 }
 
+var posRoot = "/btiao/product";
+function putPos() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "PUT",
+		url: posRoot+"/positions/__n",
+		contentType: "application/json; charset=UTF-8",
+		data: '{ \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
+			id: "1", \
+			name: "中国", \
+			desc: "中国" \
+		}',
+		success: function(d) {
+			$("#idOut").append("result="+d.errCode);
+		}
+	});
+}
+function getPos() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "GET",
+		url: posRoot+"/positions/1",
+		contentType: "application/json; charset=UTF-8",
+		data: {
+			__opUsrInfo: {uId: loginUser, token: token}
+		},
+		success: function(d) {
+			$("#idOut").append("result="+d.errCode+
+					",content.id="+d.content.id+
+					",content.pid="+d.content.pid+
+					",content.name="+d.content.name+
+					",content.desc="+d.content.desc
+					);
+		}
+	})
+}
+
 function onload() {
 	$("#idPut").click(putUsr);
 	$("#idGet").click(getUsr);
@@ -150,5 +190,7 @@ function onload() {
 	$("#idLogout").click(delLogout);
 	
 	$("#idGetAll").click(getAllUsr);
+	
+	$("#idPutPos").click(putPos);
 }
 

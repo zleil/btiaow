@@ -100,8 +100,8 @@ public class RestFilterBasicAuth extends Filter {
 			return Filter.STOP;
 		}
 		
-		UserService usrSvc = (UserService)BTiaoServiceMgr.instance().
-				getService(UserService.class.getName());
+		BTiaoServiceMgr svcMgr = BTiaoServiceMgr.instance();
+		UserService usrSvc = (UserService)svcMgr.getService(UserService.class.getName());
 		if (!usrSvc.baseAuth(uId, token)) {
 			setFaildRsp(response);
 			return Filter.STOP;

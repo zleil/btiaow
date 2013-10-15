@@ -11,6 +11,13 @@ public class BTiaoExp extends Exception {
 		this.src = src;
 	}
 	
+	public BTiaoExp(int errNo, Throwable src, String extInfo) {
+		super(extInfo);
+		
+		this.errNo = errNo;
+		this.src = src;
+	}
+	
 	@Override
 	public String toString() {
 		return "errNo=" + errNo + "\n" + src;

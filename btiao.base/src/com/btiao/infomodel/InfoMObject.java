@@ -7,6 +7,10 @@ import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 
 public class InfoMObject implements Cloneable {
+	public boolean initId(String id) {
+		return false;
+	}
+	
 	/**
 	 * update some attributes from newObj
 	 * @param newObj
