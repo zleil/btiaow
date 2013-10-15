@@ -1,6 +1,8 @@
 package com.btiao.product.restlet;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.restlet.data.Form;
 
@@ -9,25 +11,28 @@ import com.btiao.base.exp.ErrCode;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
 import com.btiao.common.service.CommonMgr;
+import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.Position;
 
 public class ResBTiaoPosition extends ResBTBase {
 	@Override
 	protected void pre() {
-		posId = this.getAttribute("positionId");
+		String posId = this.getAttribute("positionId");
+		urlIds.add(posId);
 	}
 	
 	@Override
 	protected Object get(Form form) throws BTiaoExp {
-		return CommonMgr.instance().getInfoObject(Position.class, posId);
+		return CommonMgr.instance().getInfoObject(Position.class, urlIds);
 	}
 
 	@Override
 	@JsonCvtInfo(objClassName="com.btiao.product.domain.Position")
 	protected Object put(Object arg) throws BTiaoExp {
-		Position info = (Position)arg;
-		if (!posId.endsWith(OBJID_WHEN_CREATE)){
-			String errMsg = "id in url is not equals to " + OBJID_WHEN_CREATE;
+		InfoMObject info = (InfoMObject)arg;
+		String lastUrlId = urlIds.get(urlIds.size()-1);
+		if (!lastUrlId.endsWith(OBJID_WHEN_CREATE)){
+			String errMsg = "last id in url is not equals to " + OBJID_WHEN_CREATE;
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
 		}
 
@@ -38,10 +43,8 @@ public class ResBTiaoPosition extends ResBTBase {
 	@Override
 	@JsonCvtInfo(objClassName="com.btiao.product.domain.Position")
 	protected Object post(Object arg, Collection<String> attrs) throws BTiaoExp {
-		Position info = (Position)arg;
-		if (!info.id.equals(posId)){
-			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
-		}
+		InfoMObject info = (InfoMObject)arg;
+		info.initId(urlIds);
 		
 		CommonMgr.instance().updateInfoObject(info, attrs);
 		return null;
@@ -49,9 +52,9 @@ public class ResBTiaoPosition extends ResBTBase {
 
 	@Override
 	protected Object del(Object arg) throws BTiaoExp {
-		CommonMgr.instance().delInfoObject(Position.class, posId);
+		CommonMgr.instance().delInfoObject(Position.class, urlIds);
 		return null;
 	}
 
-	private String posId;
+	protected List<String> urlIds = new ArrayList<String>();
 }

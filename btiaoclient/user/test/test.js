@@ -132,7 +132,7 @@ function delUsr() {
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
-			uId:"'+loginUser+'" \
+			uId:"zleil" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
@@ -179,6 +179,40 @@ function getPos() {
 		}
 	})
 }
+function postPos() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "POST",
+		url: posRoot+"/positions/1",
+		contentType: "application/json; charset=UTF-8",
+		data: '{ \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
+			id: "1", \
+			name: "中国 new", \
+			desc: "中国 new" \
+		}',
+		success: function(d) {
+			$("#idOut").append("result="+d.errCode);
+		}
+	});
+}
+function delPos() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "DELETE",
+		url: posRoot+"/positions/1",
+		contentType: "application/json; charset=UTF-8",
+		data: '{ \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
+			id:"1" \
+		}',
+		success: function(d) {
+			$("#idOut").append("result="+d.errCode);
+		}
+	})
+}
 
 function onload() {
 	$("#idPut").click(putUsr);
@@ -192,5 +226,8 @@ function onload() {
 	$("#idGetAll").click(getAllUsr);
 	
 	$("#idPutPos").click(putPos);
+	$("#idGetPos").click(getPos);
+	$("#idPostPos").click(postPos);
+	$("#idDelPos").click(delPos);
 }
 

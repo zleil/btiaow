@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -34,9 +35,14 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			public String id;
 			public String desc;
 			public int age;
+			@Override
+			public boolean initId(List<String> urlIds) {
+				this.id = urlIds.get(0);
+				return true;
+			}
 		}
 		class TestObj2 extends InfoMObject {
-			TestObj2(String id, int id2, String desc, int age) {
+			TestObj2(String id, String id2, String desc, int age) {
 				this.id = id;
 				this.id2 = id2;
 				this.desc = desc;
@@ -45,9 +51,15 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			@InfoMObjAttrDesc(key=true)
 			public String id;
 			@InfoMObjAttrDesc(key=true)
-			public int id2;
+			public String id2;
 			public String desc;
 			public int age;
+			@Override
+			public boolean initId(List<String> urlIds) {
+				this.id = urlIds.get(0);
+				this.id2 = urlIds.get(1);
+				return true;
+			}
 		}
 		Neo4jMgr.instance().clearDB();
 		
@@ -126,7 +138,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		assert(uu.desc.equals(u.desc));
 		
 		//check addRel
-		TestObj2 u2 = new TestObj2("zl", 3, "fffx", 55);
+		TestObj2 u2 = new TestObj2("zl", "3", "fffx", 55);
 		RelType r = new RelType("employ");
 		base.begin();
 		try {
@@ -140,7 +152,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			base.finish();
 		}
 		
-		TestObj2 uu2 = new TestObj2("zl", 3, "", 0);
+		TestObj2 uu2 = new TestObj2("zl", "3", "", 0);
 		assert(base.get(uu2));
 		assert(uu2.age == u2.age);
 		assert(uu2.desc.equals(u2.desc));
@@ -188,7 +200,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		} finally {
 			base.finish();
 		}
-		uu2 = new TestObj2("zl", 3, "", 0);
+		uu2 = new TestObj2("zl", "3", "", 0);
 		assert(!base.get(uu2));
 		
 		base.begin();

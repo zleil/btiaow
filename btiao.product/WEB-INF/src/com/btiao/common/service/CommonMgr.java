@@ -1,6 +1,7 @@
 package com.btiao.common.service;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
@@ -19,31 +20,32 @@ public class CommonMgr {
 	static private CommonMgr inst;
 	
 	public synchronized InfoMObject getInfoObject(
-			Class<?extends InfoMObject>infoClz, String id) throws BTiaoExp {
+			Class<?extends InfoMObject>infoClz, List<String> urlIds) throws BTiaoExp {
 		InfoMObject info = null;
 		try {
 			info = infoClz.newInstance();
 		} catch (Exception e) {
-			String extMsg = "infoClz.newInstance failed,class="+infoClz.getName()+",id="+id;
+			String extMsg = "infoClz.newInstance failed,class="+infoClz.getName()+",id="+getUrlIdsStr(urlIds);
 			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, e, extMsg);
 		}
 		
-		info.initId(id);
+		info.initId(urlIds);
 		if (InfoMBaseService.instance().get(info)) {
 			return info;
 		} else {
-			String errMsg = "fetch from db error,class="+infoClz.getName()+",id="+id;
+			String errMsg = "fetch from db error,class="+infoClz.getName()+",id="+getUrlIdsStr(urlIds);
 			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(errMsg));
 		}
 	}
 	
 	public synchronized void delInfoObject(
-			Class<?extends InfoMObject> infoClz, String id) throws BTiaoExp {
+			Class<?extends InfoMObject> infoClz, List<String> urlIds) throws BTiaoExp {
 		InfoMObject info = null;
 		try {
 			info = infoClz.newInstance();
+			info.initId(urlIds);
 		} catch (Exception e) {
-			String extMsg = "infoClz.newInstance failed,class="+infoClz.getName()+",id="+id;
+			String extMsg = "infoClz.newInstance failed,class="+infoClz.getName()+",id="+getUrlIdsStr(urlIds);
 			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, e, extMsg);
 		}
 		
@@ -93,13 +95,13 @@ public class CommonMgr {
 			InfoMObject info, Collection<String> attrs) throws BTiaoExp {
 		InfoMBaseService.instance().begin();
 		try {
-			InfoMObject newAttr = info.clone();
-			if (!InfoMBaseService.instance().get(newAttr)) {
-				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(newAttr.toString()));
+			InfoMObject newObj = info.clone();
+			if (!InfoMBaseService.instance().get(newObj)) {
+				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(newObj.toString()));
 			}
 			
-			newAttr.update(newAttr, attrs);
-			InfoMBaseService.instance().mdf(newAttr);
+			newObj.update(info, attrs);
+			InfoMBaseService.instance().mdf(newObj);
 			
 			InfoMBaseService.instance().success();
 		} catch (BTiaoExp e) {
@@ -108,6 +110,17 @@ public class CommonMgr {
 		} finally {
 			InfoMBaseService.instance().finish();
 		}
+	}
+	
+	private String getUrlIdsStr(List<String> urlIds) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for (String id : urlIds) {
+			sb.append(id);
+			sb.append(",");
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 	
 	private CommonMgr() {}

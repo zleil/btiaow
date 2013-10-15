@@ -163,13 +163,13 @@ public class UserMgr implements UserService {
 	public synchronized void updateUser(BTiaoUser u, Collection<String> attrs) throws BTiaoExp {
 		InfoMBaseService.instance().begin();
 		try {
-			BTiaoUser newAttr = (BTiaoUser)u.clone();
-			if (!InfoMBaseService.instance().get(u)) {
-				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(u.toString()));
+			BTiaoUser newObj = (BTiaoUser)u.clone();
+			if (!InfoMBaseService.instance().get(newObj)) {
+				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(newObj.toString()));
 			}
+			newObj.update(u, attrs);
 			
-			u.update(newAttr, attrs);
-			InfoMBaseService.instance().mdf(u);
+			InfoMBaseService.instance().mdf(newObj);
 			
 			InfoMBaseService.instance().success();
 		} catch (BTiaoExp e) {
