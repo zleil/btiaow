@@ -11,7 +11,7 @@ public class App extends Application {
 	public Restlet createInboundRoot() {
 		Router router = new Router(getContext());
 		router.attach("/positions/{positionId}", ResBTiaoPosition.class);
-		router.attach("/positions/{positionId}/info/{infoId}", ResBTiaoBlockInfo.class);
+		router.attach("/positions/{positionId}/infos/{infoId}", ResBTiaoBlockInfo.class);
 		
 		RestFilterBasicAuth authFilter = new RestFilterBasicAuth();
 		authFilter.setNext(router);

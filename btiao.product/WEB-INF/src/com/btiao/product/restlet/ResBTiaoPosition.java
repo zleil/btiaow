@@ -52,7 +52,9 @@ public class ResBTiaoPosition extends ResBTBase {
 
 	@Override
 	protected Object del(Object arg) throws BTiaoExp {
-		CommonMgr.instance().delInfoObject(Position.class, urlIds);
+		Position info = new Position();
+		info.initId(urlIds);
+		CommonMgr.instance().delInfoObject(info);
 		return null;
 	}
 

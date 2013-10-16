@@ -30,7 +30,7 @@ public class CommonMgr {
 		}
 		
 		info.initId(urlIds);
-		if (InfoMBaseService.instance().get(info)) {
+		if (base.get(info)) {
 			return info;
 		} else {
 			String errMsg = "fetch from db error,class="+infoClz.getName()+",id="+getUrlIdsStr(urlIds);
@@ -38,34 +38,41 @@ public class CommonMgr {
 		}
 	}
 	
-	public synchronized void delInfoObject(
-			Class<?extends InfoMObject> infoClz, List<String> urlIds) throws BTiaoExp {
-		InfoMObject info = null;
+	public synchronized void delInfoObject(InfoMObject info) throws BTiaoExp {
+		base.begin();
 		try {
-			info = infoClz.newInstance();
-			info.initId(urlIds);
-		} catch (Exception e) {
-			String extMsg = "infoClz.newInstance failed,class="+infoClz.getName()+",id="+getUrlIdsStr(urlIds);
-			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, e, extMsg);
-		}
-		
-		InfoMBaseService.instance().begin();
-		try {
-			InfoMBaseService.instance().del(info);
+			base.del(info);
 			
-			InfoMBaseService.instance().success();
+			base.success();
 		} catch (BTiaoExp e) {
-			InfoMBaseService.instance().failed();
+			base.failed();
 			throw e;
 		} finally {
-			InfoMBaseService.instance().finish();
+			base.finish();
 		}
 	}
 	
-	public void addInfoObject(String relName, InfoMObject from, InfoMObject info) throws BTiaoExp {
+	public synchronized void delInfoObject(String relName,
+			InfoMObject from, InfoMObject to) throws BTiaoExp {
 		base.begin();
 		try {
-			InfoMBaseService.instance().add(info);
+			base.delRel(from, to, new RelType(relName));
+			base.del(to);
+			
+			base.success();
+		} catch (BTiaoExp e) {
+			base.failed();
+			throw e;
+		} finally {
+			base.finish();
+		}
+	}
+	
+	public void addInfoObject(String relName, 
+			InfoMObject from, InfoMObject info) throws BTiaoExp {
+		base.begin();
+		try {
+			base.add(info);
 			base.addRel(from, info, new RelType(relName));
 			
 			base.success();
@@ -94,7 +101,7 @@ public class CommonMgr {
 	public void addInfoObject(InfoMObject info) throws BTiaoExp {
 		base.begin();
 		try {
-			InfoMBaseService.instance().add(info);
+			base.add(info);
 			
 			base.success();
 		} catch (Throwable e) {
@@ -107,22 +114,22 @@ public class CommonMgr {
 	
 	public synchronized void updateInfoObject(
 			InfoMObject info, Collection<String> attrs) throws BTiaoExp {
-		InfoMBaseService.instance().begin();
+		base.begin();
 		try {
 			InfoMObject newObj = info.clone();
-			if (!InfoMBaseService.instance().get(newObj)) {
+			if (!base.get(newObj)) {
 				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(newObj.toString()));
 			}
 			
 			newObj.update(info, attrs);
-			InfoMBaseService.instance().mdf(newObj);
+			base.mdf(newObj);
 			
-			InfoMBaseService.instance().success();
+			base.success();
 		} catch (BTiaoExp e) {
-			InfoMBaseService.instance().failed();
+			base.failed();
 			throw e;
 		} finally {
-			InfoMBaseService.instance().finish();
+			base.finish();
 		}
 	}
 	

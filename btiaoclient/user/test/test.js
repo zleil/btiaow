@@ -214,6 +214,80 @@ function delPos() {
 	})
 }
 
+function putInfo() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "PUT",
+		url: posRoot+"/positions/1/infos/__n",
+		contentType: "application/json; charset=UTF-8",
+		data: '{ \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
+			id: "1", \
+			type: "sale", \
+			posId: "1", \
+			desc: "脉动买一送一" \
+		}',
+		success: function(d) {
+			$("#idOut").append("result="+d.errCode);
+		}
+	});
+}
+function getInfo() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "GET",
+		url: posRoot+"/positions/1/infos/1",
+		contentType: "application/json; charset=UTF-8",
+		data: {
+			__opUsrInfo: {uId: loginUser, token: token}
+		},
+		success: function(d) {
+			$("#idOut").append("result="+d.errCode+
+					",content.id="+d.content.id+
+					",content.posId="+d.content.posId+
+					",content.type="+d.content.type+
+					",content.desc="+d.content.desc
+					);
+		}
+	})
+}
+function postInfo() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "POST",
+		url: posRoot+"/positions/1/infos/1",
+		contentType: "application/json; charset=UTF-8",
+		data: '{ \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
+			id: "1", \
+			posId: "2", \
+			desc: "脉动七折" \
+		}',
+		success: function(d) {
+			$("#idOut").append("result="+d.errCode);
+		}
+	});
+}
+function delInfo() {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "DELETE",
+		url: posRoot+"/positions/1/infos/1",
+		contentType: "application/json; charset=UTF-8",
+		data: '{ \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
+			id:"1" \
+		}',
+		success: function(d) {
+			$("#idOut").append("result="+d.errCode);
+		}
+	})
+}
+
 function onload() {
 	$("#idPut").click(putUsr);
 	$("#idGet").click(getUsr);
@@ -229,5 +303,10 @@ function onload() {
 	$("#idGetPos").click(getPos);
 	$("#idPostPos").click(postPos);
 	$("#idDelPos").click(delPos);
+	
+	$("#idPutInfo").click(putInfo);
+	$("#idGetInfo").click(getInfo);
+	$("#idPostInfo").click(postInfo);
+	$("#idDelInfo").click(delInfo);
 }
 
