@@ -82,13 +82,43 @@ public abstract class InfoMBaseService {
 	 * @throws BTiaoExp
 	 */
 	public abstract void delRel(InfoMObject o1, InfoMObject o2, RelType r) throws BTiaoExp;
-	
+
+	/*
+	 * for example,
+	 * begin();
+	 * try {
+	 * 	...
+	 * } catch (BTiaoExp e) {
+	 * 	failed();
+	 * } finally {
+	 * 	finish();
+	 * }
+	 * 
+	 * they alse support reenter usage, e.g.
+	 * func() {
+	 * 	begin();
+	 * 	try {
+	 * 		...
+	 * 	} catch (BTiaoExp e) {
+	 * 		failed();	
+	 * 	} finally {
+	 * 		finish();
+	 * 	}
+	 * }
+	 * 
+	 * begin();
+	 * try { // reenter usage, all statements in try block are in a transaction.
+	 * 	func();
+	 * 	...
+	 * } catch (BTiaoExp e) {
+	 * 	failed();
+	 * } finally {
+	 * 	finish();
+	 * }
+	 */
 	public abstract void begin();
-	
 	public abstract void finish();
-	
 	public abstract void success();
-	
 	public abstract void failed();
 	
 	//public abstract void setRelProp(Object o1, Object o2, RelType r) throws BTiaoExp;

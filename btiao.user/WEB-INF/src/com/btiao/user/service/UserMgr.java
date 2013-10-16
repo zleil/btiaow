@@ -98,7 +98,7 @@ public class UserMgr implements UserService {
 			base.addRel(u, info, getUserLoginRel());
 			
 			base.success();
-		} catch (Throwable e) {
+		} catch (BTiaoExp e) {
 			base.failed();
 			throw e;
 		} finally {

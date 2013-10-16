@@ -76,7 +76,7 @@ public class CommonMgr {
 			base.addRel(from, info, new RelType(relName));
 			
 			base.success();
-		} catch (Throwable e) {
+		} catch (BTiaoExp e) {
 			base.failed();
 			throw e;
 		} finally {
@@ -90,7 +90,7 @@ public class CommonMgr {
 			base.addRel(from, to, new RelType(relName));
 			
 			base.success();
-		} catch (Throwable e) {
+		} catch (BTiaoExp e) {
 			base.failed();
 			throw e;
 		} finally {
@@ -104,7 +104,7 @@ public class CommonMgr {
 			base.add(info);
 			
 			base.success();
-		} catch (Throwable e) {
+		} catch (BTiaoExp e) {
 			base.failed();
 			throw e;
 		} finally {

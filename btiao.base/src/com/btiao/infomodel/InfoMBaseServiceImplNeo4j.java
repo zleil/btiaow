@@ -342,19 +342,33 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	
 	@Override
 	public void begin() {
+		if (thTransLevel.get() > 0) {
+			thTransLevel.set(thTransLevel.get()+1);
+			return;
+		}
+		
 		Transaction tx = db.beginTx();
-		thVar.set(tx);
+		thTransContext.set(tx);
 	}
 
 	@Override
 	public void finish() {
-		Transaction tx = (Transaction)thVar.get();
+		if (thTransLevel.get() > 0) {
+			thTransLevel.set(thTransLevel.get()-1);
+			return;
+		}
+		
+		Transaction tx = (Transaction)thTransContext.get();
 		tx.finish();
 	}
 	
 	@Override
 	public void success() {
-		Transaction tx = (Transaction)thVar.get();
+		if (thTransLevel.get() > 0) {
+			return;
+		}
+		
+		Transaction tx = (Transaction)thTransContext.get();
 		tx.success();
 	}
 	
@@ -557,5 +571,6 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	
 	GraphDatabaseService db = Neo4jMgr.instance().db();
 
-	ThreadLocal<Transaction> thVar = new ThreadLocal<Transaction>();
+	ThreadLocal<Transaction> thTransContext = new ThreadLocal<Transaction>();
+	ThreadLocal<Integer> thTransLevel = new ThreadLocal<Integer>();
 }
