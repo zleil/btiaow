@@ -25,7 +25,7 @@ public class BlockInfo extends InfoMObject {
 	public String desc = "";
 	public int price;
 	public int oldPrice;
-	public String imageUrl = "";
+	public String imgUrl = "";
 	
 	public int evaluteValue;
 }

@@ -38,7 +38,7 @@ public class ResBTiaoBlockInfo extends ResBTiaoPosition {
 
 		Position pos = new Position();
 		pos.initId(new ArrayList<String>(urlIds.subList(0, urlIds.size()-1)));
-		CommonMgr.instance().addInfoObject("blockInfo", pos, (InfoMObject)arg);
+		CommonMgr.instance().addInfoObject(RelName.blockInfo, pos, (InfoMObject)arg);
 		return null;
 	}
 
@@ -56,7 +56,7 @@ public class ResBTiaoBlockInfo extends ResBTiaoPosition {
 		
 		Position pos = new Position();
 		pos.initId(new ArrayList<String>(urlIds.subList(0, urlIds.size()-1)));
-		CommonMgr.instance().delInfoObject("blockInfo", pos, (InfoMObject)info);
+		CommonMgr.instance().delInfoObject(RelName.blockInfo, pos, (InfoMObject)info);
 		return null;
 	}
 }

@@ -103,7 +103,8 @@ public class JSONConvert {
 		} else if (typeName.equals("double")) {
 			return Double.parseDouble(valueStr);
 		} else {
-			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
+			String errMsg = "JSONConvert failed! valueStr="+valueStr+",typeName="+typeName;
+			throw new BTiaoExp(ErrCode.WRONG_PARAM, errMsg);
 		}
 	}
 	

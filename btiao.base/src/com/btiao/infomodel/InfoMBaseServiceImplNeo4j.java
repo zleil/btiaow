@@ -240,7 +240,8 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	public void add(InfoMObject u) throws BTiaoExp {
 		Node n = getNodeFromIdx(u);
 		if (n != null) {
-			throw new BTiaoExp(ErrCode.ADD_DUP_OBJ_TO_INFO_MODEL, null);
+			String errMsg = "objType="+u.getClass().getName()+",obj="+u.toString();
+			throw new BTiaoExp(ErrCode.ADD_DUP_OBJ_TO_INFO_MODEL, errMsg);
 		}
 		
 		Node node = db.createNode();
@@ -290,7 +291,8 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	public void mdf(InfoMObject u) throws BTiaoExp {
 		Node n = getNodeFromIdx(u);
 		if (n == null) {
-			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, null);
+			String errMsg = "objType="+u.getClass().getName()+",obj="+u.toString();
+			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, errMsg);
 		}
 		
 		setNodeAttrs(n, u);
@@ -327,6 +329,33 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	
 		Relationship ship = getRelShip(n1, n2, r, o2.getClass());
 		return ship != null;
+	}
+	
+	@Override
+	public InfoMObject getFirstRelObj(InfoMObject o, RelType r) throws BTiaoExp {
+		Node n = getNodeFromIdx(o);
+		if (n == null || r == null) {
+			String errMsg = "hasRel failed!n="+n+",r="+r;
+			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, new Throwable(errMsg));
+		}
+		
+		Relationship ship = getFirstRelShip(n, r);
+		if (ship == null) {
+			return null;
+		}
+		
+		Node endNode = ship.getEndNode();
+		
+		InfoMObject endObj = null;
+		try {
+			endObj = o.getClass().newInstance();
+		} catch (Exception e) {
+			String errMsg = "class.newInstance failed!className="+o.getClass().getName();
+			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, errMsg);
+		}
+		
+		setObjAttrs(endObj, endNode);
+		return endObj;
 	}
 
 	@Override
@@ -405,7 +434,8 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			try {
 				value = f.get(o);
 			} catch (Exception e) {
-				throw new BTiaoExp(ErrCode.INTERNEL_ERROR, null);
+				String errMsg = "setNodeAttrs failed!f="+f.getName()+",obj="+o;
+				throw new BTiaoExp(ErrCode.INTERNEL_ERROR, e, errMsg);
 			}
 			
 			n.setProperty(name, value);
@@ -535,6 +565,12 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		}
 		
 		return null;
+	}
+	
+	private Relationship getFirstRelShip(Node n, RelType r) throws BTiaoExp {
+		Iterable<Relationship> ships = n.getRelationships(new RelTypeNeo4j(r), Direction.OUTGOING);
+		Iterator<Relationship> it = ships.iterator();
+		return it.hasNext() ? it.next() : null;
 	}
 	
 	private Collection<String> getKeys(Class<?> clz) {

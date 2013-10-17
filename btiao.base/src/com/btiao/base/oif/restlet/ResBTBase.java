@@ -1,13 +1,8 @@
 package com.btiao.base.oif.restlet;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,7 +15,6 @@ import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
-
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.utils.BTiaoLog;
@@ -209,11 +203,7 @@ public abstract class ResBTBase extends ServerResource {
 					contentRet = get(form);
 				} else {
 					JSONObject jao = null;
-					if (arg != null) {
-						jao = arg.getJsonObject();
-					} else {
-						throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
-					}
+					jao = arg.getJsonObject();
 					
 					JSONObject opUsrInfo = (JSONObject)jao.get(RestFilterBasicAuth.OP_USER_INFO_NAME);
 					opUserId = (String)opUsrInfo.get(RestFilterBasicAuth.ARG_NAME_USER);

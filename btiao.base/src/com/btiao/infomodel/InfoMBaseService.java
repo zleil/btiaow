@@ -75,6 +75,17 @@ public abstract class InfoMBaseService {
 	public abstract boolean hasRel(InfoMObject o1, InfoMObject o2, RelType r) throws BTiaoExp;
 	
 	/**
+	 * get first object which has a relationship with object 'o'.<br>
+	 * @param o
+	 * @param r
+	 * @return if there is no specific relationship then return null;<br>
+	 *         otherwise, convert the end node to specific object which has <br>
+	 *         the same type with 'o'.<br>
+	 * @throws BTiaoExp
+	 */
+	public abstract InfoMObject getFirstRelObj(InfoMObject o, RelType r) throws BTiaoExp;
+	
+	/**
 	 * delete the relation ship between object o1 and o2.
 	 * @param o1 only the key attribute must be setted.
 	 * @param o2 only the key attribute must be setted.

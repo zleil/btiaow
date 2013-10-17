@@ -6,6 +6,11 @@ public class BTiaoExp extends Exception {
 	 */
 	private static final long serialVersionUID = -5694149100044209600L;
 
+	public BTiaoExp(int errNo, String extInfo) {
+		super(extInfo);
+		this.errNo = errNo;
+		this.src = null;
+	}
 	public BTiaoExp(int errNo, Throwable src) {
 		this.errNo = errNo;
 		this.src = src;
@@ -20,7 +25,7 @@ public class BTiaoExp extends Exception {
 	
 	@Override
 	public String toString() {
-		return "errNo=" + errNo + "\n" + src;
+		return this.toString()+",errNo=" + errNo + "\nsrcExp=" + src;
 	}
 	
 	public final int errNo;

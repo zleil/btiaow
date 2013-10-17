@@ -51,6 +51,10 @@ function devLogin() {
 				btiao.loginInfo = new Object();
 				btiao.loginInfo.user = loginUser;
 				btiao.loginInfo.token = token;
+				
+				//TODO change areaId to user's default areaId
+				var posId = 1000000;
+				btiao.preparePgFirst(posId);
 			} else {
 				alert("login error!");
 			}

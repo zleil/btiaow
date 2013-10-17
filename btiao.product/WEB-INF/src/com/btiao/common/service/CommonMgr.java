@@ -1,5 +1,6 @@
 package com.btiao.common.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,6 +39,22 @@ public class CommonMgr {
 		}
 	}
 	
+	public synchronized List<?extends InfoMObject> normalGet(
+			InfoMObject obj, String relSeqName, int num) throws BTiaoExp {
+		List<InfoMObject> ret = new ArrayList<InfoMObject>();
+		
+		while (num-- > 0) {
+			InfoMObject o = base.getFirstRelObj(obj, new RelType(relSeqName));
+			if (o == null) {
+				break;
+			}
+			
+			ret.add(o);
+		}
+		
+		return ret;
+	}
+	
 	public synchronized void delInfoObject(InfoMObject info) throws BTiaoExp {
 		base.begin();
 		try {
@@ -73,7 +90,11 @@ public class CommonMgr {
 		base.begin();
 		try {
 			base.add(info);
-			base.addRel(from, info, new RelType(relName));
+			if (base.hasRel(from, null, new RelType(relName))) {
+				
+			} else {
+				base.addRel(from, info, new RelType(relName));
+			}
 			
 			base.success();
 		} catch (BTiaoExp e) {

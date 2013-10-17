@@ -150,9 +150,9 @@ function putPos() {
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
-			id: "1", \
-			name: "中国", \
-			desc: "中国" \
+			id: "1000000", \
+			name: "望春园", \
+			desc: "望春园是北苑家园中环境较好的小区，生活气息非常浓厚，小区内的幼儿园也是都市小家庭的不错选择！" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
@@ -164,7 +164,7 @@ function getPos() {
 	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "GET",
-		url: posRoot+"/positions/1",
+		url: posRoot+"/positions/1000000",
 		contentType: "application/json; charset=UTF-8",
 		data: {
 			__opUsrInfo: {uId: loginUser, token: token}
