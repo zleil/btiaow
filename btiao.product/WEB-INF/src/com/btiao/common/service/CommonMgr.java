@@ -20,7 +20,7 @@ public class CommonMgr {
 	
 	static private CommonMgr inst;
 	
-	public synchronized InfoMObject getInfoObject(
+	public InfoMObject getInfoObject(
 			Class<?extends InfoMObject>infoClz, List<String> urlIds) throws BTiaoExp {
 		InfoMObject info = null;
 		try {
@@ -39,12 +39,12 @@ public class CommonMgr {
 		}
 	}
 	
-	public synchronized List<?extends InfoMObject> normalGet(
+	public List<InfoMObject> normalGet(
 			InfoMObject obj, String relSeqName, int num) throws BTiaoExp {
 		List<InfoMObject> ret = new ArrayList<InfoMObject>();
 		
 		while (num-- > 0) {
-			InfoMObject o = base.getFirstRelObj(obj, new RelType(relSeqName));
+			InfoMObject o = base.getFirstRelObj(obj, new RelType(relSeqName), obj.getClass());
 			if (o == null) {
 				break;
 			}
@@ -55,7 +55,12 @@ public class CommonMgr {
 		return ret;
 	}
 	
-	public synchronized void delInfoObject(InfoMObject info) throws BTiaoExp {
+	public InfoMObject getFirstRelObj(InfoMObject obj, String relName, 
+			Class<?extends InfoMObject> relObjClz) throws BTiaoExp {
+		return base.getFirstRelObj(obj, new RelType(relName), relObjClz);
+	}
+	
+	public void delInfoObject(InfoMObject info) throws BTiaoExp {
 		base.begin();
 		try {
 			base.del(info);
@@ -69,7 +74,7 @@ public class CommonMgr {
 		}
 	}
 	
-	public synchronized void delInfoObject(String relName,
+	public void delInfoObject(String relName,
 			InfoMObject from, InfoMObject to) throws BTiaoExp {
 		base.begin();
 		try {
@@ -133,7 +138,7 @@ public class CommonMgr {
 		}
 	}
 	
-	public synchronized void updateInfoObject(
+	public void updateInfoObject(
 			InfoMObject info, Collection<String> attrs) throws BTiaoExp {
 		base.begin();
 		try {

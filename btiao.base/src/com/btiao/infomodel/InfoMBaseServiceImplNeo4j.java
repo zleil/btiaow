@@ -332,7 +332,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	}
 	
 	@Override
-	public InfoMObject getFirstRelObj(InfoMObject o, RelType r) throws BTiaoExp {
+	public InfoMObject getFirstRelObj(InfoMObject o, RelType r, Class<?extends InfoMObject> relObjClz) throws BTiaoExp {
 		Node n = getNodeFromIdx(o);
 		if (n == null || r == null) {
 			String errMsg = "hasRel failed!n="+n+",r="+r;
@@ -348,9 +348,9 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		
 		InfoMObject endObj = null;
 		try {
-			endObj = o.getClass().newInstance();
+			endObj = relObjClz.newInstance();
 		} catch (Exception e) {
-			String errMsg = "class.newInstance failed!className="+o.getClass().getName();
+			String errMsg = "class.newInstance failed in getFirstRelObj!className="+relObjClz.getName();
 			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, errMsg);
 		}
 		
