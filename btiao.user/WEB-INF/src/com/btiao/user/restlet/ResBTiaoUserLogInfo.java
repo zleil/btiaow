@@ -50,7 +50,8 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 		
 		if (!u.id.equals(uIdFromUrl) ||
 			!token.equals(reserved_loginId)) {
-			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
+			String errMsg = "login error:u.id="+u.id+",uIdFromUrl="+uIdFromUrl+",token="+token;
+			throw new BTiaoExp(ErrCode.WRONG_PARAM, errMsg);
 		}
 		
 		String token = UserMgr.instance().login(u.id, u.passwd, u.authType);
@@ -81,7 +82,8 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 		BTiaoUserLogInfo info = (BTiaoUserLogInfo)arg;
 		
 		if (!uIdFromUrl.equals(info.uId)) {
-			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
+			String errMsg = "the id in url does not equal to id in object while logout,uIdFromUrl="+uIdFromUrl+",info.uid="+info.uId;
+			throw new BTiaoExp(ErrCode.WRONG_PARAM, errMsg);
 		}
 		
 		UserMgr.instance().logout(info.uId, info.token);

@@ -195,7 +195,7 @@ public class AllTgMgr {
 		String dbId = genTgFilterDBOnlyFile(f, true);
 		
 		if (dbId == null) {
-			throw new BTiaoExp(Result.TG_GEN_FDB_FAILED, null);
+			throw new BTiaoExp(Result.TG_GEN_FDB_FAILED, null, null);
 		}
 
 		Connection cn = null;
@@ -378,7 +378,7 @@ public class AllTgMgr {
 				}
 				
 				if (err != 0) {
-					throw new BTiaoExp(Result.TG_GEN_FDB_FAILED, null);
+					throw new BTiaoExp(Result.TG_GEN_FDB_FAILED, null, null);
 				}
 				break;
 			} catch (InterruptedException e) {

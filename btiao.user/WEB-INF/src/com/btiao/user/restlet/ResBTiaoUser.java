@@ -27,7 +27,8 @@ public class ResBTiaoUser extends ResBTBase {
 	protected Object put(Object arg) throws BTiaoExp {
 		BTiaoUser u = (BTiaoUser)arg;
 		if (!uIdFromUrl.equals(OBJID_WHEN_CREATE)){
-			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
+			String errMsg = "lastId in url is not '"+OBJID_WHEN_CREATE+"' while creating object";
+			throw new BTiaoExp(ErrCode.WRONG_PARAM, errMsg);
 		}
 
 		UserMgr.instance().addUser(u);
@@ -39,7 +40,8 @@ public class ResBTiaoUser extends ResBTBase {
 	protected Object post(Object arg, Collection<String> attrs) throws BTiaoExp {
 		BTiaoUser u = (BTiaoUser)arg;
 		if (!u.id.equals(uIdFromUrl)){
-			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
+			String errMsg = "while modifying object, the id in url does not equal to id in json object";
+			throw new BTiaoExp(ErrCode.WRONG_PARAM, errMsg);
 		}
 		
 		UserMgr.instance().updateUser(u, attrs);

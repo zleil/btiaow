@@ -74,7 +74,8 @@ public class UserMgr implements UserService {
 		}
 		
 		if (!auth(uId, passwd, authType)) {
-			throw new BTiaoExp(ErrCode.AUTH_FAILED, null);
+			String errMsg = "uId="+uId+",passwd="+passwd;
+			throw new BTiaoExp(ErrCode.AUTH_FAILED, errMsg);
 		}
 		
 		BTiaoUser u = new BTiaoUser(uId);
@@ -128,7 +129,8 @@ public class UserMgr implements UserService {
 	
 	public synchronized void addUser(BTiaoUser u) throws BTiaoExp {
 		if (!isCreateUserInfoComplete(u)){
-			throw new BTiaoExp(ErrCode.WRONG_PARAM, null);
+			String errMsg = "user infos are not completed while adding,u="+u;
+			throw new BTiaoExp(ErrCode.WRONG_PARAM, errMsg);
 		}
 		
 		InfoMBaseService.instance().begin();

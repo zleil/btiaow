@@ -105,7 +105,7 @@ public class GetTgs extends HttpServlet {
 				throw new BTiaoExp(Result.ARG_ERROR, e);
 			}
 		} else {
-			throw new BTiaoExp(Result.ARG_ERROR, null);
+			throw new BTiaoExp(Result.ARG_ERROR, null, null);
 		}
 	}
 	
@@ -120,7 +120,7 @@ public class GetTgs extends HttpServlet {
 				throw new BTiaoExp(Result.ARG_ERROR, e);
 			}
 		} else {
-			throw new BTiaoExp(Result.ARG_ERROR, null);
+			throw new BTiaoExp(Result.ARG_ERROR, null, null);
 		}
 	}
 	
@@ -135,7 +135,7 @@ public class GetTgs extends HttpServlet {
 			f = new UserFilter();
 			for (String filterStr : filterArg) {
 				if (!f.addFilter(filterStr)) {
-					throw new BTiaoExp(Result.ARG_ERROR, null);
+					throw new BTiaoExp(Result.ARG_ERROR, null, null);
 				}
 				continue;
 			}
@@ -164,7 +164,7 @@ public class GetTgs extends HttpServlet {
 				throw new BTiaoExp(Result.ARG_ERROR, e);
 			}
 		} else {
-			throw new BTiaoExp(Result.ARG_ERROR, null);
+			throw new BTiaoExp(Result.ARG_ERROR, null, null);
 		}
 	}
 }
