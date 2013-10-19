@@ -371,7 +371,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	
 	@Override
 	public void begin() {
-		if (thTransLevel.get() > 0) {
+		if (thTransLevel.get() !=null && thTransLevel.get() > 0) {
 			thTransLevel.set(thTransLevel.get()+1);
 			return;
 		}
@@ -382,7 +382,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 
 	@Override
 	public void finish() {
-		if (thTransLevel.get() > 0) {
+		if (thTransLevel.get() != null && thTransLevel.get() > 0) {
 			thTransLevel.set(thTransLevel.get()-1);
 			return;
 		}
@@ -393,7 +393,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	
 	@Override
 	public void success() {
-		if (thTransLevel.get() > 0) {
+		if (thTransLevel.get() != null && thTransLevel.get() > 0) {
 			return;
 		}
 		

@@ -25,7 +25,7 @@ public class BTiaoExp extends Exception {
 	
 	@Override
 	public String toString() {
-		return this.toString()+",errNo=" + errNo + "\nsrcExp=" + src;
+		return super.toString()+",errNo=" + errNo + "\nsrcExp=" + src;
 	}
 	
 	public final int errNo;

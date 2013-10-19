@@ -141,7 +141,7 @@ function delUsr() {
 }
 
 var posRoot = "/btiao/product";
-function putPos() {
+function putPos(posId, name, desc, pId) {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
 	$.ajax({
@@ -150,21 +150,22 @@ function putPos() {
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
-			id: "1000000", \
-			name: "望春园", \
-			desc: "望春园是北苑家园中环境较好的小区，生活气息非常浓厚，小区内的幼儿园也是都市小家庭的不错选择！" \
+			id: "'+posId+'", \
+			pid: "'+pId+'", \
+			name: "'+name+'", \
+			desc: "'+desc+'" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
 		}
 	});
 }
-function getPos() {
+function getPos(posId) {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "GET",
-		url: posRoot+"/positions/1000000",
+		url: posRoot+"/positions/"+posId,
 		contentType: "application/json; charset=UTF-8",
 		data: {
 			__opUsrInfo: {uId: loginUser, token: token}
@@ -179,34 +180,34 @@ function getPos() {
 		}
 	})
 }
-function postPos() {
+function postPos(posId,name,desc) {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "POST",
-		url: posRoot+"/positions/1",
+		url: posRoot+"/positions/"+posId,
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
-			id: "1", \
-			name: "中国 new", \
-			desc: "中国 new" \
+			id: "'+posId+'", \
+			name: "'+name+'", \
+			desc: "'+desc+'" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
 		}
 	});
 }
-function delPos() {
+function delPos(posId) {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "DELETE",
-		url: posRoot+"/positions/1",
+		url: posRoot+"/positions/"+posId,
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
-			id:"1" \
+			id:"'+posId+'" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
@@ -214,31 +215,31 @@ function delPos() {
 	})
 }
 
-function putInfo() {
+function putInfo(posId, infoId, infoDesc) {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "PUT",
-		url: posRoot+"/positions/1/infos/__n",
+		url: posRoot+"/positions/"+posId+"/infos/__n",
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
-			id: "1", \
+			id: "'+infoId+'", \
 			type: "sale", \
-			posId: "1", \
-			desc: "脉动买一送一" \
+			posId: "'+posId+'", \
+			desc: "'+infoDesc+'" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
 		}
 	});
 }
-function getInfo() {
+function getInfo(posId, infoId) {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "GET",
-		url: posRoot+"/positions/1/infos/1",
+		url: posRoot+"/positions/"+posId+"/infos/"+infoId,
 		contentType: "application/json; charset=UTF-8",
 		data: {
 			__opUsrInfo: {uId: loginUser, token: token}
@@ -253,34 +254,34 @@ function getInfo() {
 		}
 	})
 }
-function postInfo() {
+function postInfo(posId, infoId, infoDesc) {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "POST",
-		url: posRoot+"/positions/1/infos/1",
+		url: posRoot+"/positions/"+posId+"/infos/"+infoId,
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
-			id: "1", \
-			posId: "2", \
-			desc: "脉动七折" \
+			id: "'+infoId+'", \
+			posId: "'+posId+'", \
+			desc: "'+infoDesc+'" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
 		}
 	});
 }
-function delInfo() {
+function delInfo(posId, infoId) {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
 	$.ajax({
 		type: "DELETE",
-		url: posRoot+"/positions/1/infos/1",
+		url: posRoot+"/positions/"+posId+"/infos/"+infoId,
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
-			id:"1" \
+			id:"'+infoId+'" \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
@@ -299,10 +300,20 @@ function onload() {
 	
 	$("#idGetAll").click(getAllUsr);
 	
-	$("#idPutPos").click(putPos);
-	$("#idGetPos").click(getPos);
-	$("#idPostPos").click(postPos);
-	$("#idDelPos").click(delPos);
+	$("#idPutPos").click(function(){
+		//省、市、区、区域、小区、家、个人
+		putPos(100000001,"6#0105","6号楼小卖部", 100000000);
+		putPos(100000000,"望春园","北苑最好的小区，环境优雅，还有个小区幼儿园！", 0);
+	});
+	$("#idGetPos").click(function(){
+		getPos(1000001);
+	});
+	$("#idPostPos").click(function(){
+		postPos(1000000,"望春园","北苑最好的小区，环境非常优雅，还有个小区幼儿园，附近小区很多小孩都在这里上学");
+	});
+	$("#idDelPos").click(function(){
+		delPos(1000000);
+	});
 	
 	$("#idPutInfo").click(putInfo);
 	$("#idGetInfo").click(getInfo);
