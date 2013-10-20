@@ -46,6 +46,11 @@ public class ResBTiaoPosition extends ResBTBase {
 		InfoMObject info = (InfoMObject)arg;
 		info.initId(urlIds);
 		
+		if (!((Position)info).pid.equals(new Position().pid)) {
+			String errMsg = "can't modify pid of position!";
+			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
+		}
+		
 		CommonMgr.instance().updateInfoObject(info, attrs);
 		return null;
 	}

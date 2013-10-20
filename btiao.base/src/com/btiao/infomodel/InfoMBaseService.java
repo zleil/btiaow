@@ -83,7 +83,7 @@ public abstract class InfoMBaseService {
 	 *         the same type with 'o'.<br>
 	 * @throws BTiaoExp
 	 */
-	public abstract InfoMObject getFirstRelObj(InfoMObject o, RelType r, Class<?extends InfoMObject> relObjClz) throws BTiaoExp;
+	public abstract InfoMObject getFirstRelObj(InfoMObject o, RelType r, Class<?extends InfoMObject> relObjClz, boolean isOutRel) throws BTiaoExp;
 	
 	/**
 	 * delete the relation ship between object o1 and o2.

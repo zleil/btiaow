@@ -264,7 +264,6 @@ function postInfo(posId, infoId, infoDesc) {
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
 			id: "'+infoId+'", \
-			posId: "'+posId+'", \
 			desc: "'+infoDesc+'" \
 		}',
 		success: function(d) {
@@ -302,22 +301,41 @@ function onload() {
 	
 	$("#idPutPos").click(function(){
 		//省、市、区、区域、小区、家、个人
-		putPos(100000001,"6#0105","6号楼小卖部", 100000000);
-		putPos(100000000,"望春园","北苑最好的小区，环境优雅，还有个小区幼儿园！", 0);
+		putPos(1000001,"6#0105","6号楼小卖部", 100000000);
+		putPos(1000000,"望春园","北苑最好的小区，环境优雅，还有个小区幼儿园！", 0);
 	});
 	$("#idGetPos").click(function(){
 		getPos(1000001);
+		getPos(1000000);
 	});
 	$("#idPostPos").click(function(){
-		postPos(1000000,"望春园","北苑最好的小区，环境非常优雅，还有个小区幼儿园，附近小区很多小孩都在这里上学");
+		postPos(1000001,"望春园","北苑最好的小区，环境非常优雅，还有个小区幼儿园，附近小区很多小孩都在这里上学");
+		postPos(1000000,"6#0105","6号楼小卖部，便宜！");
 	});
 	$("#idDelPos").click(function(){
+		delPos(1000001);
 		delPos(1000000);
 	});
 	
-	$("#idPutInfo").click(putInfo);
-	$("#idGetInfo").click(getInfo);
-	$("#idPostInfo").click(postInfo);
-	$("#idDelInfo").click(delInfo);
+	$("#idPutInfo").click(function(){
+		putInfo(1000001, 1, "脉动买一送一！");
+		//putInfo(1000001, 2, "康师傅方便面促销，10桶20元！");
+		//putInfo(1000001, 3, "可爱多，30元/12个！");
+		//putInfo(1000001, 4, "西芹，最后一把，半价甩！");
+	});
+	$("#idGetInfo").click(function(){
+		getInfo(1000001, 1);
+		//getInfo(1000001, 2);
+		//getInfo(1000001, 3);
+		//getInfo(1000001, 4);
+	});
+	$("#idPostInfo").click(function(){
+		postInfo(1000001, 1, "脉动买一送一，5折甩，截至时间今晚22：00点！");
+		//postInfo(1000001, 4, "西芹，最后一把，半价甩，截至时间今晚22：00点！");
+	});
+	$("#idDelInfo").click(function(){
+		delInfo(1000001, 1);
+		//delInfo(1000001, 4);
+	});
 }
 

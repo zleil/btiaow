@@ -332,19 +332,19 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	}
 	
 	@Override
-	public InfoMObject getFirstRelObj(InfoMObject o, RelType r, Class<?extends InfoMObject> relObjClz) throws BTiaoExp {
+	public InfoMObject getFirstRelObj(InfoMObject o, RelType r, Class<?extends InfoMObject> relObjClz, boolean isOutRel) throws BTiaoExp {
 		Node n = getNodeFromIdx(o);
 		if (n == null || r == null) {
 			String errMsg = "hasRel failed!n="+n+",r="+r;
 			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, new Throwable(errMsg));
 		}
 		
-		Relationship ship = getFirstRelShip(n, r);
+		Relationship ship = getFirstRelShip(n, r, isOutRel);
 		if (ship == null) {
 			return null;
 		}
 		
-		Node endNode = ship.getEndNode();
+		Node endNode = isOutRel ? ship.getEndNode() : ship.getStartNode();
 		
 		InfoMObject endObj = null;
 		try {
@@ -567,8 +567,9 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		return null;
 	}
 	
-	private Relationship getFirstRelShip(Node n, RelType r) throws BTiaoExp {
-		Iterable<Relationship> ships = n.getRelationships(new RelTypeNeo4j(r), Direction.OUTGOING);
+	private Relationship getFirstRelShip(Node n, RelType r, boolean isOutRel) throws BTiaoExp {
+		Direction direct = isOutRel ? Direction.OUTGOING : Direction.INCOMING;
+		Iterable<Relationship> ships = n.getRelationships(new RelTypeNeo4j(r), direct);
 		Iterator<Relationship> it = ships.iterator();
 		return it.hasNext() ? it.next() : null;
 	}

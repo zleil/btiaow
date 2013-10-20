@@ -9,6 +9,7 @@ import com.btiao.base.exp.ErrCode;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.infomodel.RelType;
+import com.btiao.product.restlet.RelName;
 
 public class CommonMgr {
 	static public CommonMgr instance() {
@@ -39,25 +40,30 @@ public class CommonMgr {
 		}
 	}
 	
-	public List<InfoMObject> normalGet(
-			InfoMObject obj, String relSeqName, int num) throws BTiaoExp {
+	public List<InfoMObject> timeSeqGet(
+			InfoMObject obj, int num) throws BTiaoExp {
 		List<InfoMObject> ret = new ArrayList<InfoMObject>();
 		
 		while (num-- > 0) {
-			InfoMObject o = base.getFirstRelObj(obj, new RelType(relSeqName), obj.getClass());
+			InfoMObject o = base.getFirstRelObj(
+					obj, new RelType(RelName.infoTimeSeq), obj.getClass(), true);
 			if (o == null) {
 				break;
 			}
 			
 			ret.add(o);
+			obj = o;
 		}
 		
 		return ret;
 	}
 	
-	public InfoMObject getFirstRelObj(InfoMObject obj, String relName, 
-			Class<?extends InfoMObject> relObjClz) throws BTiaoExp {
-		return base.getFirstRelObj(obj, new RelType(relName), relObjClz);
+	public InfoMObject getFirstRelObj(
+			InfoMObject obj, 
+			String relName, 
+			Class<?extends InfoMObject> relObjClz, 
+			boolean isOut) throws BTiaoExp {
+		return base.getFirstRelObj(obj, new RelType(relName), relObjClz, isOut);
 	}
 	
 	public void delInfoObject(InfoMObject info) throws BTiaoExp {
@@ -74,11 +80,37 @@ public class CommonMgr {
 		}
 	}
 	
-	public void delInfoObject(String relName,
+	public void delTimeSeqInfoObject(String relName,
 			InfoMObject from, InfoMObject to) throws BTiaoExp {
 		base.begin();
 		try {
-			base.delRel(from, to, new RelType(relName));
+			//first, delete relation of to
+			if (base.hasRel(from, to, new RelType(relName))) {
+				InfoMObject next = base.getFirstRelObj(to, new RelType(RelName.infoTimeSeq), to.getClass(), true);
+				
+				if (next != null) {
+					base.delRel(from, to, new RelType(relName));
+					base.delRel(to, next, new RelType(RelName.infoTimeSeq));
+					
+					base.addRel(from, next, new RelType(relName));
+				} else {
+					base.delRel(from, to, new RelType(relName));
+				}
+			} else {
+				InfoMObject next = base.getFirstRelObj(to, new RelType(RelName.infoTimeSeq), to.getClass(), true);
+				InfoMObject pre = base.getFirstRelObj(to, new RelType(RelName.infoTimeSeq), to.getClass(), true);
+				
+				if (next != null) {
+					base.delRel(to, next, new RelType(RelName.infoTimeSeq));
+					base.delRel(pre, to, new RelType(RelName.infoTimeSeq));
+					
+					base.addRel(pre, next, new RelType(RelName.infoTimeSeq));
+				} else {
+					base.delRel(pre, to, new RelType(RelName.infoTimeSeq));
+				}
+			}
+			
+			//second delete to
 			base.del(to);
 			
 			base.success();
@@ -90,15 +122,31 @@ public class CommonMgr {
 		}
 	}
 	
-	public void addInfoObject(String relName, 
-			InfoMObject from, InfoMObject info) throws BTiaoExp {
+	public void addTimeSeqInfoObject(
+			String relName, 
+			InfoMObject from, 
+			InfoMObject info) throws BTiaoExp {
 		base.begin();
 		try {
 			base.add(info);
-			if (base.hasRel(from, null, new RelType(relName))) {
-				
-			} else {
+			InfoMObject firstInfo = base.getFirstRelObj(from, 
+					new RelType(relName), info.getClass(), true);
+			if (firstInfo == null) {
 				base.addRel(from, info, new RelType(relName));
+			} else {
+				InfoMObject lastInfo = firstInfo;
+				do {
+					InfoMObject next = base.getFirstRelObj(
+							lastInfo, 
+							new RelType(RelName.infoTimeSeq), 
+							lastInfo.getClass(), 
+							true);
+					if (next == null) break;
+					
+					lastInfo = next;
+				} while (true);
+				
+				base.addRel(lastInfo, info, new RelType(RelName.infoTimeSeq));
 			}
 			
 			base.success();
@@ -109,21 +157,7 @@ public class CommonMgr {
 			base.finish();
 		}
 	}
-	
-	public void addObjectRel(String relName, InfoMObject from, InfoMObject to) throws BTiaoExp {
-		base.begin();
-		try {
-			base.addRel(from, to, new RelType(relName));
-			
-			base.success();
-		} catch (BTiaoExp e) {
-			base.failed();
-			throw e;
-		} finally {
-			base.finish();
-		}
-	}
-	
+		
 	public void addInfoObject(InfoMObject info) throws BTiaoExp {
 		base.begin();
 		try {

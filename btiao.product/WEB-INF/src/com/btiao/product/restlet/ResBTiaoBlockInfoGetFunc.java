@@ -41,24 +41,24 @@ public class ResBTiaoBlockInfoGetFunc extends ResBTBase {
 			if (lastId == null) {
 				Position parentObj = new Position();
 				parentObj.initId(urlIds);
-				InfoMObject firstObj = CommonMgr.instance().getFirstRelObj(parentObj, RelName.blockInfo, BlockInfo.class);
+				InfoMObject firstObj = CommonMgr.instance().getFirstRelObj(parentObj, RelName.blockInfo, BlockInfo.class, true);
 				if (firstObj == null) {
 					return new ArrayList<InfoMObject>();
 				} else {
 					List<InfoMObject> ret = new ArrayList<InfoMObject>();
 					ret.add(firstObj);
 					if (num > 1) {
-						List<InfoMObject> otherRet = CommonMgr.instance().normalGet(firstObj, RelName.infoTimeSeq, num-1);
+						List<InfoMObject> otherRet = CommonMgr.instance().timeSeqGet(firstObj, num-1);
 						ret.addAll(otherRet);
 					}
 					return ret;
 				}
 			} else {
-				BlockInfo obj = new BlockInfo();
+				BlockInfo lastObj = new BlockInfo();
 				List<String> urlIdsOfInfo = new ArrayList<String>(urlIds);
 				urlIdsOfInfo.add(lastId);
-				obj.initId(urlIdsOfInfo);
-				return CommonMgr.instance().normalGet(obj, RelName.infoTimeSeq, num);
+				lastObj.initId(urlIdsOfInfo);
+				return CommonMgr.instance().timeSeqGet(lastObj, num);
 			}
 		}
 		

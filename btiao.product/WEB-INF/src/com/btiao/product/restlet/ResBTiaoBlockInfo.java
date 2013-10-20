@@ -38,7 +38,7 @@ public class ResBTiaoBlockInfo extends ResBTiaoPosition {
 
 		Position pos = new Position();
 		pos.initId(new ArrayList<String>(urlIds.subList(0, urlIds.size()-1)));
-		CommonMgr.instance().addInfoObject(RelName.blockInfo, pos, (InfoMObject)arg);
+		CommonMgr.instance().addTimeSeqInfoObject(RelName.blockInfo, pos, (InfoMObject)arg);
 		return null;
 	}
 
@@ -46,7 +46,11 @@ public class ResBTiaoBlockInfo extends ResBTiaoPosition {
 	@JsonCvtInfo(objClassName="com.btiao.product.domain.BlockInfo")
 	protected Object post(Object arg, Collection<String> attrList)
 			throws BTiaoExp {
-		return super.post(arg, attrList);
+		InfoMObject info = (InfoMObject)arg;
+		info.initId(urlIds);
+				
+		CommonMgr.instance().updateInfoObject(info, attrList);
+		return null;
 	}
 
 	@Override
@@ -56,7 +60,7 @@ public class ResBTiaoBlockInfo extends ResBTiaoPosition {
 		
 		Position pos = new Position();
 		pos.initId(new ArrayList<String>(urlIds.subList(0, urlIds.size()-1)));
-		CommonMgr.instance().delInfoObject(RelName.blockInfo, pos, (InfoMObject)info);
+		CommonMgr.instance().delTimeSeqInfoObject(RelName.blockInfo, pos, (InfoMObject)info);
 		return null;
 	}
 }
