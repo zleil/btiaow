@@ -47,10 +47,9 @@
 				num: num
 			},
 			success: function(d) {
-				for d
+				;
 			}
 		});
-			}
 	}
 	
 })();

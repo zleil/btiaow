@@ -319,15 +319,15 @@ function onload() {
 	
 	$("#idPutInfo").click(function(){
 		putInfo(1000001, 1, "脉动买一送一！");
-		//putInfo(1000001, 2, "康师傅方便面促销，10桶20元！");
-		//putInfo(1000001, 3, "可爱多，30元/12个！");
-		//putInfo(1000001, 4, "西芹，最后一把，半价甩！");
+		putInfo(1000001, 2, "康师傅方便面促销，10桶20元！");
+		putInfo(1000001, 3, "可爱多，30元/12个！");
+		putInfo(1000001, 4, "西芹，最后一把，半价甩！");
 	});
 	$("#idGetInfo").click(function(){
 		getInfo(1000001, 1);
-		//getInfo(1000001, 2);
-		//getInfo(1000001, 3);
-		//getInfo(1000001, 4);
+		getInfo(1000001, 2);
+		getInfo(1000001, 3);
+		getInfo(1000001, 4);
 	});
 	$("#idPostInfo").click(function(){
 		postInfo(1000001, 1, "脉动买一送一，5折甩，截至时间今晚22：00点！");
