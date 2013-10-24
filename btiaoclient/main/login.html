@@ -77,8 +77,8 @@
                 </h5>
             </div>
         </div>
-        <ul data-role="listview" data-divider-theme="b" data-inset="true">
-            <li data-theme="e">
+        <ul id="lstBlockInfo" data-role="listview" data-divider-theme="b" data-inset="true">
+            <!-- <li data-theme="e">
                 <a href="#pgDetail" data-transition="slide">
                     3升纯净水促销，买一送一！
                 </a>
@@ -92,7 +92,7 @@
                 <a href="#pgDetail" data-transition="slide">
                     可爱多，现价2￥(原价3￥)
                 </a>
-            </li>
+            </li> -->
         </ul>
     </div>
     <div data-theme="b" data-role="footer" data-position="fixed">
@@ -188,6 +188,37 @@
                     提交
                 </a>
             </div>
+        </div>
+    </div>
+    <div data-theme="b" data-role="footer" data-position="fixed">
+        <div data-role="navbar" data-iconpos="top">
+            <ul>
+                <li>
+                    <a id="actSubOne" data-transition="fade" data-theme="" data-icon="">
+                        -
+                    </a>
+                </li>
+                <li>
+                    <a id="labProductNum" data-transition="fade" data-theme="" data-icon="">
+                       	1
+                    </a>
+                </li>
+                <li>
+                    <a id="actAddOne" data-transition="fade" data-theme="" data-icon="" class="ui-btn-active ui-state-persist">
+                        +
+                    </a>
+                </li>
+                <li>
+                    <a id="labTotalPrice" data-transition="fade" data-theme="" data-icon="" class="ui-btn-active ui-state-persist">
+                        总价(...)
+                    </a>
+                </li>
+                <li>
+                    <a id="actPurchase" data-transition="fade" data-theme="" data-icon="" class="ui-btn-active ui-state-persist">
+                        购买
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

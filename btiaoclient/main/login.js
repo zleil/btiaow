@@ -53,7 +53,7 @@ function devLogin() {
 				btiao.loginInfo.token = token;
 				
 				//TODO change areaId to user's default areaId
-				var posId = 1000000;
+				var posId = 1000001;
 				btiao.preparePgFirst(posId);
 			} else {
 				alert("login error!");
@@ -89,5 +89,11 @@ window.onload = function() {
 	if (!!oldInit) {
 		(oldInit)();
 	}
+	
+	$("#actAddOne").click(btiao.purchaseAddOne);
+	$("#actSubOne").click(btiao.purchaseSubOne);
+	
+	$("#actPurchase")click(btiao.purchase);
 }
+
 })();

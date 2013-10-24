@@ -154,6 +154,7 @@ function putPos(posId, name, desc, pId) {
 			pid: "'+pId+'", \
 			name: "'+name+'", \
 			desc: "'+desc+'" \
+			price: 1 \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
@@ -264,7 +265,8 @@ function postInfo(posId, infoId, infoDesc) {
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
 			id: "'+infoId+'", \
-			desc: "'+infoDesc+'" \
+			desc: "'+infoDesc+'", \
+			price: 20 \
 		}',
 		success: function(d) {
 			$("#idOut").append("result="+d.errCode);
@@ -287,6 +289,38 @@ function delInfo(posId, infoId) {
 		}
 	})
 }
+function getAllInfo(posId, lastId) {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "GET",
+		url: posRoot+"/positions/"+posId+"/infos",
+		contentType: "application/json; charset=UTF-8",
+		data: {
+			__opUsrInfo: {uId: loginUser, token: token},
+			func: "normal",
+			num: 10,
+			lastId: (!!lastId ? lastId : "")
+		},
+		success: function(d) {
+			if (d.errCode == 0) {
+				for (var idx in d.content) {
+					var info = d.content[idx];
+					$("#idOut").append(
+							"info.id="+info.id+
+							",info.posId="+info.posId+
+							",info.type="+info.type+
+							",info.desc="+info.desc
+							);
+				}
+			} else {
+				$("#idOut").append("result="+d.errCode);
+			}
+			
+		}
+	})
+}
+
 
 function onload() {
 	$("#idPut").click(putUsr);
@@ -309,8 +343,8 @@ function onload() {
 		getPos(1000000);
 	});
 	$("#idPostPos").click(function(){
-		postPos(1000001,"望春园","北苑最好的小区，环境非常优雅，还有个小区幼儿园，附近小区很多小孩都在这里上学");
-		postPos(1000000,"6#0105","6号楼小卖部，便宜！");
+		postPos(1000000,"望春园","北苑最好的小区，环境非常优雅，还有个小区幼儿园，附近小区很多小孩都在这里上学");
+		postPos(1000001,"6#0105","本店卖雪糕/汽水/零食，新鲜蔬菜，馒头等主食，纯净水等，送货上门！");
 	});
 	$("#idDelPos").click(function(){
 		delPos(1000001);
@@ -319,9 +353,9 @@ function onload() {
 	
 	$("#idPutInfo").click(function(){
 		putInfo(1000001, 1, "脉动买一送一！");
-		putInfo(1000001, 2, "康师傅方便面促销，10桶20元！");
-		putInfo(1000001, 3, "可爱多，30元/12个！");
-		putInfo(1000001, 4, "西芹，最后一把，半价甩！");
+		setTimeout(function(){putInfo(1000001, 2, "康师傅方便面促销，10桶20元！");},1000);
+		setTimeout(function(){putInfo(1000001, 3, "可爱多，30元/12个！");},2000);
+		setTimeout(function(){putInfo(1000001, 4, "西芹，最后一把，半价甩！");},3000);
 	});
 	$("#idGetInfo").click(function(){
 		getInfo(1000001, 1);
@@ -335,7 +369,13 @@ function onload() {
 	});
 	$("#idDelInfo").click(function(){
 		delInfo(1000001, 1);
-		//delInfo(1000001, 4);
+		delInfo(1000001, 2);
+		delInfo(1000001, 3);
+		delInfo(1000001, 4);
+	});
+	$("#idGetAllInfo").click(function(){
+		getAllInfo(1000001);
+		getAllInfo(1000001, 2);
 	});
 }
 

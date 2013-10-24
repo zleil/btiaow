@@ -38,7 +38,7 @@ public class ResBTiaoBlockInfoGetFunc extends ResBTBase {
 				throw new BTiaoExp(ErrCode.WRONG_PARAM, e, errMsg);
 			}
 			
-			if (lastId == null) {
+			if (lastId == null || lastId.equals("")) {
 				Position parentObj = new Position();
 				parentObj.initId(urlIds);
 				InfoMObject firstObj = CommonMgr.instance().getFirstRelObj(parentObj, RelName.blockInfo, BlockInfo.class, true);

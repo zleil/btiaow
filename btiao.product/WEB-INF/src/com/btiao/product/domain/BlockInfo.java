@@ -19,7 +19,7 @@ public class BlockInfo extends InfoMObject {
 	@InfoMObjAttrDesc(key=true)
 	public String id = "";
 	
-	public String type = "";
+	public String type = "product";
 	public String posId = "";
 	
 	public String desc = "";

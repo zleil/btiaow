@@ -3,11 +3,15 @@
 	var productRoot = "/btiao/product";
 	var positionId = 0;
 	var numPer = 10;
+	var loginUser = "";
+	var token = "";
+	var infos = {};
+	var curInfoId = "";
 	
 	//function definition and init-code
 	btiao.preparePgFirst = function(posId) {
-		var loginUser = btiao.loginInfo.user;
-		var token = btiao.loginInfo.token;
+		loginUser = btiao.loginInfo.user;
+		token = btiao.loginInfo.token;
 		$.ajax({
 			type: "GET",
 			url: productRoot+"/positions/"+posId,
@@ -27,9 +31,9 @@
 				var img = $("#pgFirst > div > div > div > div > img");
 				img.attr("src", d.content.imgUrl);
 				
-				fillBlockInfo(0, numPer);
-				
 				positionId = posId;
+				fillBlockInfo("", numPer);
+
 				$.mobile.changePage("#pgFirst");
 			}
 		});
@@ -38,7 +42,7 @@
 	function fillBlockInfo(lastInfoId, num) {
 		$.ajax({
 			type: "GET",
-			url: productRoot+"/positions/"+posId+"/infos",
+			url: productRoot+"/positions/"+positionId+"/infos",
 			contentType: "application/json; charset=UTF-8",
 			data: {
 				__opUsrInfo: {uId: loginUser, token: token},
@@ -47,9 +51,60 @@
 				num: num
 			},
 			success: function(d) {
-				;
+				if (d.errCode == 0) {
+					for (var idx in d.content) {
+						fillAInfo(d.content[idx]);
+					}
+					$("#lstBlockInfo").listview("refresh");
+				} else {
+					//TODO
+					alert("error:"+d.errCode);
+				}
 			}
 		});
+	}
+	
+	function fillAInfo(info) {
+		$("#lstBlockInfo").append(
+				'<li data-theme="e">' +
+				'<a href="#" class="blockInfo" data-infoid="'+info.id+'" data-transition="slide">' +
+				info.desc +
+				'</a></li>'
+		);
+		infos[info.id] = info;
+		
+		$("#lstBlockInfo li:last-child a").click(function(e){
+			var infoId = e.target.dataset['infoid'];
+			//alert(infoId);
+			prepareBlockInfoDetail(infoId);
+		});
+	}
+	function prepareBlockInfoDetail(infoId) {
+		var info = infos[infoId];
+		
+		$("#labTotalPrice").text("总价("+info.price+")");
+		
+		curInfoId = infoId;
+		$.mobile.changePage("#pgDetail");
+	}
+	
+	btiao.purchaseAddOne = function() {
+		var num=parseInt($('#labProductNum').text()) + 1;
+		$('#labProductNum').text(num);
+		$('#labTotalPrice').text("总价("+infos[curInfoId].price*num+")");
+	}
+	btiao.purchaseSubOne = function() {
+		var num=parseInt($('#labProductNum').text()) - 1;
+		if (num < 0) {
+			num = 0;
+			return;
+		}
+		
+		$('#labProductNum').text(num);
+		$('#labTotalPrice').text("总价("+infos[curInfoId].price*num+")");
+	}
+	btiao.purchase = function() {
+		...
 	}
 	
 })();
