@@ -104,7 +104,7 @@
 		$('#labTotalPrice').text("总价("+infos[curInfoId].price*num+")");
 	}
 	btiao.purchase = function() {
-		...
+		alert("purchase");
 	}
 	
 })();

@@ -5,9 +5,9 @@
 <title>便条网 -- 登录</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"> 
 <link rel="shortcut icon" href="/btiao/bt.png"/>
-<link rel="stylesheet" href="../third/jquery/jquery.mobile-1.3.2.min.css" />
-<script src="../third/jquery/jquery-1.9.1.min.js"></script>
-<script src="../third/jquery/jquery.mobile-1.3.2.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
 <script src="../btiao.js" type="text/javascript"></script>
 <script src="product.js" type="text/javascript"></script>
 <script src="login.js" type="text/javascript"></script>
@@ -132,6 +132,9 @@
         <h3>
             小卖部6#0105  [望春园]
         </h3>
+        <a data-role="button" href="#pgPurchase" data-rel="dialog" class="ui-btn-right">
+            购买
+        </a>
     </div>
     <div data-role="content">
         <h2>
@@ -190,39 +193,40 @@
             </div>
         </div>
     </div>
-    <div data-theme="b" data-role="footer" data-position="fixed">
+</div>
+<!-- Home -->
+<div data-role="page" id="pgPurchase">
+    <div data-role="content">
         <div data-role="navbar" data-iconpos="top">
             <ul>
                 <li>
-                    <a id="actSubOne" data-transition="fade" data-theme="" data-icon="">
-                        -
+                    <a href="#page1" data-role="button" data-iconpos="bottom" data-icon="minus">&nbsp;
                     </a>
                 </li>
                 <li>
-                    <a id="labProductNum" data-transition="fade" data-theme="" data-icon="">
-                       	1
+                    <a href="#page1" data-role="button" data-iconpos="bottom" data-icon="info">
+                        0
                     </a>
                 </li>
                 <li>
-                    <a id="actAddOne" data-transition="fade" data-theme="" data-icon="" class="ui-btn-active ui-state-persist">
-                        +
-                    </a>
-                </li>
-                <li>
-                    <a id="labTotalPrice" data-transition="fade" data-theme="" data-icon="" class="ui-btn-active ui-state-persist">
-                        总价(...)
-                    </a>
-                </li>
-                <li>
-                    <a id="actPurchase" data-transition="fade" data-theme="" data-icon="" class="ui-btn-active ui-state-persist">
-                        购买
+                    <a href="#page1" data-role="button" data-iconpos="bottom" data-icon="plus">&nbsp;
                     </a>
                 </li>
             </ul>
         </div>
+        <div data-role="fieldcontain">
+            <label for="textarea1">
+                备注
+            </label>
+            <textarea name="" id="textarea1" placeholder=""></textarea>
+        </div>
+        <h2>
+            总价：<span id="totalPrice">0</span>元
+        </h2>
+        <a data-role="button" href="#page1">
+            购买
+        </a>
     </div>
 </div>
-
-
 </body>
 </html>

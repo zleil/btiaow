@@ -93,7 +93,7 @@ window.onload = function() {
 	$("#actAddOne").click(btiao.purchaseAddOne);
 	$("#actSubOne").click(btiao.purchaseSubOne);
 	
-	$("#actPurchase")click(btiao.purchase);
+	$("#actPurchase").click(btiao.purchase);
 }
 
 })();
