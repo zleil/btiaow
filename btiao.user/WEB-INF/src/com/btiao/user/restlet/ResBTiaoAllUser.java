@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.restlet.data.Form;
 
 import com.btiao.base.exp.BTiaoExp;
+import com.btiao.base.model.BTiaoUser;
 import com.btiao.base.oif.restlet.ResBTBase;
-import com.btiao.user.domain.BTiaoUser;
 import com.btiao.user.service.UserMgr;
 
 public class ResBTiaoAllUser extends ResBTBase {

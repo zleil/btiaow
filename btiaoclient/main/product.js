@@ -82,7 +82,8 @@
 	function prepareBlockInfoDetail(infoId) {
 		var info = infos[infoId];
 		
-		$("#labTotalPrice").text("总价("+info.price+")");
+		$("#idInfoDesc").text(info.desc);
+		$("#idInfoPrice").text("价格("+info.price+")");
 		
 		curInfoId = infoId;
 		$.mobile.changePage("#pgDetail");
@@ -91,7 +92,7 @@
 	btiao.purchaseAddOne = function() {
 		var num=parseInt($('#labProductNum').text()) + 1;
 		$('#labProductNum').text(num);
-		$('#labTotalPrice').text("总价("+infos[curInfoId].price*num+")");
+		$('#labTotalPrice').text(infos[curInfoId].price*num);
 	}
 	btiao.purchaseSubOne = function() {
 		var num=parseInt($('#labProductNum').text()) - 1;
@@ -101,7 +102,7 @@
 		}
 		
 		$('#labProductNum').text(num);
-		$('#labTotalPrice').text("总价("+infos[curInfoId].price*num+")");
+		$('#labTotalPrice').text(infos[curInfoId].price*num);
 	}
 	btiao.purchase = function() {
 		alert("purchase");

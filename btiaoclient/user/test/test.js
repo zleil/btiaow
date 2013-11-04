@@ -4,6 +4,9 @@ var logNodeName = "/auth";
 var loginUser = "";
 var token = "";
 
+function log(str) {
+	$("#idOut").prepend('<p stype="margin:0;padding0;">'+str+'</p>');
+}
 function putLogin() {
 	loginUser = $("#idLoginUser").attr("value");
 	var passwd = $("#idLoginPasswd").attr("value");
@@ -22,10 +25,10 @@ function putLogin() {
 			if (d.errCode == 0) {
 				token = d.content.token;
 				$("#idToken").attr("value", token);
-				$("#idOut").append("token="+token);
+				log("token="+token);
 			}
 
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	});
 }
@@ -44,7 +47,7 @@ function delLogout() {
 			token:"'+token+'" \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 			if (d.errCode == 0) {
 				token = "";
 			}
@@ -67,7 +70,7 @@ function putUsr() {
 			authType: 0 \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	});
 }
@@ -82,7 +85,7 @@ function getUsr() {
 			__opUsrInfo: {uId: loginUser, token: token}
 		},
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode+
+			log("result="+d.errCode+
 					"\ncontent.id="+d.content.id+
 					"\ncontent.nick="+d.content.nick);
 		}
@@ -99,9 +102,9 @@ function getAllUsr() {
 			__opUsrInfo: {uId: loginUser, token: token}
 		},
 		success: function(d) {
-			$("#idOut").append("<br>result="+d.errCode);
+			log("<br>result="+d.errCode);
 			for (var o in d.content) {
-				$("#idOut").append("\n{id="+d.content[o].id+",nick="+d.content[o].nick+"},");
+				log("\n{id="+d.content[o].id+",nick="+d.content[o].nick+"},");
 			}
 		}
 	})
@@ -119,7 +122,7 @@ function postUsr() {
 			nick: "习远2, he is a good man!" \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	});
 }
@@ -135,7 +138,7 @@ function delUsr() {
 			uId:"zleil" \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	})
 }
@@ -153,11 +156,11 @@ function putPos(posId, name, desc, pId) {
 			id: "'+posId+'", \
 			pid: "'+pId+'", \
 			name: "'+name+'", \
-			desc: "'+desc+'" \
+			desc: "'+desc+'", \
 			price: 1 \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	});
 }
@@ -172,7 +175,7 @@ function getPos(posId) {
 			__opUsrInfo: {uId: loginUser, token: token}
 		},
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode+
+			log("result="+d.errCode+
 					",content.id="+d.content.id+
 					",content.pid="+d.content.pid+
 					",content.name="+d.content.name+
@@ -195,7 +198,7 @@ function postPos(posId,name,desc) {
 			desc: "'+desc+'" \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	});
 }
@@ -211,12 +214,12 @@ function delPos(posId) {
 			id:"'+posId+'" \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	})
 }
 
-function putInfo(posId, infoId, infoDesc) {
+function putInfo(posId, infoId, infoDesc, newPrice, oldPrice) {
 	var loginUser = $("#idLoginUser").attr("value");
 	var token = $("#idToken").attr("value");
 	$.ajax({
@@ -228,10 +231,12 @@ function putInfo(posId, infoId, infoDesc) {
 			id: "'+infoId+'", \
 			type: "sale", \
 			posId: "'+posId+'", \
-			desc: "'+infoDesc+'" \
+			desc: "'+infoDesc+'", \
+			oldPrice: "'+oldPrice+'", \
+			price: "'+newPrice+'" \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	});
 }
@@ -246,7 +251,7 @@ function getInfo(posId, infoId) {
 			__opUsrInfo: {uId: loginUser, token: token}
 		},
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode+
+			log("result="+d.errCode+
 					",content.id="+d.content.id+
 					",content.posId="+d.content.posId+
 					",content.type="+d.content.type+
@@ -269,7 +274,7 @@ function postInfo(posId, infoId, infoDesc) {
 			price: 20 \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	});
 }
@@ -285,7 +290,7 @@ function delInfo(posId, infoId) {
 			id:"'+infoId+'" \
 		}',
 		success: function(d) {
-			$("#idOut").append("result="+d.errCode);
+			log("result="+d.errCode);
 		}
 	})
 }
@@ -306,21 +311,72 @@ function getAllInfo(posId, lastId) {
 			if (d.errCode == 0) {
 				for (var idx in d.content) {
 					var info = d.content[idx];
-					$("#idOut").append(
-							"info.id="+info.id+
-							",info.posId="+info.posId+
-							",info.type="+info.type+
-							",info.desc="+info.desc
-							);
+					log("info.id="+info.id+
+						",info.posId="+info.posId+
+						",info.type="+info.type+
+						",info.desc="+info.desc
+						);
 				}
 			} else {
-				$("#idOut").append("result="+d.errCode);
+				log("result="+d.errCode);
 			}
 			
 		}
 	})
 }
 
+function putOrder(posId, orderId, productId, productNum, totalPrice, fromUser) {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "PUT",
+		url: posRoot+"/positions/"+posId+"/orders/__n",
+		contentType: "application/json; charset=UTF-8",
+		data: '{ \
+			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
+			orderId: "'+orderId+'", \
+			posId: "'+posId+'", \
+			productId: "'+productId+'", \
+			productNum: "'+productNum+'", \
+			totalPrice: "'+totalPrice+'", \
+			fromUser: "'+fromUser+'" \
+		}',
+		success: function(d) {
+			log("putOrder.result="+d.errCode);
+		}
+	});
+}
+function getAllOrder(posId, lastId) {
+	var loginUser = $("#idLoginUser").attr("value");
+	var token = $("#idToken").attr("value");
+	$.ajax({
+		type: "GET",
+		url: posRoot+"/positions/"+posId+"/orders",
+		contentType: "application/json; charset=UTF-8",
+		data: {
+			__opUsrInfo: {uId: loginUser, token: token},
+			func: "normal",
+			num: 10,
+			lastId: (!!lastId ? lastId : "")
+		},
+		success: function(d) {
+			if (d.errCode == 0) {
+				for (var idx in d.content) {
+					var order = d.content[idx];
+					log("order.orderId="+order.orderId+
+						",order.posId="+order.posId+
+						",order.productId="+order.productId+
+						",order.productNum="+order.productNum+
+						",order.totalPrice="+order.totalPrice+
+						",order.fromUser="+order.fromUser
+						);
+				}
+			} else {
+				log("result="+d.errCode);
+			}
+		}
+	})
+}
 
 function onload() {
 	$("#idPut").click(putUsr);
@@ -352,10 +408,10 @@ function onload() {
 	});
 	
 	$("#idPutInfo").click(function(){
-		putInfo(1000001, 1, "脉动买一送一！");
-		setTimeout(function(){putInfo(1000001, 2, "康师傅方便面促销，10桶20元！");},1000);
-		setTimeout(function(){putInfo(1000001, 3, "可爱多，30元/12个！");},2000);
-		setTimeout(function(){putInfo(1000001, 4, "西芹，最后一把，半价甩！");},3000);
+		putInfo(1000001, 1, "脉动买一送一！", 450, 450);
+		setTimeout(function(){putInfo(1000001, 2, "康师傅方便面促销，10桶20元！", 2000, 3500);},1000);
+		setTimeout(function(){putInfo(1000001, 3, "可爱多，30元/12个！", 3000, 3600);},2000);
+		setTimeout(function(){putInfo(1000001, 4, "西芹，最后一把，半价甩！", 500, 800);},3000);
 	});
 	$("#idGetInfo").click(function(){
 		getInfo(1000001, 1);
@@ -377,5 +433,12 @@ function onload() {
 		getAllInfo(1000001);
 		getAllInfo(1000001, 2);
 	});
+	$("#idPutOrder").click(function(){
+		putOrder(1000001,1,1,3,1350,"_mgr0");
+		setTimeout(function(){putOrder(1000001,2,2,10,20000,"_mgr0")}, 1000);
+	});
+	$("#idGetAllOrder").click(function(){
+		getAllOrder(1000001);
+	})
 }
 

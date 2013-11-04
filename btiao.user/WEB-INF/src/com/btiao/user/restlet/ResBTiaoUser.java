@@ -6,9 +6,9 @@ import org.restlet.data.Form;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.model.BTiaoUser;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
-import com.btiao.user.domain.BTiaoUser;
 import com.btiao.user.service.UserMgr;
 
 public class ResBTiaoUser extends ResBTBase {
@@ -23,7 +23,7 @@ public class ResBTiaoUser extends ResBTBase {
 	}
 
 	@Override
-	@JsonCvtInfo(objClassName="com.btiao.user.domain.BTiaoUser")
+	@JsonCvtInfo(objClassName="com.btiao.base.model.BTiaoUser")
 	protected Object put(Object arg) throws BTiaoExp {
 		BTiaoUser u = (BTiaoUser)arg;
 		if (!uIdFromUrl.equals(OBJID_WHEN_CREATE)){
@@ -36,7 +36,7 @@ public class ResBTiaoUser extends ResBTBase {
 	}
 
 	@Override
-	@JsonCvtInfo(objClassName="com.btiao.user.domain.BTiaoUser")
+	@JsonCvtInfo(objClassName="com.btiao.base.model.BTiaoUser")
 	protected Object post(Object arg, Collection<String> attrs) throws BTiaoExp {
 		BTiaoUser u = (BTiaoUser)arg;
 		if (!u.id.equals(uIdFromUrl)){

@@ -5,12 +5,12 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.model.BTiaoUser;
 import com.btiao.base.service.UserService;
 import com.btiao.base.utils.BTiaoLog;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMService;
 import com.btiao.infomodel.RelType;
-import com.btiao.user.domain.BTiaoUser;
 import com.btiao.user.domain.BTiaoUserLogInfo;
 
 public class UserMgr implements UserService {

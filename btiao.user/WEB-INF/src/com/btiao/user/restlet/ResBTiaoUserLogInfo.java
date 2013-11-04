@@ -6,9 +6,9 @@ import org.restlet.data.Form;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.model.BTiaoUser;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
-import com.btiao.user.domain.BTiaoUser;
 import com.btiao.user.domain.BTiaoUserLogInfo;
 import com.btiao.user.service.UserMgr;
 
@@ -44,7 +44,7 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 	 *         valid attributes: token
 	 */
 	@Override
-	@JsonCvtInfo(objClassName="com.btiao.user.domain.BTiaoUser")
+	@JsonCvtInfo(objClassName="com.btiao.base.model.BTiaoUser")
 	protected Object put(Object arg) throws BTiaoExp {
 		BTiaoUser u = (BTiaoUser)arg;
 		
