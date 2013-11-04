@@ -9,6 +9,7 @@ import com.btiao.base.exp.ErrCode;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.infomodel.RelType;
+import com.btiao.product.domain.BlockInfo;
 import com.btiao.product.restlet.RelName;
 
 public class CommonMgr {
@@ -40,13 +41,13 @@ public class CommonMgr {
 		}
 	}
 	
-	public List<InfoMObject> timeSeqGet(
-			InfoMObject obj, int num) throws BTiaoExp {
+	public List<InfoMObject> seqGet(
+			String relName, InfoMObject obj, int num) throws BTiaoExp {
 		List<InfoMObject> ret = new ArrayList<InfoMObject>();
 		
 		while (num-- > 0) {
 			InfoMObject o = base.getFirstRelObj(
-					obj, new RelType(RelName.infoTimeSeq), obj.getClass(), true);
+					obj, new RelType(relName), obj.getClass(), true);
 			if (o == null) {
 				break;
 			}
@@ -86,27 +87,27 @@ public class CommonMgr {
 		try {
 			//first, delete relation of to
 			if (base.hasRel(from, to, new RelType(relName))) {
-				InfoMObject next = base.getFirstRelObj(to, new RelType(RelName.infoTimeSeq), to.getClass(), true);
+				InfoMObject next = base.getFirstRelObj(to, new RelType(RelName.timeSeq), to.getClass(), true);
 				
 				if (next != null) {
 					base.delRel(from, to, new RelType(relName));
-					base.delRel(to, next, new RelType(RelName.infoTimeSeq));
+					base.delRel(to, next, new RelType(RelName.timeSeq));
 					
 					base.addRel(from, next, new RelType(relName));
 				} else {
 					base.delRel(from, to, new RelType(relName));
 				}
 			} else {
-				InfoMObject next = base.getFirstRelObj(to, new RelType(RelName.infoTimeSeq), to.getClass(), true);
-				InfoMObject pre = base.getFirstRelObj(to, new RelType(RelName.infoTimeSeq), to.getClass(), true);
+				InfoMObject next = base.getFirstRelObj(to, new RelType(RelName.timeSeq), to.getClass(), true);
+				InfoMObject pre = base.getFirstRelObj(to, new RelType(RelName.timeSeq), to.getClass(), true);
 				
 				if (next != null) {
-					base.delRel(to, next, new RelType(RelName.infoTimeSeq));
-					base.delRel(pre, to, new RelType(RelName.infoTimeSeq));
+					base.delRel(to, next, new RelType(RelName.timeSeq));
+					base.delRel(pre, to, new RelType(RelName.timeSeq));
 					
-					base.addRel(pre, next, new RelType(RelName.infoTimeSeq));
+					base.addRel(pre, next, new RelType(RelName.timeSeq));
 				} else {
-					base.delRel(pre, to, new RelType(RelName.infoTimeSeq));
+					base.delRel(pre, to, new RelType(RelName.timeSeq));
 				}
 			}
 			
@@ -126,27 +127,40 @@ public class CommonMgr {
 			String relName, 
 			InfoMObject from, 
 			InfoMObject info) throws BTiaoExp {
+		addObjectRightAndDownRel(relName, from, info, RelName.timeSeq);
+	}
+	
+	public void addObjectRightAndDownRel(
+			String rightRelName, 
+			InfoMObject from, 
+			InfoMObject to,
+			String downRelName) throws BTiaoExp {
+		_addObjectRightAndDownRel(rightRelName, from, to, downRelName, false);
+	}
+	public void addObjectRelRightAndDownRel(
+			String rightRelName, 
+			InfoMObject from, 
+			InfoMObject to,
+			String downRelName) throws BTiaoExp {
+		_addObjectRightAndDownRel(rightRelName, from, to, downRelName, true);
+	}
+	private void _addObjectRightAndDownRel(
+			String rightRelName, 
+			InfoMObject from, 
+			InfoMObject to,
+			String downRelName, 
+			boolean justAddRel) throws BTiaoExp {
 		base.begin();
 		try {
-			base.add(info);
 			InfoMObject firstInfo = base.getFirstRelObj(from, 
-					new RelType(relName), info.getClass(), true);
-			if (firstInfo == null) {
-				base.addRel(from, info, new RelType(relName));
-			} else {
-				InfoMObject lastInfo = firstInfo;
-				do {
-					InfoMObject next = base.getFirstRelObj(
-							lastInfo, 
-							new RelType(RelName.infoTimeSeq), 
-							lastInfo.getClass(), 
-							true);
-					if (next == null) break;
-					
-					lastInfo = next;
-				} while (true);
-				
-				base.addRel(lastInfo, info, new RelType(RelName.infoTimeSeq));
+					new RelType(rightRelName), to.getClass(), true);
+			
+			if (!justAddRel) base.add(to);
+			base.addRel(from, to, new RelType(rightRelName));
+			
+			if (firstInfo != null) {
+				base.delRel(from, firstInfo, new RelType(rightRelName));
+				base.addRel(to, firstInfo, new RelType(downRelName));
 			}
 			
 			base.success();
@@ -155,6 +169,28 @@ public class CommonMgr {
 			throw e;
 		} finally {
 			base.finish();
+		}
+	}
+	
+	public List<InfoMObject> getAllRightAndDownObj(InfoMObject parentObj, 
+			Class<?extends InfoMObject> objClz, String rightRel, 
+			InfoMObject lastObj, String downRel, int num) throws BTiaoExp {
+		if (lastObj == null) {
+			InfoMObject firstObj = 
+					getFirstRelObj(parentObj, rightRel, objClz, true);
+			if (firstObj == null) {
+				return new ArrayList<InfoMObject>();
+			} else {
+				List<InfoMObject> ret = new ArrayList<InfoMObject>();
+				ret.add(firstObj);
+				if (num > 1) {
+					List<InfoMObject> otherRet = seqGet(downRel, firstObj, num-1);
+					ret.addAll(otherRet);
+				}
+				return ret;
+			}
+		} else {
+			return seqGet(downRel, lastObj, num);
 		}
 	}
 		
@@ -206,5 +242,5 @@ public class CommonMgr {
 	
 	private CommonMgr() {}
 	
-	private InfoMBaseService base = InfoMBaseService.instance();
+	public InfoMBaseService base = InfoMBaseService.instance();
 }

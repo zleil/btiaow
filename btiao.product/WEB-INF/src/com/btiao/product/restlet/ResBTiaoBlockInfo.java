@@ -2,18 +2,20 @@ package com.btiao.product.restlet;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.restlet.data.Form;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
+import com.btiao.base.oif.restlet.ResBTBase;
 import com.btiao.common.service.CommonMgr;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.BlockInfo;
 import com.btiao.product.domain.Position;
 
-public class ResBTiaoBlockInfo extends ResBTiaoPosition {
+public class ResBTiaoBlockInfo extends ResBTBase {
 	@Override
 	protected void pre() {
 		String posId = this.getAttribute("positionId");
@@ -63,4 +65,6 @@ public class ResBTiaoBlockInfo extends ResBTiaoPosition {
 		CommonMgr.instance().delTimeSeqInfoObject(RelName.blockInfo, pos, (InfoMObject)info);
 		return null;
 	}
+	
+	protected List<String> urlIds = new ArrayList<String>();
 }

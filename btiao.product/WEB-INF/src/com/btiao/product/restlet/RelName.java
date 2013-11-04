@@ -3,5 +3,9 @@ package com.btiao.product.restlet;
 public class RelName {
 	static public final String blockInfo = "blockInfo";
 	
-	static public final String infoTimeSeq = "infoTimeSeq";
+	static public final String order = "order";
+	
+	static public final String userOrder = "userOrder";
+	
+	static public final String timeSeq = "infoTimeSeq";
 }

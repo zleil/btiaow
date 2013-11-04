@@ -24,7 +24,6 @@ public class ResBTiaoBlockInfoGetFunc extends ResBTBase {
 	@Override
 	protected Object get(Form form) throws BTiaoExp {
 		String func = form.getFirstValue("func");
-		System.out.println(func);
 		
 		if (func.equals("normal")) {
 			String lastId = form.getFirstValue("lastId");
@@ -38,28 +37,21 @@ public class ResBTiaoBlockInfoGetFunc extends ResBTBase {
 				throw new BTiaoExp(ErrCode.WRONG_PARAM, e, errMsg);
 			}
 			
-			if (lastId == null || lastId.equals("")) {
-				Position parentObj = new Position();
-				parentObj.initId(urlIds);
-				InfoMObject firstObj = CommonMgr.instance().getFirstRelObj(parentObj, RelName.blockInfo, BlockInfo.class, true);
-				if (firstObj == null) {
-					return new ArrayList<InfoMObject>();
-				} else {
-					List<InfoMObject> ret = new ArrayList<InfoMObject>();
-					ret.add(firstObj);
-					if (num > 1) {
-						List<InfoMObject> otherRet = CommonMgr.instance().timeSeqGet(firstObj, num-1);
-						ret.addAll(otherRet);
-					}
-					return ret;
-				}
+			Position parentObj = new Position();
+			parentObj.initId(urlIds);
+			
+			BlockInfo lastObj = new BlockInfo();
+			List<String> urlIdsOfInfo = new ArrayList<String>(urlIds);
+			if (lastId.equals("")) {
+				lastObj = null;
 			} else {
-				BlockInfo lastObj = new BlockInfo();
-				List<String> urlIdsOfInfo = new ArrayList<String>(urlIds);
 				urlIdsOfInfo.add(lastId);
 				lastObj.initId(urlIdsOfInfo);
-				return CommonMgr.instance().timeSeqGet(lastObj, num);
 			}
+			
+			return mgr.getAllRightAndDownObj(parentObj, 
+					BlockInfo.class, RelName.blockInfo,
+					lastObj, RelName.timeSeq, num);
 		}
 		
 		return null;
@@ -85,4 +77,6 @@ public class ResBTiaoBlockInfoGetFunc extends ResBTBase {
 	}
 
 	private List<String> urlIds = new ArrayList<String>();
+	
+	private CommonMgr mgr = CommonMgr.instance();
 }
