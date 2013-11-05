@@ -92,7 +92,7 @@
 	btiao.purchaseAddOne = function() {
 		var num=parseInt($('#labProductNum').text()) + 1;
 		$('#labProductNum').text(num);
-		$('#labTotalPrice').text(infos[curInfoId].price*num);
+		$('#labTotalPrice').text(infos[curInfoId].price*num/100);
 	}
 	btiao.purchaseSubOne = function() {
 		var num=parseInt($('#labProductNum').text()) - 1;
@@ -102,7 +102,7 @@
 		}
 		
 		$('#labProductNum').text(num);
-		$('#labTotalPrice').text(infos[curInfoId].price*num);
+		$('#labTotalPrice').text(infos[curInfoId].price*num/100);
 	}
 	btiao.purchase = function() {
 		alert("purchase");

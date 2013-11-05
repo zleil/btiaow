@@ -23,9 +23,12 @@ public class Order extends InfoMObject {
 	public String orderId = "";
 	
 	public String productId = "";
+	public String productDesc = "";
 	public int productNum;
 	
 	public int totalPrice;
 	
 	public String fromUser = "";
+	
+	public boolean discard = false;
 }

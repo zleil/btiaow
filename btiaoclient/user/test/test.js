@@ -5,7 +5,7 @@ var loginUser = "";
 var token = "";
 
 function log(str) {
-	$("#idOut").prepend('<p stype="margin:0;padding0;">'+str+'</p>');
+	$("#idOut").prepend('<p style="margin:0;padding:0;">'+str+'</p>');
 }
 function putLogin() {
 	loginUser = $("#idLoginUser").attr("value");
