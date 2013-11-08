@@ -21,7 +21,7 @@
 			},
 			success: function(d) {
 				var h3 = $("#pgFirst > div > h3");
-				h3.empty(); 
+				h3.empty();
 				h3.append(d.content.name);
 				
 				var h5 = $("#pgFirst > div > div > div > h5");
@@ -79,11 +79,14 @@
 			prepareBlockInfoDetail(infoId);
 		});
 	}
+	function decoratePrice(price) {
+		return (price*1.0)/100;
+	}
 	function prepareBlockInfoDetail(infoId) {
 		var info = infos[infoId];
 		
 		$("#idInfoDesc").text(info.desc);
-		$("#idInfoPrice").text("价格("+info.price+")");
+		$("#idInfoPrice").text("价格("+decoratePrice(info.price)+")");
 		
 		curInfoId = infoId;
 		$.mobile.changePage("#pgDetail");
@@ -92,7 +95,7 @@
 	btiao.purchaseAddOne = function() {
 		var num=parseInt($('#labProductNum').text()) + 1;
 		$('#labProductNum').text(num);
-		$('#labTotalPrice').text(infos[curInfoId].price*num/100);
+		$('#labTotalPrice').text(decoratePrice(infos[curInfoId].price)*num);
 	}
 	btiao.purchaseSubOne = function() {
 		var num=parseInt($('#labProductNum').text()) - 1;
@@ -102,10 +105,49 @@
 		}
 		
 		$('#labProductNum').text(num);
-		$('#labTotalPrice').text(infos[curInfoId].price*num/100);
-	}
-	btiao.purchase = function() {
-		alert("purchase");
+		$('#labTotalPrice').text(decoratePrice(infos[curInfoId].price)*num);
 	}
 	
+	function getId(idName, func) {
+		$.ajax({
+			type: "POST",
+			url: productRoot+"/getId/"+idName,
+			contentType: "application/json; charset=UTF-8",
+			data: '{\
+				__opUsrInfo: {uId: "' + loginUser + '", token: "' + token + '"} \
+			}',
+			success: function(d) {
+				var idValue = d.content.nextValue;
+				(func)(idValue);
+			}
+		});
+	}
+	
+	btiao.purchase = function() {
+		getId("orderId", function(orderId) {
+			var productNum = parseInt($('#labProductNum').text());
+	
+			$.ajax({
+				type: "PUT",
+				url: productRoot+"/positions/"+positionId+"/orders/__n",
+				contentType: "application/json; charset=UTF-8",
+				data: '{ \
+					__opUsrInfo: {uId: "' + loginUser + '", token: "' + token + '"}, \
+					orderId: "'+orderId+'", \
+					posId: "'+positionId+'", \
+					productId: "'+curInfoId+'", \
+					productDesc: "'+infos[curInfoId].desc+'", \
+					productNum: "'+productNum+'", \
+					totalPrice: "'+infos[curInfoId].totalPrice*productNum+'", \
+					fromUser: "'+loginUser+'" \
+				}',
+				success: function(d) {
+					$.mobile.changePage("#pgDetail");
+				},
+				error: function(httpReq, textStatus, errorThrow) {
+					alert("购买失败，请确认网络无故障，若无故障则可能是系统问题:"+textStatus);
+				}
+			});
+		});
+	}
 })();

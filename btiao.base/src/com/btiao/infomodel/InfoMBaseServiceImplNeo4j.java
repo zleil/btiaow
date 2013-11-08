@@ -371,29 +371,32 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	
 	@Override
 	public void begin() {
-		if (thTransLevel.get() !=null && thTransLevel.get() > 0) {
+		if (thTransLevel.get() !=null && thTransLevel.get() >= 1) {
 			thTransLevel.set(thTransLevel.get()+1);
 			return;
 		}
 		
 		Transaction tx = db.beginTx();
 		thTransContext.set(tx);
+		
+		thTransLevel.set(1);
 	}
 
 	@Override
 	public void finish() {
-		if (thTransLevel.get() != null && thTransLevel.get() > 0) {
+		if (thTransLevel.get() != null && thTransLevel.get() >= 2) {
 			thTransLevel.set(thTransLevel.get()-1);
 			return;
 		}
 		
 		Transaction tx = (Transaction)thTransContext.get();
 		tx.finish();
+		thTransLevel.set(0);
 	}
 	
 	@Override
 	public void success() {
-		if (thTransLevel.get() != null && thTransLevel.get() > 0) {
+		if (thTransLevel.get() != null && thTransLevel.get() >= 2) {
 			return;
 		}
 		
@@ -451,6 +454,10 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 			}
 			
 			String name = f.getName();
+			if (!n.hasProperty(name)) {
+				continue;
+			}
+			
 			Object v = n.getProperty(name);
 			
 			try {

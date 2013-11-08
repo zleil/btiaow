@@ -15,6 +15,7 @@ public class App extends Application {
 		router.attach("/positions/{positionId}/orders/{orderId}", ResBTiaoOrder.class);
 		router.attach("/positions/{positionId}/infos", ResBTiaoBlockInfoGetFunc.class);
 		router.attach("/positions/{positionId}/orders", ResBTiaoOrderGetAll.class);
+		router.attach("/getId/{idName}", ResBTiaoGetId.class);
 		
 		RestFilterBasicAuth authFilter = new RestFilterBasicAuth();
 		authFilter.setNext(router);

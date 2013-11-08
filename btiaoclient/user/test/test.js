@@ -7,6 +7,23 @@ var token = "";
 function log(str) {
 	$("#idOut").prepend('<p style="margin:0;padding:0;">'+str+'</p>');
 }
+function getJsonObjStr(obj) {
+	var r = "{";
+	
+	var first = true;
+	for (attrName in obj) {
+		if (!first) r += ",";
+		if (obj[attrName] instanceof Object) {
+			r += attrName + ":" + getJsonObjStr(obj[attrName]);
+		} else {
+			r += attrName + ":" + "\"" + obj[attrName] + "\"";
+		}		
+		first = false;
+	}
+	r += "}";
+	
+	return r;
+}
 function putLogin() {
 	loginUser = $("#idLoginUser").attr("value");
 	var passwd = $("#idLoginPasswd").attr("value");
@@ -22,13 +39,15 @@ function putLogin() {
 			authType:0 \
 		}',
 		success: function(d) {
+			log(getJsonObjStr(d));
+			
 			if (d.errCode == 0) {
 				token = d.content.token;
 				$("#idToken").attr("value", token);
-				log("token="+token);
 			}
-
-			log("result="+d.errCode);
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	});
 }
@@ -47,10 +66,14 @@ function delLogout() {
 			token:"'+token+'" \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+			
 			if (d.errCode == 0) {
 				token = "";
 			}
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	})
 }
@@ -66,11 +89,14 @@ function putUsr() {
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
 			id: "zleil", \
 			nick: "习远, he is a good man!", \
-			passwd: "mypasswd", \
+			passwd: "zleil", \
 			authType: 0 \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	});
 }
@@ -85,9 +111,10 @@ function getUsr() {
 			__opUsrInfo: {uId: loginUser, token: token}
 		},
 		success: function(d) {
-			log("result="+d.errCode+
-					"\ncontent.id="+d.content.id+
-					"\ncontent.nick="+d.content.nick);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	})
 }
@@ -102,10 +129,13 @@ function getAllUsr() {
 			__opUsrInfo: {uId: loginUser, token: token}
 		},
 		success: function(d) {
-			log("<br>result="+d.errCode);
+			log("getAllUsr.result="+d.errCode);
 			for (var o in d.content) {
-				log("\n{id="+d.content[o].id+",nick="+d.content[o].nick+"},");
+				log(getJsonObjStr(d.content[o]));
 			}
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	})
 }
@@ -122,7 +152,10 @@ function postUsr() {
 			nick: "习远2, he is a good man!" \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	});
 }
@@ -138,7 +171,10 @@ function delUsr() {
 			uId:"zleil" \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	})
 }
@@ -157,10 +193,13 @@ function putPos(posId, name, desc, pId) {
 			pid: "'+pId+'", \
 			name: "'+name+'", \
 			desc: "'+desc+'", \
-			price: 1 \
+			owner: "zleil" \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	});
 }
@@ -175,12 +214,10 @@ function getPos(posId) {
 			__opUsrInfo: {uId: loginUser, token: token}
 		},
 		success: function(d) {
-			log("result="+d.errCode+
-					",content.id="+d.content.id+
-					",content.pid="+d.content.pid+
-					",content.name="+d.content.name+
-					",content.desc="+d.content.desc
-					);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	})
 }
@@ -198,7 +235,10 @@ function postPos(posId,name,desc) {
 			desc: "'+desc+'" \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	});
 }
@@ -214,7 +254,10 @@ function delPos(posId) {
 			id:"'+posId+'" \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	})
 }
@@ -236,7 +279,10 @@ function putInfo(posId, infoId, infoDesc, newPrice, oldPrice) {
 			price: "'+newPrice+'" \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	});
 }
@@ -251,12 +297,10 @@ function getInfo(posId, infoId) {
 			__opUsrInfo: {uId: loginUser, token: token}
 		},
 		success: function(d) {
-			log("result="+d.errCode+
-					",content.id="+d.content.id+
-					",content.posId="+d.content.posId+
-					",content.type="+d.content.type+
-					",content.desc="+d.content.desc
-					);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	})
 }
@@ -274,7 +318,10 @@ function postInfo(posId, infoId, infoDesc) {
 			price: 20 \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	});
 }
@@ -290,7 +337,10 @@ function delInfo(posId, infoId) {
 			id:"'+infoId+'" \
 		}',
 		success: function(d) {
-			log("result="+d.errCode);
+			log(getJsonObjStr(d));
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	})
 }
@@ -308,19 +358,16 @@ function getAllInfo(posId, lastId) {
 			lastId: (!!lastId ? lastId : "")
 		},
 		success: function(d) {
+			log("result="+d.errCode);
 			if (d.errCode == 0) {
 				for (var idx in d.content) {
 					var info = d.content[idx];
-					log("info.id="+info.id+
-						",info.posId="+info.posId+
-						",info.type="+info.type+
-						",info.desc="+info.desc
-						);
+					log(getJsonObjStr(info));
 				}
-			} else {
-				log("result="+d.errCode);
 			}
-			
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			log("failed. textStatus="+textStatus);
 		}
 	})
 }
@@ -342,7 +389,7 @@ function putOrder(posId, orderId, productId, productNum, totalPrice, fromUser) {
 			fromUser: "'+fromUser+'" \
 		}',
 		success: function(d) {
-			log("putOrder.result="+d.errCode);
+			log(getJsonObjStr(d));
 		}
 	});
 }
@@ -363,13 +410,7 @@ function getAllOrder(posId, lastId) {
 			if (d.errCode == 0) {
 				for (var idx in d.content) {
 					var order = d.content[idx];
-					log("order.orderId="+order.orderId+
-						",order.posId="+order.posId+
-						",order.productId="+order.productId+
-						",order.productNum="+order.productNum+
-						",order.totalPrice="+order.totalPrice+
-						",order.fromUser="+order.fromUser
-						);
+					log(getJsonObjStr(order));
 				}
 			} else {
 				log("result="+d.errCode);
@@ -435,10 +476,27 @@ function onload() {
 	});
 	$("#idPutOrder").click(function(){
 		putOrder(1000001,1,1,3,1350,"_mgr0");
-		setTimeout(function(){putOrder(1000001,2,2,10,20000,"_mgr0")}, 1000);
+		setTimeout(function(){putOrder(1000001,2,2,10,20000,"_mgr0")}, 2000);
 	});
 	$("#idGetAllOrder").click(function(){
 		getAllOrder(1000001);
-	})
+	});
+	$("#idGetId").click(function(){
+		var loginUser = $("#idLoginUser").attr("value");
+		var token = $("#idToken").attr("value");
+		
+		var idName = $("#idId").attr("value");
+		$.ajax({
+			type: "POST",
+			url: posRoot+"/getId/"+idName,
+			contentType: "application/json; charset=UTF-8",
+			data: '{ \
+				__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"} \
+			}',
+			success: function(d) {
+				log(getJsonObjStr(d));
+			}
+		})
+	});
 }
 
