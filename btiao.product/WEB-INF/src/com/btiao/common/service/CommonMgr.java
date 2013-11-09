@@ -3,13 +3,11 @@ package com.btiao.common.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.infomodel.RelType;
-import com.btiao.product.domain.BlockInfo;
 import com.btiao.product.restlet.RelName;
 
 public class CommonMgr {

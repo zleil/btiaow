@@ -8,4 +8,6 @@ public class RelName {
 	static public final String userOrder = "userOrder";
 	
 	static public final String timeSeq = "infoTimeSeq";
+	
+	static public final String usrInfoExt = "usrInfoExt";
 }

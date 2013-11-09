@@ -6,10 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"> 
 <link rel="shortcut icon" href="/btiao/bt.png"/>
 <!-- -->
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
-
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0-rc.1/jquery.mobile-1.4.0-rc.1.min.css">
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.0-rc.1/jquery.mobile-1.4.0-rc.1.min.js"></script>
 <!-- 
 <link rel="stylesheet" href="../third/jquery/jquery.mobile-1.3.2.min.css" />
 <script src="../third/jquery/jquery-1.9.1.min.js"></script>
@@ -66,43 +65,15 @@
 
 <!-- Home -->
 <div data-role="page" id="pgFirst">
-    <div data-theme="d" data-role="header">
-        <h3>
+    <div data-theme="a" data-role="header">
+        <h3 class="posName">
             小卖部6#0105  [望春园]
         </h3>
     </div>
     <div data-role="content">
-        <div class="ui-grid-a">
-            <div class="ui-block-a">
-                <div style="width: 100%; height: 100%; position: relative; background-color: #fbfbfb; border: 0px solid #b8b8b8;">
-                    <img src="image/60105.png" alt="image" style="position: absolute; align:center; top:-30px">
-                </div>
-            </div>
-            <div class="ui-block-b">
-                <h5>
-                    望春园6号楼商店(6#0105)
-                </h5>
-            </div>
-        </div>
-        <ul id="lstBlockInfo" data-role="listview" data-divider-theme="b" data-inset="true">
-            <!-- <li data-theme="e">
-                <a href="#pgDetail" data-transition="slide">
-                    3升纯净水促销，买一送一！
-                </a>
-            </li>
-            <li data-theme="c">
-                <a href="#pgDetail" data-transition="slide">
-                    北冰洋买一送一，今日限量10瓶！
-                </a>
-            </li>
-            <li data-theme="e">
-                <a href="#pgDetail" data-transition="slide">
-                    可爱多，现价2￥(原价3￥)
-                </a>
-            </li> -->
-        </ul>
+        <ul id="lstBlockInfo" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
     </div>
-    <div data-theme="b" data-role="footer" data-position="fixed">
+    <div data-theme="a" data-role="footer" data-position="fixed">
         <div data-role="navbar" data-iconpos="top">
             <ul>
                 <li>
@@ -132,111 +103,79 @@
 
 <!-- Home -->
 <div data-role="page" id="pgDetail">
-    <div data-theme="b" data-role="header">
+    <div data-theme="a" data-role="header">
         <a data-role="button" href="#pgFirst" class="ui-btn-left">
             返回
         </a>
-        <h3>
+        <h3 class="posName">
             小卖部6#0105  [望春园]
         </h3>
-        <a data-role="button" href="#pgPurchase" data-rel="dialog" class="ui-btn-right">
+        <a data-role="button" id="actEnterPurchase" href="#" class="ui-btn-right">
             购买
         </a>
     </div>
     <div data-role="content">
-        <h2 id="idInfoDesc">
-            纯净水特价，最后3天，快来抢购吧
-        </h2>
-        <h3 id="idInfoPrice">总价：3元</h3>
-        <div data-role="collapsible-set">
-            <div data-role="collapsible">
-                <h3>
-                    我要评价
-                </h3>
-                <div data-role="navbar" data-iconpos="right">
-                    <ul style="font-size:8px;">
-                        <li>
-                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
-                                很好
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
-                                好
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
-                                一般
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
-                                不行
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#page1" data-transition="fade" data-theme="" data-icon="">
-                                太差
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div data-role="fieldcontain">
-                    <textarea name="" id="textarea1" placeholder=""></textarea>
-                </div>
-            </div>
-        </div>
-        <div data-role="collapsible-set">
-            <div data-role="collapsible" data-collapsed="false">
-                <h3>
-                    咨询与回复
-                </h3>
-                <div data-role="fieldcontain">
-                    <textarea name="" id="textarea4" placeholder=""></textarea>
-                </div>
-                <a data-role="button" href="#page1">
-                    提交
-                </a>
-            </div>
-        </div>
-    </div>
+    	<div data-role="fieldcontain">
+	        <h2 id="idInfoDesc">
+	            纯净水特价，最后3天，快来抢购吧
+	        </h2>
+	    </div>
+	    <div data-role="fieldcontain">
+	    	<h3>价格：<span id="idInfoPrice">3</span>元</h3>
+	    </div>
+        <div data-role="fieldcontain">
+	        <div data-role="collapsible-set">
+	            <div data-role="collapsible" data-collapsed="false">
+	                <h3>
+	                    咨询与反馈
+	                </h3>
+	                <div data-role="fieldcontain">
+	                    <textarea name="" id="textarea4" placeholder=""></textarea>
+	                </div>
+	                <a data-role="button" href="#page1">
+	                    提交
+	                </a>
+	            </div>
+	        </div>
+    	</div>
+	</div>
 </div>
+
 <!-- Home -->
 <div data-role="page" id="pgPurchase">
+	<div data-theme="a" data-role="header">
+        <h3>
+                    订单填写
+        </h3>
+    </div>
     <div data-role="content">
-        <div data-role="navbar" data-iconpos="top">
-            <ul>
-                <li>
-                    <a href="#" id="actSubOne" data-role="button" data-iconpos="bottom" data-icon="minus">&nbsp;
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="labProductNum" data-role="button" data-iconpos="bottom" data-icon="info">
-                        0
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="actAddOne" data-role="button" data-iconpos="bottom" data-icon="plus">&nbsp;
-                    </a>
-                </li>
-            </ul>
+        <div data-role="fieldcontain">
+            <label for="labProductNum"><h5>
+                购买个数
+            </h5></label>
+            <input id="labProductNum" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="slider" name="labProductNum" value="1" min="1" max="5" data-highlight="true">
+	        <h3>
+	            总价：<span id="labTotalPrice">0</span>元
+	        </h3>
         </div>
+        <div data-role="fieldcontain">
+            <label for="orderDst"><h5>
+                送至本小区的如下地址(如：8个数字，楼、单元、层、房号各占2数字，若无单元编号，则填写00)
+            </h5></label>
+            <input name="" id="orderDst" placeholder="如：填01020304，代表1号楼2单元3层4号房" value="" type="text">
+        </div>
+        <a data-role="button" id="actPurchase">
+            购买
+        </a>
+        <a data-role="button" id="actCancelPurchase" href="#pgDetail">
+            取消
+        </a>
         <div data-role="fieldcontain">
             <label for="textarea1">
                 备注
             </label>
             <textarea name="" id="textarea1" placeholder=""></textarea>
         </div>
-        <h2>
-            总价：<span id="labTotalPrice">0</span>元
-        </h2>
-        <a data-role="button" id="actPurchase" href="#">
-            购买
-        </a>
-        <a data-role="button" id="actCancelPurchase" href="#pgDetail">
-            取消
-        </a>
     </div>
 </div>
 </body>

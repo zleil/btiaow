@@ -85,15 +85,17 @@ function devLogout() {
 
 var oldInit = window.onload;
 window.onload = function() {
-	$("#btDevLogin").click(devLogin);
 	if (!!oldInit) {
 		(oldInit)();
 	}
 	
-	$("#actAddOne").click(btiao.purchaseAddOne);
-	$("#actSubOne").click(btiao.purchaseSubOne);
-	
-	$("#actPurchase").click(btiao.purchase);
+	$("#btDevLogin").click(devLogin);
+
+	$("#labProductNum").slider({
+		theme:"c",trackTheme:"c",highlight:true,mini:false
+	});
+	$("#labProductNum").change(btiao.changePurchaseNum);
+	$("#labProductNum").slider("refresh");
 }
 
 })();

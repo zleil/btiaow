@@ -2,6 +2,7 @@
 	//global variable declare
 	var productRoot = "/btiao/product";
 	var positionId = 0;
+	var positionName = "";
 	var numPer = 10;
 	var loginUser = "";
 	var token = "";
@@ -20,20 +21,17 @@
 				__opUsrInfo: {uId: loginUser, token: token}
 			},
 			success: function(d) {
-				var h3 = $("#pgFirst > div > h3");
+				$("#actPurchase").click(btiao.purchase);
+				
+				positionName = d.content.name;
+				positionId = posId;
+				
+				var h3 = $(".posName");
 				h3.empty();
 				h3.append(d.content.name);
 				
-				var h5 = $("#pgFirst > div > div > div > h5");
-				h5.empty();
-				h5.append(d.content.desc);
-				
-				var img = $("#pgFirst > div > div > div > div > img");
-				img.attr("src", d.content.imgUrl);
-				
-				positionId = posId;
 				fillBlockInfo("", numPer);
-
+				
 				$.mobile.changePage("#pgFirst");
 			}
 		});
@@ -55,6 +53,10 @@
 					for (var idx in d.content) {
 						fillAInfo(d.content[idx]);
 					}
+					$(".blockInfo").click(function(e){
+						var infoId = $(e.target).attr("data-infoid");
+						prepareBlockInfoDetail(infoId);
+					});
 					$("#lstBlockInfo").listview("refresh");
 				} else {
 					//TODO
@@ -67,17 +69,11 @@
 	function fillAInfo(info) {
 		$("#lstBlockInfo").append(
 				'<li data-theme="e">' +
-				'<a href="#" class="blockInfo" data-infoid="'+info.id+'" data-transition="slide">' +
+				'<a class="blockInfo" data-infoid="'+info.id+'" data-transition="slide">' +
 				info.desc +
 				'</a></li>'
 		);
 		infos[info.id] = info;
-		
-		$("#lstBlockInfo li:last-child a").click(function(e){
-			var infoId = e.target.dataset['infoid'];
-			//alert(infoId);
-			prepareBlockInfoDetail(infoId);
-		});
 	}
 	function decoratePrice(price) {
 		return (price*1.0)/100;
@@ -85,27 +81,32 @@
 	function prepareBlockInfoDetail(infoId) {
 		var info = infos[infoId];
 		
+		$("#pgDetail .posName").text(positionName);
 		$("#idInfoDesc").text(info.desc);
-		$("#idInfoPrice").text("价格("+decoratePrice(info.price)+")");
+		$("#idInfoPrice").text(decoratePrice(info.price));
+		$("#actEnterPurchase").click(btiao.preparePurchasePage);
 		
 		curInfoId = infoId;
 		$.mobile.changePage("#pgDetail");
 	}
 	
-	btiao.purchaseAddOne = function() {
-		var num=parseInt($('#labProductNum').text()) + 1;
-		$('#labProductNum').text(num);
-		$('#labTotalPrice').text(decoratePrice(infos[curInfoId].price)*num);
-	}
-	btiao.purchaseSubOne = function() {
-		var num=parseInt($('#labProductNum').text()) - 1;
-		if (num < 0) {
-			num = 0;
-			return;
-		}
+	btiao.preparePurchasePage = function() {
+		$('#labProductNum').val(1);
+		$('#labProductNum').slider("refresh");
+		btiao.changePurchaseNum();
 		
-		$('#labProductNum').text(num);
-		$('#labTotalPrice').text(decoratePrice(infos[curInfoId].price)*num);
+		$.mobile.changePage("#pgPurchase");//, {role:"dialog"});
+	}
+	
+	btiao.changePurchaseNum = function() {
+		if (!curInfoId || curInfoId == "") return;
+		
+		var num = parseInt($('#labProductNum').val());
+		
+		var info = infos[curInfoId];
+		var price = info.price;
+		var truePrice = decoratePrice(price);
+		$('#labTotalPrice').text(truePrice*num);
 	}
 	
 	function getId(idName, func) {
@@ -125,7 +126,7 @@
 	
 	btiao.purchase = function() {
 		getId("orderId", function(orderId) {
-			var productNum = parseInt($('#labProductNum').text());
+			var productNum = parseInt($('#labProductNum').val());
 	
 			$.ajax({
 				type: "PUT",
@@ -142,7 +143,11 @@
 					fromUser: "'+loginUser+'" \
 				}',
 				success: function(d) {
-					$.mobile.changePage("#pgDetail");
+					//$("#pgPurchase").dialog("close");
+//					setTimeout(function(){
+//						$("#pgPurchase").dialog("close");
+//					},800);
+					$.mobile.changePage("#pgFirst");
 				},
 				error: function(httpReq, textStatus, errorThrow) {
 					alert("购买失败，请确认网络无故障，若无故障则可能是系统问题:"+textStatus);
@@ -151,3 +156,4 @@
 		});
 	}
 })();
+

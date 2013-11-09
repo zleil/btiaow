@@ -498,5 +498,86 @@ function onload() {
 			}
 		})
 	});
+	
+	function getTestBlockElm(child) {
+		while (child != null) {
+			var clzs = $(child).attr("class");
+			if (clzs.match(".*testBlock.*").length > 0){
+				return child;
+			}
+			child = child.parentNode;
+		}
+		
+		return null;
+	}
+	function constructJsonObj(testBlockElm) {
+		var allInput = $("input",testBlockElm);
+		var obj = "";
+		for (var idx=0; idx<allInput.length; ++idx) {
+			var input = $(allInput[idx]);
+			var name = input.attr("id");
+			var value = input.attr("value");
+			obj += "," + name + ":" + "\"" + value + "\"";
+		}
+		return obj;
+	}
+	function constructUrl(urlTemplate, testBlockElm) {
+		var allInput = $("input",testBlockElm);
+		for (var idx=0; idx<allInput.length; ++idx) {
+			var input = $(allInput[idx]);
+			var name = input.attr("id");
+			var value = input.attr("value");
+			urlTemplate = urlTemplate.replace("{"+name+"}", value);
+		}
+		
+		return urlTemplate;
+	}
+	$(".testBlock button").click(function(e){
+		var loginUser = $("#idLoginUser").attr("value");
+		var token = $("#idToken").attr("value");
+		
+		var testBlockElm = getTestBlockElm(e.target.parentNode);
+		var objStr = constructJsonObj(testBlockElm);
+		var urlTemplate = $(e.target).attr("url");
+		var url = constructUrl(urlTemplate, testBlockElm);
+		var op = $(e.target).text();
+		
+		if (op == "PUT" || op == "POST") {
+			$.ajax({
+				type: op,
+				url: "http://localhost"+url,
+				contentType: "application/json; charset=UTF-8",
+				data: '{ \
+					__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}' +
+					objStr + ' \
+				}',
+				success: function(d) {
+					log(getJsonObjStr(d));
+				}
+			})
+		} else if (op == "GET") {
+			$.ajax({
+				type: op,
+				url: "http://localhost"+url,
+				contentType: "application/json; charset=UTF-8",
+				data: {__opUsrInfo:{uId: loginUser, token: token}},
+				success: function(d) {
+					log(getJsonObjStr(d));
+				}
+			});
+		} else if (op == "DELETE") {
+			$.ajax({
+				type: op,
+				url: "http://localhost"+url,
+				contentType: "application/json; charset=UTF-8",
+				data: '{ \
+					__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"} \
+				}',
+				success: function(d) {
+					log(getJsonObjStr(d));
+				}
+			})
+		}
+	});
 }
 
