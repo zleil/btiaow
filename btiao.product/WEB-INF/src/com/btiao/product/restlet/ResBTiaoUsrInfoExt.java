@@ -35,6 +35,7 @@ public class ResBTiaoUsrInfoExt extends ResBTBase {
 	}
 
 	@Override
+	@JsonCvtInfo(objClassName="com.btiao.product.domain.UsrInfoExt")
 	protected Object post(Object arg, Collection<String> attrList)
 			throws BTiaoExp {
 		try {

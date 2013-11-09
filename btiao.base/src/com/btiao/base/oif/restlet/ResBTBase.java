@@ -238,13 +238,13 @@ public abstract class ResBTBase extends ServerResource {
 			BTiaoLog.logExp(log, e);
 		}
 
-		if (errCode != ErrCode.SUCCESS) {
-			if (errCode == ErrCode.OBJ_NOT_IN_INFO_MODEL) {
-				this.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
-			} else {
-				this.setStatus(Status.CLIENT_ERROR_EXPECTATION_FAILED);
-			}
-		}
+//		if (errCode != ErrCode.SUCCESS) {
+//			if (errCode == ErrCode.OBJ_NOT_IN_INFO_MODEL) {
+//				this.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+//			} else {
+//				this.setStatus(Status.CLIENT_ERROR_EXPECTATION_FAILED);
+//			}
+//		}
 		return new JsonRepresentation(jro);
 	}
 	

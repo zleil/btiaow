@@ -8,11 +8,34 @@
 	var token = "";
 	var infos = {};
 	var curInfoId = "";
+	var usrExtInfo;
 	
 	//function definition and init-code
+	function getObj(url, func) {
+		$.ajax({
+			type: "GET",
+			url: "http://localhost"+url,
+			contentType: "application/json; charset=UTF-8",
+			data: {__opUsrInfo:{uId: loginUser, token: token}},
+			success: func
+		});
+	}
+	function getUsrExtInfo(func) {
+		var url = productRoot + "/usrInfoExt/" + loginUser;
+		return getObj(url, func);
+	}
+	
+	
 	btiao.preparePgFirst = function(posId) {
 		loginUser = btiao.loginInfo.user;
 		token = btiao.loginInfo.token;
+		
+		getUsrExtInfo(function(d){
+			usrExtInfo = d.content;
+			preparePgFirst2(posId);
+		});
+	}
+	function preparePgFirst2(posId) {
 		$.ajax({
 			type: "GET",
 			url: productRoot+"/positions/"+posId,
@@ -95,6 +118,7 @@
 		$('#labProductNum').slider("refresh");
 		btiao.changePurchaseNum();
 		
+		$("#orderDst").val(usrExtInfo.locationOfPos);
 		$.mobile.changePage("#pgPurchase");//, {role:"dialog"});
 	}
 	
