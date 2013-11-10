@@ -16,8 +16,13 @@ public class BTiaoLog {
 	}
 	
 	static public void logExp(Logger log, Throwable e) {
+		logExp(log, e, "");
+	}
+	
+	static public void logExp(Logger log, Throwable e, String extInfo) {
 		OutputStream o = new ByteArrayOutputStream();
 		PrintStream p = new PrintStream(o);
+		p.append("there's a exception,extInfo=[");p.append(extInfo);p.append("]\n");
 		e.printStackTrace(p);
 		
 		System.err.println(o);

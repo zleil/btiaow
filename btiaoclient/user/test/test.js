@@ -430,7 +430,7 @@ function onload() {
 	
 	$("#idGetAll").click(getAllUsr);
 	
-	$("#idPutPos").click(function(){
+	$("#putSimplePositions").click(function(){
 		//省、市、区、区域、小区、家、个人
 		putPos(1000001,"6#0105","6号楼小卖部", 100000000);
 		putPos(1000000,"望春园","北苑最好的小区，环境优雅，还有个小区幼儿园！", 0);
@@ -532,7 +532,7 @@ function onload() {
 		
 		return urlTemplate;
 	}
-	$(".testBlock button").click(function(e){
+	$(".comTestOp").click(function(e){
 		var loginUser = $("#idLoginUser").attr("value");
 		var token = $("#idToken").attr("value");
 		
@@ -577,6 +577,27 @@ function onload() {
 					log(getJsonObjStr(d));
 				}
 			})
+		} else if (op == "GETALL") {
+			$.ajax({
+				type: "GET",
+				url: "http://localhost"+url,
+				contentType: "application/json; charset=UTF-8",
+				data: {
+					__opUsrInfo: {uId: loginUser, token: token},
+					func: "normal",
+					num: 10,
+					lastId: ""
+				},
+				success: function(d) {
+					log("result="+d.errCode);
+					if (d.errCode == 0) {
+						for (var idx in d.content) {
+							var info = d.content[idx];
+							log(getJsonObjStr(info));
+						}
+					}
+				}
+			});
 		}
 	});
 }

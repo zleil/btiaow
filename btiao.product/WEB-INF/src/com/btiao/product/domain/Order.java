@@ -9,11 +9,7 @@ public class Order extends InfoMObject {
 
 	@Override
 	public boolean initId(List<String> urlIds) {
-		if (urlIds.size() != 2) {
-			return false;
-		}
-		this.posId = urlIds.get(0);
-		this.orderId = urlIds.get(1);
+		this.orderId = urlIds.get(0);
 		return true;
 	}
 

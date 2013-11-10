@@ -4,8 +4,24 @@
 <meta charset="UTF-8">
 <script src="../../third/jquery/jquery.js" type="text/javascript"></script>
 <script src="test.js" type="text/javascript"></script>
+<style>
+body {
+	font-size:11px;
+}
+.dispBlock {
+	margin:5px 0 5px 0;
+	padding:0;
+	border-style:solid;
+	border-width:2px 0px 0px 0px;
+}
+.dispBlock input,.dispBlock span,.dispBlock button {
+	margin:0;
+	padding:0;
+	font-size:11px;
+}
+</style>
 </head>
-<body onload="onload();" style="font-size:12px">
+<body onload="onload();">
 <p>
 <label>uid:</label>
 <input id="idLoginUser" type="text" value="_mgr0"></input>
@@ -23,12 +39,21 @@
 <button id="idDel">delUsr</button>
 <button id="idPost">postUsr</button>
 </p>
-<p>
-<button id="idPutPos">putPos</button>
-<button id="idGetPos">getPos</button>
-<button id="idPostPos">postPos</button>
-<button id="idDelPos">delPos</button>
-</p>
+<div class="dispBlock testBlock">
+<span>position</span>
+<input type="text" id="id" placeholder="id"/>
+<input type="text" id="pid" placeholder="pid"/>
+<input type="text" id="name" placeholder="name"/>
+<input type="text" id="desc" placeholder="desc"/>
+<input type="text" id="imgUrl" placeholder="imgUrl"/>
+<input type="text" id="owner" placeholder="owner"/>
+<button url="/btiao/product/positions/{id}" class="comTestOp">PUT</button>
+<button url="/btiao/product/positions/{id}" class="comTestOp">GET</button>
+<button url="/btiao/product/positions/{id}" class="comTestOp">POST</button>
+<button url="/btiao/product/positions/{id}" class="comTestOp">DELETE</button>
+<button url="/btiao/product/positions" class="comTestOp">GETALL</button>
+<button id="putSimplePositions">putAll</button>
+</div>
 <p>
 <button id="idPutInfo">putInfo</button>
 <button id="idGetInfo">getInfo</button>
@@ -44,15 +69,15 @@
 <label>id:</label><input id="idId" type="text"/>
 <button id="idGetId">getId</button>
 </p>
-<p class="testBlock">
-<label>usrId:</label><input id="usrId" type="text"/>
-<label>positionId:</label><input id="positionId" type="text"/>
-<label>locationOfPos:</label><input id="locationOfPos" type="text"/>
-<button url="/btiao/product/usrInfoExt/{usrId}">PUT</button>
-<button url="/btiao/product/usrInfoExt/{usrId}">GET</button>
-<button url="/btiao/product/usrInfoExt/{usrId}">POST</button>
-<button url="/btiao/product/usrInfoExt/{usrId}">DELETE</button>
-</p>
-<div id="idOut" style="font-size:11px;"></div>
+<div class="testBlock dispBlock">
+<input placeholder="usrId" id="usrId" type="text"/>
+<input placeholder="positionId" id="positionId" type="text"/>
+<input placeholder="locationOfPos:" id="locationOfPos" type="text"/>
+<button url="/btiao/product/usrInfoExt/{usrId}" class="comTestOp">PUT</button>
+<button url="/btiao/product/usrInfoExt/{usrId}" class="comTestOp">GET</button>
+<button url="/btiao/product/usrInfoExt/{usrId}" class="comTestOp">POST</button>
+<button url="/btiao/product/usrInfoExt/{usrId}" class="comTestOp">DELETE</button>
+</div>
+<div class="dispBlock" id="idOut" style="font-size:11px;"></div>
 </body>
 </html>

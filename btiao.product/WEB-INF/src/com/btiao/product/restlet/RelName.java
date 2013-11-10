@@ -10,4 +10,7 @@ public class RelName {
 	static public final String timeSeq = "infoTimeSeq";
 	
 	static public final String usrInfoExt = "usrInfoExt";
+	
+	static public final String posOfRoot = "posOfRoot";
+	static public final String usrExtInfoOfRoot = "usrExtInfoOfRoot";
 }

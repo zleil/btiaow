@@ -21,6 +21,7 @@ import org.neo4j.graphdb.index.IndexHits;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.utils.BTiaoLog;
 
 public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
@@ -609,6 +610,17 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		}
 		
 		return ks.size() == 0 ? n1.equals(n2) : true;
+	}
+	
+	InfoMBaseServiceImplNeo4j() {
+		try {
+			if (!this.get(new BTiaoRoot())) {
+				this.add(new BTiaoRoot());
+			}
+		} catch (BTiaoExp e) {
+			BTiaoLog.logExp(log, e, "failed to create root object in neo4j!");
+			e.printStackTrace();
+		}
 	}
 	
 	Logger log = BTiaoLog.get();

@@ -51,7 +51,7 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 		InfoMObject info = (InfoMObject)arg;
 		info.initId(urlIds);
 				
-		CommonMgr.instance().updateInfoObject(info, attrList);
+		CommonMgr.instance().updateObject(info, attrList);
 		return null;
 	}
 

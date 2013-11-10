@@ -36,7 +36,7 @@ public class ResBTiaoPosition extends ResBTBase {
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
 		}
 
-		CommonMgr.instance().addInfoObject(info);
+		CommonMgr.instance().addObjHoldInRoot(info, RelName.posOfRoot);
 		return null;
 	}
 
@@ -51,7 +51,7 @@ public class ResBTiaoPosition extends ResBTBase {
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
 		}
 		
-		CommonMgr.instance().updateInfoObject(info, attrs);
+		CommonMgr.instance().updateObject(info, attrs);
 		return null;
 	}
 

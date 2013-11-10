@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.model.BTiaoRoot;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.infomodel.RelType;
@@ -192,21 +193,11 @@ public class CommonMgr {
 		}
 	}
 		
-	public void addInfoObject(InfoMObject info) throws BTiaoExp {
-		base.begin();
-		try {
-			base.add(info);
-			
-			base.success();
-		} catch (BTiaoExp e) {
-			base.failed();
-			throw e;
-		} finally {
-			base.finish();
-		}
+	public void addObjHoldInRoot(InfoMObject obj, String relName) throws BTiaoExp {
+		addObjectRelRightAndDownRel(relName, new BTiaoRoot(), obj, RelName.timeSeq);
 	}
 	
-	public void updateInfoObject(
+	public void updateObject(
 			InfoMObject info, Collection<String> attrs) throws BTiaoExp {
 		base.begin();
 		try {
