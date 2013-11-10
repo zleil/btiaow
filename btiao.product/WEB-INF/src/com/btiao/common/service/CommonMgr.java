@@ -111,6 +111,7 @@ public class CommonMgr {
 						new RelType(downRelName), to.getClass(), false);
 				base.delRel(upperObj, to, new RelType(downRelName));
 				if (nextObj != null) {
+					base.delRel(to, nextObj, new RelType(downRelName));
 					base.addRel(upperObj, nextObj, new RelType(downRelName));
 				}
 			}

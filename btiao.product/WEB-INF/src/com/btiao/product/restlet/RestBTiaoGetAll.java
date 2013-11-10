@@ -68,7 +68,7 @@ public class RestBTiaoGetAll extends ResBTBase {
 		if (func.equals("normal")) {
 			getArg(form);
 			InfoMObject parentObj = getParentObj();
-			InfoMObject lastObj = getLastObj();
+			InfoMObject lastObj = getLastObj(form);
 			
 			return mgr.getAllObjRightAndDownRel(parentObj, 
 					def.objClass, def.rightRelName,
@@ -85,14 +85,11 @@ public class RestBTiaoGetAll extends ResBTBase {
 			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, e, "failed to get parent obj while get all!");
 		}
 		
-		List<String> idStrs = def.idStrs;
+		List<String> idStrs = def.pidStrs;
 		List<String> idList = new ArrayList<String>();
 		for (String idStr : idStrs) {
 			String value = this.getAttribute(idStr);
-			if (value == null || value.equals("")) {
-				return null;
-			}
-			
+
 			idList.add(value);
 		}
 		
@@ -100,11 +97,11 @@ public class RestBTiaoGetAll extends ResBTBase {
 		return parentObj;
 	}
 	
-	protected InfoMObject getLastObj() throws BTiaoExp {
+	protected InfoMObject getLastObj(Form form) throws BTiaoExp {
 		List<String> idStrs = def.idStrs;
 		List<String> idList = new ArrayList<String>();
 		for (String idStr : idStrs) {
-			String value = this.getMatrix().getFirstValue(idStr);
+			String value = form.getFirstValue(idStr);
 			if (value == null || value.equals("")) {
 				return null;
 			}

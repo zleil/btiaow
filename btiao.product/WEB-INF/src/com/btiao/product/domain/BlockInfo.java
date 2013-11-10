@@ -8,11 +8,7 @@ import com.btiao.infomodel.InfoMObject;
 public class BlockInfo extends InfoMObject {
 	@Override
 	public boolean initId(List<String> urlIds) {
-		if (urlIds.size() != 2) {
-			return false;
-		}
-		this.posId = urlIds.get(0);
-		this.id = urlIds.get(1);
+		this.id = urlIds.get(0);
 		return true;
 	}
 	
