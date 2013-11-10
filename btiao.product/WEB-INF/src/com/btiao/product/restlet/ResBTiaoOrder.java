@@ -54,8 +54,8 @@ public class ResBTiaoOrder extends ResBTBase {
 		InfoMBaseService base = CommonMgr.instance().base;
 		base.begin();
 		try {
-			CommonMgr.instance().addObjectRightAndDownRel(RelName.order, pos, (InfoMObject)arg, RelName.timeSeq);
-			CommonMgr.instance().addObjectRelRightAndDownRel(RelName.order, fromUser, (InfoMObject)arg, RelName.userOrder);
+			CommonMgr.instance().addObjectRightAndDownRel(RelName.order, pos, (InfoMObject)arg, RelName.timeSeq, false);
+			CommonMgr.instance().addObjectRightAndDownRel(RelName.order, fromUser, (InfoMObject)arg, RelName.userOrder, true);
 			base.success();
 		} catch (BTiaoExp e) {
 			base.failed();

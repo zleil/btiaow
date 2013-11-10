@@ -3,12 +3,28 @@ package com.btiao.infomodel;
 import java.util.Collection;
 
 import com.btiao.base.exp.BTiaoExp;
+import com.btiao.base.model.BTiaoRoot;
+import com.btiao.base.utils.BTiaoLog;
 
 public abstract class InfoMBaseService {
 	static public synchronized InfoMBaseService instance() {
 		if (inst == null) {
 			Neo4jMgr.instance().init();
 			inst = new InfoMBaseServiceImplNeo4j();
+			
+			inst.begin();
+			try {
+				if (!inst.get(new BTiaoRoot())) {
+					inst.add(new BTiaoRoot());
+				}
+				inst.success();
+			} catch (BTiaoExp e) {
+				inst.failed();
+				BTiaoLog.logExp(BTiaoLog.get(), e, "failed to create root object in neo4j!");
+				e.printStackTrace();
+			} finally {
+				inst.finish();
+			}
 		}
 		return inst;
 	}
@@ -34,6 +50,8 @@ public abstract class InfoMBaseService {
 	 * @throws BTiaoExp 
 	 */
 	public abstract boolean get(InfoMObject u) throws BTiaoExp;
+	
+	public abstract void delAllInRelShip(InfoMObject u) throws BTiaoExp;
 	
 	public abstract Collection<?extends InfoMObject> getAll(Class<?extends InfoMObject> objClz) throws BTiaoExp;
 	

@@ -22,17 +22,14 @@ body {
 </style>
 </head>
 <body onload="onload();">
-<p>
-<label>uid:</label>
-<input id="idLoginUser" type="text" value="_mgr0"></input>
-<label>passwd:</label>
-<input id="idLoginPasswd" type="text" value="zleil"></input>
+<p class="dispBlock">
+<input id="idLoginUser" placeholder="uid" type="text" value="_mgr0"></input>
+<input id="idLoginPasswd" placeholder="passward" type="text" value="zleil"></input>
 <button id="idLogin">login</button>
-<label>token:</label>
-<input id="idToken" type="text"></input>
+<label>token:</label><input id="idToken" type="text"></input>
 <button id="idLogout">logout</button>
 </p>
-<p>
+<p class="dispBlock">
 <button id="idPut">putUsr</button>
 <button id="idGet">getUsr</button>
 <button id="idGetAll">getAllUsr</button>
@@ -54,19 +51,19 @@ body {
 <button url="/btiao/product/positions" class="comTestOp">GETALL</button>
 <button id="putSimplePositions">putAll</button>
 </div>
-<p>
+<p class="dispBlock">
 <button id="idPutInfo">putInfo</button>
 <button id="idGetInfo">getInfo</button>
 <button id="idPostInfo">postInfo</button>
 <button id="idDelInfo">delInfo</button>
 <button id="idGetAllInfo">getAllInfo</button>
 </p>
-<p>
+<p class="dispBlock">
 <button id="idPutOrder">putOrder</button>
 <button id="idGetAllOrder">getAllOrder</button>
 </p>
-<p>
-<label>id:</label><input id="idId" type="text"/>
+<p class="dispBlock">
+<input id="idId" type="text" placeholder="idName" />
 <button id="idGetId">getId</button>
 </p>
 <div class="testBlock dispBlock">

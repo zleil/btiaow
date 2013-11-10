@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -18,10 +17,8 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
-import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.utils.BTiaoLog;
 
 public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
@@ -248,6 +245,19 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		Node node = db.createNode();
 		setNodeAttrs(node, u);
 		addNode2Idx( node, u);
+	}
+	
+
+	public void delAllInRelShip(InfoMObject u)  throws BTiaoExp {
+		Node n = getNodeFromIdx(u);
+		if (n != null) {
+			Iterable<Relationship> ships = n.getRelationships(Direction.INCOMING);
+			Iterator<Relationship> it = ships.iterator();
+			while (it.hasNext()) {
+				Relationship ship = it.next();
+				ship.delete();
+			}
+		}		
 	}
 
 	@Override
@@ -551,7 +561,7 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		
 		return new AttrValue(nameStr.toString(), valueStr.toString());
 	}
-	
+		
 	/**
 	 * if there is a node with which node 'n' has the specified ship 'r',<br>
 	 * then, return the node. otherwise return null
@@ -613,14 +623,6 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	}
 	
 	InfoMBaseServiceImplNeo4j() {
-		try {
-			if (!this.get(new BTiaoRoot())) {
-				this.add(new BTiaoRoot());
-			}
-		} catch (BTiaoExp e) {
-			BTiaoLog.logExp(log, e, "failed to create root object in neo4j!");
-			e.printStackTrace();
-		}
 	}
 	
 	Logger log = BTiaoLog.get();

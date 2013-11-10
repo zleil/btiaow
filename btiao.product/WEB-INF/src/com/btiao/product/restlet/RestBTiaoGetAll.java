@@ -70,7 +70,7 @@ public class RestBTiaoGetAll extends ResBTBase {
 			InfoMObject parentObj = getParentObj();
 			InfoMObject lastObj = getLastObj();
 			
-			return mgr.getAllRightAndDownObj(parentObj, 
+			return mgr.getAllObjRightAndDownRel(parentObj, 
 					def.objClass, def.rightRelName,
 					lastObj, def.downRelName, num);
 		}

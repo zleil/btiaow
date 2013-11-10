@@ -7,6 +7,7 @@ import org.restlet.data.Form;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
 import com.btiao.common.service.CommonMgr;
@@ -23,14 +24,14 @@ public class ResBTiaoUsrInfoExt extends ResBTBase {
 	protected Object get(Form form) throws BTiaoExp {
 		ArrayList<String> idList = new ArrayList<String>();
 		idList.add(usrId);
-		Object r = mgr.getInfoObject(UsrInfoExt.class, idList);
+		Object r = mgr.getObject(UsrInfoExt.class, idList);
 		return r;
 	}
 
 	@Override
 	@JsonCvtInfo(objClassName="com.btiao.product.domain.UsrInfoExt")
 	protected Object put(Object arg) throws BTiaoExp {
-		mgr.addObjHoldInRoot((InfoMObject) arg, RelName.usrExtInfoOfRoot);
+		mgr.addObjectRightAndDownRel(RelName.usrExtInfoOfRoot, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
 		return null;
 	}
 
@@ -42,7 +43,7 @@ public class ResBTiaoUsrInfoExt extends ResBTBase {
 			mgr.updateObject((InfoMObject)arg, attrList);
 		} catch (BTiaoExp e) {
 			if (e.errNo == ErrCode.OBJ_NOT_IN_INFO_MODEL) {
-				mgr.addObjHoldInRoot((InfoMObject) arg, RelName.usrExtInfoOfRoot);
+				mgr.addObjectRightAndDownRel(RelName.usrExtInfoOfRoot, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
 			}
 		}
 		return null;

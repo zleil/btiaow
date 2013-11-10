@@ -21,7 +21,7 @@ public class CommonMgr {
 	
 	static private CommonMgr inst;
 	
-	public InfoMObject getInfoObject(
+	public InfoMObject getObject(
 			Class<?extends InfoMObject>infoClz, List<String> urlIds) throws BTiaoExp {
 		InfoMObject info = null;
 		try {
@@ -40,36 +40,18 @@ public class CommonMgr {
 		}
 	}
 	
-	public List<InfoMObject> seqGet(
-			String relName, InfoMObject obj, int num) throws BTiaoExp {
-		List<InfoMObject> ret = new ArrayList<InfoMObject>();
-		
-		while (num-- > 0) {
-			InfoMObject o = base.getFirstRelObj(
-					obj, new RelType(relName), obj.getClass(), true);
-			if (o == null) {
-				break;
-			}
-			
-			ret.add(o);
-			obj = o;
-		}
-		
-		return ret;
-	}
-	
-	public InfoMObject getFirstRelObj(
-			InfoMObject obj, 
-			String relName, 
-			Class<?extends InfoMObject> relObjClz, 
-			boolean isOut) throws BTiaoExp {
-		return base.getFirstRelObj(obj, new RelType(relName), relObjClz, isOut);
-	}
-	
-	public void delInfoObject(InfoMObject info) throws BTiaoExp {
+
+	public void updateObject(
+			InfoMObject info, Collection<String> attrs) throws BTiaoExp {
 		base.begin();
 		try {
-			base.del(info);
+			InfoMObject newObj = info.clone();
+			if (!base.get(newObj)) {
+				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(newObj.toString()));
+			}
+			
+			newObj.update(info, attrs);
+			base.mdf(newObj);
 			
 			base.success();
 		} catch (BTiaoExp e) {
@@ -79,71 +61,8 @@ public class CommonMgr {
 			base.finish();
 		}
 	}
-	
-	public void delTimeSeqInfoObject(String relName,
-			InfoMObject from, InfoMObject to) throws BTiaoExp {
-		base.begin();
-		try {
-			//first, delete relation of to
-			if (base.hasRel(from, to, new RelType(relName))) {
-				InfoMObject next = base.getFirstRelObj(to, new RelType(RelName.timeSeq), to.getClass(), true);
-				
-				if (next != null) {
-					base.delRel(from, to, new RelType(relName));
-					base.delRel(to, next, new RelType(RelName.timeSeq));
-					
-					base.addRel(from, next, new RelType(relName));
-				} else {
-					base.delRel(from, to, new RelType(relName));
-				}
-			} else {
-				InfoMObject next = base.getFirstRelObj(to, new RelType(RelName.timeSeq), to.getClass(), true);
-				InfoMObject pre = base.getFirstRelObj(to, new RelType(RelName.timeSeq), to.getClass(), true);
-				
-				if (next != null) {
-					base.delRel(to, next, new RelType(RelName.timeSeq));
-					base.delRel(pre, to, new RelType(RelName.timeSeq));
-					
-					base.addRel(pre, next, new RelType(RelName.timeSeq));
-				} else {
-					base.delRel(pre, to, new RelType(RelName.timeSeq));
-				}
-			}
-			
-			//second delete to
-			base.del(to);
-			
-			base.success();
-		} catch (BTiaoExp e) {
-			base.failed();
-			throw e;
-		} finally {
-			base.finish();
-		}
-	}
-	
-	public void addTimeSeqInfoObject(
-			String relName, 
-			InfoMObject from, 
-			InfoMObject info) throws BTiaoExp {
-		addObjectRightAndDownRel(relName, from, info, RelName.timeSeq);
-	}
-	
+
 	public void addObjectRightAndDownRel(
-			String rightRelName, 
-			InfoMObject from, 
-			InfoMObject to,
-			String downRelName) throws BTiaoExp {
-		_addObjectRightAndDownRel(rightRelName, from, to, downRelName, false);
-	}
-	public void addObjectRelRightAndDownRel(
-			String rightRelName, 
-			InfoMObject from, 
-			InfoMObject to,
-			String downRelName) throws BTiaoExp {
-		_addObjectRightAndDownRel(rightRelName, from, to, downRelName, true);
-	}
-	private void _addObjectRightAndDownRel(
 			String rightRelName, 
 			InfoMObject from, 
 			InfoMObject to,
@@ -171,12 +90,51 @@ public class CommonMgr {
 		}
 	}
 	
-	public List<InfoMObject> getAllRightAndDownObj(InfoMObject parentObj, 
+	public void delObjectRightAndDownRel(String rightRelName, 
+			InfoMObject from, 
+			InfoMObject to,
+			String downRelName, 
+			boolean justDelRel) throws BTiaoExp {
+		base.begin();
+		try {
+			boolean isFirst = base.hasRel(from, to, new RelType(rightRelName));
+			
+			InfoMObject nextObj = base.getFirstRelObj(to, 
+					new RelType(downRelName), to.getClass(), true);
+			
+			if (isFirst) {
+				base.delRel(from, to, new RelType(rightRelName));
+				if (nextObj != null) {
+					base.delRel(to, nextObj, new RelType(downRelName));
+					base.addRel(from, nextObj, new RelType(rightRelName));
+				}
+			} else {
+				InfoMObject upperObj = base.getFirstRelObj(to, 
+						new RelType(downRelName), to.getClass(), false);
+				base.delRel(upperObj, to, new RelType(downRelName));
+				if (nextObj != null) {
+					base.addRel(upperObj, nextObj, new RelType(downRelName));
+				}
+			}
+			
+			if (!justDelRel) base.del(to);
+			
+			base.success();
+		} catch (BTiaoExp e) {
+			base.failed();
+			throw e;
+		} finally {
+			base.finish();
+		}
+	}
+	
+	public List<InfoMObject> getAllObjRightAndDownRel(InfoMObject parentObj, 
 			Class<?extends InfoMObject> objClz, String rightRel, 
 			InfoMObject lastObj, String downRel, int num) throws BTiaoExp {
 		if (lastObj == null) {
 			InfoMObject firstObj = 
-					getFirstRelObj(parentObj, rightRel, objClz, true);
+					base.getFirstRelObj(parentObj, new RelType(rightRel), objClz, true);
+			
 			if (firstObj == null) {
 				return new ArrayList<InfoMObject>();
 			} else {
@@ -192,30 +150,23 @@ public class CommonMgr {
 			return seqGet(downRel, lastObj, num);
 		}
 	}
-		
-	public void addObjHoldInRoot(InfoMObject obj, String relName) throws BTiaoExp {
-		addObjectRelRightAndDownRel(relName, new BTiaoRoot(), obj, RelName.timeSeq);
-	}
 	
-	public void updateObject(
-			InfoMObject info, Collection<String> attrs) throws BTiaoExp {
-		base.begin();
-		try {
-			InfoMObject newObj = info.clone();
-			if (!base.get(newObj)) {
-				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(newObj.toString()));
+	private List<InfoMObject> seqGet(
+			String relName, InfoMObject obj, int num) throws BTiaoExp {
+		List<InfoMObject> ret = new ArrayList<InfoMObject>();
+		
+		while (num-- > 0) {
+			InfoMObject o = base.getFirstRelObj(
+					obj, new RelType(relName), obj.getClass(), true);
+			if (o == null) {
+				break;
 			}
 			
-			newObj.update(info, attrs);
-			base.mdf(newObj);
-			
-			base.success();
-		} catch (BTiaoExp e) {
-			base.failed();
-			throw e;
-		} finally {
-			base.finish();
+			ret.add(o);
+			obj = o;
 		}
+		
+		return ret;
 	}
 	
 	private String getUrlIdsStr(List<String> urlIds) {

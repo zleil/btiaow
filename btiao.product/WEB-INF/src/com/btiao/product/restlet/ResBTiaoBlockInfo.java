@@ -26,7 +26,7 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 	
 	@Override
 	protected Object get(Form form) throws BTiaoExp {
-		return CommonMgr.instance().getInfoObject(BlockInfo.class, urlIds);
+		return CommonMgr.instance().getObject(BlockInfo.class, urlIds);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 
 		Position pos = new Position();
 		pos.initId(new ArrayList<String>(urlIds.subList(0, urlIds.size()-1)));
-		CommonMgr.instance().addTimeSeqInfoObject(RelName.blockInfo, pos, (InfoMObject)arg);
+		CommonMgr.instance().addObjectRightAndDownRel(RelName.blockInfo, pos, (InfoMObject)arg, RelName.timeSeq, false);
 		return null;
 	}
 
@@ -62,7 +62,7 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 		
 		Position pos = new Position();
 		pos.initId(new ArrayList<String>(urlIds.subList(0, urlIds.size()-1)));
-		CommonMgr.instance().delTimeSeqInfoObject(RelName.blockInfo, pos, (InfoMObject)info);
+		CommonMgr.instance().delObjectRightAndDownRel(RelName.blockInfo, pos, info, RelName.timeSeq, false);
 		return null;
 	}
 	

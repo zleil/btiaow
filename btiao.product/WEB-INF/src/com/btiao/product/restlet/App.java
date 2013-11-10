@@ -10,6 +10,7 @@ import org.restlet.routing.Router;
 import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.oif.restlet.RestFilterBasicAuth;
 import com.btiao.infomodel.InfoMObject;
+import com.btiao.product.domain.BlockInfo;
 import com.btiao.product.domain.Order;
 import com.btiao.product.domain.Position;
 import com.btiao.product.restlet.RestBTiaoGetAll.Def;
@@ -24,11 +25,12 @@ public class App extends Application {
 		router.attach("/usrInfoExt/{usrId}", ResBTiaoUsrInfoExt.class);
 		
 		//router.attach("/positions", ResBTiaoPositionGetAll.class);
-		router.attach("/positions/{positionId}/infos", ResBTiaoBlockInfoGetFunc.class);
+		//router.attach("/positions/{positionId}/infos", ResBTiaoBlockInfoGetFunc.class);
 		//router.attach("/positions/{positionId}/orders", RestBTiaoGetAll.class);
 		
 		def("/positions",BTiaoRoot.class,Position.class,RelName.posOfRoot,RelName.timeSeq,ids(),ids("lastId"));
 		def("/positions/{posId}/orders",Position.class,Order.class,RelName.order,RelName.timeSeq,ids("posId"),ids("lastId"));
+		def("/positions/{posId}/infos",Position.class,BlockInfo.class,RelName.blockInfo,RelName.timeSeq,ids("posId"),ids("lastId"));
 		
 		RestFilterBasicAuth authFilter = new RestFilterBasicAuth();
 		authFilter.setNext(router);

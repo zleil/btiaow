@@ -8,6 +8,7 @@ import org.restlet.data.Form;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
 import com.btiao.common.service.CommonMgr;
@@ -23,20 +24,20 @@ public class ResBTiaoPosition extends ResBTBase {
 	
 	@Override
 	protected Object get(Form form) throws BTiaoExp {
-		return CommonMgr.instance().getInfoObject(Position.class, urlIds);
+		return CommonMgr.instance().getObject(Position.class, urlIds);
 	}
 
 	@Override
 	@JsonCvtInfo(objClassName="com.btiao.product.domain.Position")
 	protected Object put(Object arg) throws BTiaoExp {
 		InfoMObject info = (InfoMObject)arg;
-		String lastUrlId = urlIds.get(urlIds.size()-1);
-		if (!lastUrlId.endsWith(OBJID_WHEN_CREATE)){
-			String errMsg = "last id in url is not equals to " + OBJID_WHEN_CREATE;
-			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
-		}
+//		String lastUrlId = urlIds.get(urlIds.size()-1);
+//		if (!lastUrlId.endsWith(OBJID_WHEN_CREATE)){
+//			String errMsg = "last id in url is not equals to " + OBJID_WHEN_CREATE;
+//			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
+//		}
 
-		CommonMgr.instance().addObjHoldInRoot(info, RelName.posOfRoot);
+		CommonMgr.instance().addObjectRightAndDownRel(RelName.posOfRoot, new BTiaoRoot(), info, RelName.timeSeq, false);
 		return null;
 	}
 
@@ -59,7 +60,7 @@ public class ResBTiaoPosition extends ResBTBase {
 	protected Object del(Object arg) throws BTiaoExp {
 		Position info = new Position();
 		info.initId(urlIds);
-		CommonMgr.instance().delInfoObject(info);
+		CommonMgr.instance().delObjectRightAndDownRel(RelName.posOfRoot, new BTiaoRoot(), info, RelName.timeSeq, false);
 		return null;
 	}
 
