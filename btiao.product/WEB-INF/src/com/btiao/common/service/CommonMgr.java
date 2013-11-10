@@ -5,11 +5,9 @@ import java.util.Collection;
 import java.util.List;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
-import com.btiao.base.model.BTiaoRoot;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.infomodel.RelType;
-import com.btiao.product.restlet.RelName;
 
 public class CommonMgr {
 	static public CommonMgr instance() {

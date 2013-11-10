@@ -85,11 +85,18 @@ public class RestBTiaoGetAll extends ResBTBase {
 			throw new BTiaoExp(ErrCode.INTERNEL_ERROR, e, "failed to get parent obj while get all!");
 		}
 		
-		ArrayList<String> urlIds = new ArrayList<String>();
-		String posId = this.getAttribute("positionId");
-		urlIds.add(posId);
+		List<String> idStrs = def.idStrs;
+		List<String> idList = new ArrayList<String>();
+		for (String idStr : idStrs) {
+			String value = this.getAttribute(idStr);
+			if (value == null || value.equals("")) {
+				return null;
+			}
+			
+			idList.add(value);
+		}
 		
-		parentObj.initId(urlIds);
+		parentObj.initId(idList);
 		return parentObj;
 	}
 	
