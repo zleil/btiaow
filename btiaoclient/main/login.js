@@ -2,6 +2,31 @@
 var userRoot = "/btiao/usrmgr";
 var logNodeName = "/auth";
 
+/**
+ * 封装持久化接口，确保所有持久化到客户端的变量，必须在此类中定义
+ */
+function ClientPersist() {
+	this.devUserId = "devUserId";
+}
+ClientPersist.prototype.get = function(name) {
+	if (!!!localStorage) return undefined;
+	
+	if (!eval("!!this."+name)) {
+		throw Exception("get a unkown persist variable["+name+"]");
+	}
+	
+	return localStorage[name];
+}
+ClientPersist.prototype.set = function(name, value) {
+	if (!!!localStorage) return undefined;
+	
+	if (!eval("!!this."+name)) {
+		throw Exception("set a unkown persist variable["+name+"]");
+	}
+	
+	localStorage[name] = value;
+}
+
 function getDevUserId() {
 	var devUserId = retriveDevId();
 	if (!!devUserId) {
@@ -13,16 +38,10 @@ function getDevUserId() {
 	return devUserId;
 }
 function storeDevUserId(devUserId) {
-	if (localStorage) {
-		localStorage["btiao.devUserId"] = devUserId;
-	}
+	btiao.clientPersist.set("btiao.devUserId", devUserId);
 }
 function retriveDevId() {
-	if (localStorage) {
-		return localStorage["btiao.devUserId"];
-	} else {
-		return undefined;
-	}
+	return btiao.clientPersist.get("btiao.devUserId");
 }
 function genDevUserId() {
 	var myDate = new Date();
@@ -48,12 +67,13 @@ function devLogin() {
 			if (d.errCode == 0) {
 				var token = d.content.token;
 				
-				btiao.loginInfo = new Object();
+				btiao.loginInfo = {};
 				btiao.loginInfo.user = loginUser;
 				btiao.loginInfo.token = token;
 				
 				//TODO change areaId to user's default areaId
 				var posId = 1000001;
+				
 				btiao.preparePgFirst(posId);
 			} else {
 				alert("login error!");
@@ -83,8 +103,22 @@ function devLogout() {
 	})
 }
 
+btiao.log = function (str) {
+	if (!!btiao.log.android) {
+		alert(str);
+	} else {
+		alert(str);
+	}
+}
+
 var oldInit = window.onload;
 window.onload = function() {
+	if (navigator.userAgent.match(/Android/i)) {
+		btiao.log.android = true;
+	} else {	
+		btiao.log.android = false;
+	}
+	
 	if (!!oldInit) {
 		(oldInit)();
 	}
@@ -96,6 +130,8 @@ window.onload = function() {
 	});
 	$("#labProductNum").change(btiao.changePurchaseNum);
 	$("#labProductNum").slider("refresh");
+	
+	btiao.reg("clientPersist", new ClientPersist());
 }
 
 })();

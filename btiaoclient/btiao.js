@@ -1,16 +1,20 @@
-window.btiao = new Object();
-btiao.ns = new Object();
-btiao.ns.reg = function(fullNS) {
+btiao = new Object();
+btiao.reg = function(fullNS, value) {
+	if (eval("!!"+fullNS)) {
+		throw new Exception("redefined a global btiao value!");
+	}
+	
 	var nsArray = fullNS.split('.');
 	var sEval = "";
-	var sNS = "";
+	var sNS = "btiao";
 	
 	for (var i = 0; i < nsArray.length; i++) {
-		if (i != 0) sNS += ".";
+		sNS += ".";
 		sNS += nsArray[i];
 		sEval += "if (typeof(" + sNS + ") == 'undefined') " + sNS + " = new Object();"
 	}
 	
 	if (sEval != "") eval(sEval);
+	eval(fullNS+"=value");
 }
 

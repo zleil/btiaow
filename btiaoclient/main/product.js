@@ -17,11 +17,15 @@
 			url: "http://localhost"+url,
 			contentType: "application/json; charset=UTF-8",
 			data: {__opUsrInfo:{uId: loginUser, token: token}},
-			success: func
+			success: func,
+			error: function(xhr, textStatus, errorThrown) {
+				btiao.log("error="+textStatus+","+errorThrown+","+xhr.status);
+			}
 		});
 	}
 	function getUsrExtInfo(func) {
 		var url = productRoot + "/usrInfoExt/" + loginUser;
+		
 		return getObj(url, func);
 	}
 	
@@ -29,9 +33,11 @@
 	btiao.preparePgFirst = function(posId) {
 		loginUser = btiao.loginInfo.user;
 		token = btiao.loginInfo.token;
-		
+
 		getUsrExtInfo(function(d){
-			usrExtInfo = d.content;
+			if (d.errCode == 0) {
+				usrExtInfo = d.content;
+			}
 			preparePgFirst2(posId);
 		});
 	}
@@ -54,7 +60,6 @@
 				h3.append(d.content.name);
 				
 				fillBlockInfo("", numPer);
-				
 				$.mobile.changePage("#pgFirst");
 			}
 		});
@@ -83,7 +88,7 @@
 					$("#lstBlockInfo").listview("refresh");
 				} else {
 					//TODO
-					alert("error:"+d.errCode);
+					btiao.log("error:"+d.errCode);
 				}
 			}
 		});
@@ -118,7 +123,9 @@
 		$('#labProductNum').slider("refresh");
 		btiao.changePurchaseNum();
 		
-		$("#orderDst").val(usrExtInfo.locationOfPos);
+		if (!!usrExtInfo && !!usrExtInfo.locationOfPos){
+			$("#orderDst").val(usrExtInfo.locationOfPos);
+		}
 		$.mobile.changePage("#pgPurchase");//, {role:"dialog"});
 	}
 	
@@ -148,7 +155,25 @@
 		});
 	}
 	
+	function checkOrderDst() {
+		return !!$("#orderDst").val().match(/[0-9]{8}/);
+	}
+	function dispPurchaseAlert() {
+		$("#orderDstNote").addClass("alertArea");
+	}
+	function undispPurchaseAlert() {
+		$("#orderDstNote").removeClass("alertArea");
+	}
+	function setLastOrderDst() {
+		
+	}
+	
 	btiao.purchase = function() {
+		if (!checkOrderDst()) {
+			dispPurchaseAlert();
+			return;
+		}
+		
 		getId("orderId", function(orderId) {
 			var productNum = parseInt($('#labProductNum').val());
 	
@@ -167,6 +192,8 @@
 					fromUser: "'+loginUser+'" \
 				}',
 				success: function(d) {
+					undispPurchaseAlert();
+					
 					//$("#pgPurchase").dialog("close");
 //					setTimeout(function(){
 //						$("#pgPurchase").dialog("close");
@@ -174,7 +201,7 @@
 					$.mobile.changePage("#pgFirst");
 				},
 				error: function(httpReq, textStatus, errorThrow) {
-					alert("购买失败，请确认网络无故障，若无故障则可能是系统问题:"+textStatus);
+					btiao.log("购买失败，请确认网络无故障，若无故障则可能是系统问题:"+textStatus);
 				}
 			});
 		});
