@@ -9,14 +9,14 @@ public class Order extends InfoMObject {
 
 	@Override
 	public boolean initId(List<String> urlIds) {
-		this.orderId = urlIds.get(0);
+		this.id = urlIds.get(0);
 		return true;
 	}
 
 	public String posId = "";
 	
 	@InfoMObjAttrDesc(key=true)
-	public String orderId = "";
+	public String id = "";
 	
 	public String productId = "";
 	public String productDesc = "";
@@ -27,4 +27,6 @@ public class Order extends InfoMObject {
 	public String fromUser = "";
 	
 	public boolean discard = false;
+	
+	public String orderDst = "";
 }
