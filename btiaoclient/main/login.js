@@ -6,51 +6,144 @@ var logNodeName = "/auth";
  * 封装持久化接口，确保所有持久化到客户端的变量，必须在此类中定义
  */
 function ClientPersist() {
-	this.devUserId = "devUserId";
+	this.map = {};
+	this.map["btiao.devUserId"] = true;
+	this.map["btiao.orderDst"] = true;
 }
+ClientPersist.prototype.test = 1;
 ClientPersist.prototype.get = function(name) {
-	if (!!!localStorage) return undefined;
+	if (undefined == localStorage) return undefined;
 	
-	if (!eval("!!this."+name)) {
-		throw Exception("get a unkown persist variable["+name+"]");
+	if (!this.map[name]) {
+		throw Exception("get a variable not existing from client persist!");
 	}
 	
 	return localStorage[name];
 }
 ClientPersist.prototype.set = function(name, value) {
-	if (!!!localStorage) return undefined;
+	if (undefined == localStorage) return undefined;
 	
-	if (!eval("!!this."+name)) {
-		throw Exception("set a unkown persist variable["+name+"]");
+	if (!this.map[name]) {
+		throw Exception("get a variable not existing from client persist!");
 	}
 	
 	localStorage[name] = value;
 }
 
-function getDevUserId() {
-	var devUserId = retriveDevId();
+function Util() {}
+Util.prototype.getObj = function (url, func) {
+	$.ajax({
+		type: "GET",
+		url: url,
+		contentType: "application/json; charset=UTF-8",
+		data: {__opUsrInfo: {uId: btiao.loginMgr.user, token: btiao.loginMgr.token}},
+		success: func,
+		error: function(xhq,errStatus,e){
+			btiao.log.l(errStatus);
+		}
+	});
+}
+Util.prototype.getAllObj = function(url, func, num, lastId) {
+	$.ajax({
+		type: "GET",
+		url: url,
+		contentType: "application/json; charset=UTF-8",
+		data: {
+			__opUsrInfo: {uId: btiao.loginMgr.user, token: btiao.loginMgr.token},
+			func: "normal",
+			lastId: lastId,
+			num: num
+		},
+		success: func,
+		error: function(xhq,errStatus,e){
+			btiao.log.l(errStatus);
+		}
+	});
+}
+Util.prototype.getId = function (idName, func) {
+	$.ajax({
+		type: "POST",
+		url: "/btiao/product/getId/"+idName,
+		contentType: "application/json; charset=UTF-8",
+		data: '{\
+			__opUsrInfo: {uId: "' + btiao.loginMgr.user + '", token: "' + btiao.loginMgr.token + '"} \
+		}',
+		success: function(d) {
+			var idValue = d.content.nextValue;
+			(func)(idValue);
+		},
+		error: function(xhq,errStatus,e){
+			btiao.log.l(errStatus);
+		}
+	});
+}
+Util.prototype.getInnerJsonStr = function (obj) {
+	var first = true;
+	var r = "";
+	
+	for (attrName in obj) {
+		if (!first) {
+			r += ",";
+		} else {
+			first = false;
+		}
+		
+		if (obj[attrName] instanceof Object) {
+			r += attrName + ":" + getJsonObjStr(obj[attrName]);
+		} else {
+			r += attrName + ":" + "\"" + obj[attrName] + "\"";
+		}
+	}
+	return r;
+}
+Util.prototype.putObj = function(url, obj, func) {
+	$.ajax({
+		type: "PUT",
+		url: url,
+		contentType: "application/json; charset=UTF-8",
+		data: '{ \
+			__opUsrInfo: {uId: "' + btiao.loginMgr.user + '", token: "' + btiao.loginMgr.token + '"},' +
+			this.getInnerJsonStr(obj) +
+		'}',
+		success: func,
+		error: function(httpReq, textStatus, errorThrow) {
+			btiao.log.l("购买失败，请确认网络无故障，若无故障则可能是系统问题:"+textStatus);
+		}
+	});
+}
+Util.prototype.decoratePrice = function(price) {
+	return (price*1.0)/100;
+}
+
+function LoginMgr() {
+	this.logined = false;
+	this.user = undefined;
+	this.token = undefined;
+}
+LoginMgr.prototype.getDevUserId = function () {
+	var devUserId = this.retriveDevId();
 	if (!!devUserId) {
 		return devUserId;
 	}
 	
-	devUserId = genDevUserId();
-	storeDevUserId(devUserId);
+	devUserId = this.genDevUserId();
+	this.storeDevUserId(devUserId);
 	return devUserId;
 }
-function storeDevUserId(devUserId) {
+LoginMgr.prototype.storeDevUserId = function (devUserId) {
 	btiao.clientPersist.set("btiao.devUserId", devUserId);
 }
-function retriveDevId() {
+LoginMgr.prototype.retriveDevId = function () {
 	return btiao.clientPersist.get("btiao.devUserId");
 }
-function genDevUserId() {
+LoginMgr.prototype.genDevUserId = function () {
 	var myDate = new Date();
 	var devUserId = "007_" + myDate.getTime();
 	return devUserId;
 }
 
-function devLogin() {
-	var loginUser = getDevUserId();
+LoginMgr.prototype.devLogin = function () {
+	var loginUser = this.getDevUserId();
 	var usrPasswd = loginUser;
 	
 	$.ajax({
@@ -65,23 +158,19 @@ function devLogin() {
 		}',
 		success: function(d) {
 			if (d.errCode == 0) {
-				var token = d.content.token;
+				this.logined = false;
+
+				btiao.loginMgr.user = loginUser;
+				btiao.loginMgr.token = d.content.token;
 				
-				btiao.loginInfo = {};
-				btiao.loginInfo.user = loginUser;
-				btiao.loginInfo.token = token;
-				
-				//TODO change areaId to user's default areaId
-				var posId = 1000001;
-				
-				btiao.preparePgFirst(posId);
+				btiao.firstPage.prepare();
 			} else {
 				alert("login error!");
 			}
 		}
 	});
 }
-function devLogout() {
+LoginMgr.prototype.devLogout = function () {
 	var loginUser = btiao.loginInfo.user;
 	var token = btiao.loginInfo.token;
 	
@@ -103,35 +192,39 @@ function devLogout() {
 	})
 }
 
-btiao.log = function (str) {
-	if (!!btiao.log.android) {
+function Log() {
+	if (navigator.userAgent.match(/Android/i)) {
+		this.isAndroid = true;
+	} else {	
+		this.isAndroid = false;
+	}
+}
+Log.prototype.l = function (str) {
+	if (!!this.isAndroid) {
 		alert(str);
 	} else {
 		alert(str);
 	}
 }
 
+btiao.reg("log", new Log());
+btiao.reg("clientPersist", new ClientPersist());
+btiao.reg("util", new Util());
+btiao.reg("loginMgr", new LoginMgr());
+
 var oldInit = window.onload;
 window.onload = function() {
-	if (navigator.userAgent.match(/Android/i)) {
-		btiao.log.android = true;
-	} else {	
-		btiao.log.android = false;
-	}
-	
 	if (!!oldInit) {
 		(oldInit)();
 	}
 	
-	$("#btDevLogin").click(devLogin);
+	$("#btDevLogin").click(function(){btiao.loginMgr.devLogin()});
 
 	$("#labProductNum").slider({
 		theme:"c",trackTheme:"c",highlight:true,mini:false
 	});
 	$("#labProductNum").change(btiao.changePurchaseNum);
 	$("#labProductNum").slider("refresh");
-	
-	btiao.reg("clientPersist", new ClientPersist());
 }
 
 })();

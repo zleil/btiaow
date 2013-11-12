@@ -67,41 +67,60 @@
 <!-- Home -->
 <div data-role="page" id="pgFirst">
     <div data-theme="a" data-role="header">
+	    <a data-role="button" id="actListOrders" data-theme="a" href="#page1" data-icon="grid" data-iconpos="left"
+	        class="ui-btn-right">
+            订单
+        </a>
         <h3 class="posName">
             小卖部6#0105  [望春园]
         </h3>
     </div>
     <div data-role="content">
+    	<h4>本区所有者：<span id="posOwner"></span>，<a class="button" id="actSendMsg2PosOwner">@他/她</a></h4>
         <ul id="lstBlockInfo" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
     </div>
     <div data-theme="a" data-role="footer" data-position="fixed">
         <div data-role="navbar" data-iconpos="top">
             <ul>
+            <li>
+                    <a id="actRefreshFirstPage" data-transition="fade" data-theme="" data-icon="refresh">
+                         刷新
+                    </a>
+                </li>
                 <li>
-                    <a href="#page1" data-transition="fade" data-theme="" data-icon="">
+                    <a id="actToHomeArea" data-transition="fade" data-theme="" data-icon="home">
+                         回家
+                    </a>
+                </li>
+                <li>
+                    <a id="actToUpArea" data-transition="fade" data-theme="" data-icon="arrow-u">
+               上级
+                    </a>
+                </li>
+                <li>
+                    <a id="actListDownArea" data-transition="fade" data-theme="" data-icon="arrow-d">
+         下级
+                    </a>
+                </li>
+                <li>
+                    <a href="#page1" data-transition="fade" data-theme="" data-icon="info">
                         消息
-                    </a>
-                </li>
-                <li>
-                    <a href="#page1" data-transition="fade" data-theme="" data-icon="">
-                        向上
-                    </a>
-                </li>
-                <li>
-                    <a href="#page1" data-transition="fade" data-theme="" data-icon="" class="ui-btn-active ui-state-persist">
-                        -
-                    </a>
-                </li>
-                <li>
-                    <a href="#page1" data-transition="fade" data-theme="" data-icon="" class="ui-btn-active ui-state-persist">
-                        -
                     </a>
                 </li>
             </ul>
         </div>
     </div>
 </div>
-
+<div data-role="page" id="pgFirst">
+    <div data-theme="a" data-role="header">
+        <h3 class="posName">
+            订单列表
+        </h3>
+    </div>
+    <div data-role="content">
+    	<ul id="lstOrders" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
+    </div>
+</div>
 <!-- Home -->
 <div data-role="page" id="pgDetail">
     <div data-theme="a" data-role="header">

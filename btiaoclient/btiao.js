@@ -1,6 +1,6 @@
 btiao = new Object();
 btiao.reg = function(fullNS, value) {
-	if (eval("!!"+fullNS)) {
+	if (eval("!!btiao."+fullNS)) {
 		throw new Exception("redefined a global btiao value!");
 	}
 	
@@ -15,6 +15,6 @@ btiao.reg = function(fullNS, value) {
 	}
 	
 	if (sEval != "") eval(sEval);
-	eval(fullNS+"=value");
+	eval(sNS+"=value");
 }
 
