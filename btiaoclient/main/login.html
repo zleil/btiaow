@@ -76,7 +76,7 @@
         </h3>
     </div>
     <div data-role="content">
-    	<h4>本区所有者：<span id="posOwner"></span>，<a class="button" id="actSendMsg2PosOwner">@他/她</a></h4>
+    	<h4>本区所有者：<span id="posOwner"></span>（<a class="button" id="actSendMsg2PosOwner">@他/她</a>）</h4>
         <ul id="lstBlockInfo" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
     </div>
     <div data-theme="a" data-role="footer" data-position="fixed">
@@ -111,14 +111,34 @@
         </div>
     </div>
 </div>
-<div data-role="page" id="pgFirst">
+<div data-role="page" id="pgOrderListPage">
     <div data-theme="a" data-role="header">
-        <h3 class="posName">
+    	<a data-role="button" href="#pgFirst" class="ui-btn-left">
+            返回
+        </a>
+        <h3>
             订单列表
         </h3>
     </div>
     <div data-role="content">
-    	<ul id="lstOrders" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
+    	<h5 class="noOrderTip">当前还没有订单，别灰心，加油哦:-)~~~</h5>
+    	<ul id="lstOrderInfo" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
+    </div>
+</div>
+<div data-role="page" id="pgOrderDetailPage">
+    <div data-theme="a" data-role="header">
+    	<a data-role="button" href="#pgOrderListPage" class="ui-btn-left">
+            返回
+        </a>
+        <h3>
+            订单明细
+        </h3>
+    </div>
+    <div data-role="content">
+    	<h5>订单号：<span id="labOrderId"></span></h5>
+    	<h5>客户：<span id="labOrderfromUser"></span></h5>
+    	<h5>产品描述：<span id="labOrderDesc"></span></h5>
+    	<h5>单价：<span id="labOrderPrice"></span>，数量：<span id="labOrderProductNum"></span></h5>
     </div>
 </div>
 <!-- Home -->

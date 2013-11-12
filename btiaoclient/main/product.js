@@ -37,7 +37,6 @@ FirstPage.prototype.prepare = function() {
 			
 			$("#posOwner").text(btiao.firstPage.curPosInfo.owner);
 			
-			$.mobile.changePage("#pgFirst");
 			btiao.firstPage.fillBlockInfo("", numPer);
 		});
 	});
@@ -46,6 +45,9 @@ FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
 	var url = productRoot+"/positions/"+this.curPosInfo.id+"/infos";
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
+			this.infos = {};
+			btiao.util.clearListViewData("#lstBlockInfo");
+			
 			for (var idx in d.content) {
 				btiao.firstPage.fillAInfo(d.content[idx]);
 			}
@@ -53,6 +55,8 @@ FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
 				var infoId = $(e.target).attr("data-infoid");
 				btiao.detailPage.prepare(infoId);
 			});
+			
+			$.mobile.changePage("#pgFirst");
 			$("#lstBlockInfo").listview("refresh");
 		} else {
 			btiao.log.l("error:"+d.errCode);
@@ -67,6 +71,9 @@ FirstPage.prototype.fillAInfo = function (info) {
 			'</a></li>'
 	);
 	this.infos[info.id] = info;
+}
+FirstPage.prototype.goToOrderListPage = function(){
+	btiao.orderListPage.prepare(this.curPosInfo.id);
 }
 
 function DetailPage() {
@@ -140,14 +147,17 @@ PurchasePage.prototype.purchase = function() {
 		var productNum = parseInt($('#labProductNum').val());
 		var url = productRoot+"/positions/"+btiao.firstPage.curPosInfo.id+"/orders/__n";
 		
+		var orderDst = $("#orderDst").val();
+		
 		var obj = {
-				orderId: orderId,
-				curPosId: btiao.firstPage.curPosInfo.id,
+				id: orderId,
+				posId: btiao.firstPage.curPosInfo.id,
 				productId: btiao.detailPage.info.id,
-				productDesc: btiao.detailPage.desc,
+				productDesc: btiao.detailPage.info.desc,
 				productNum: productNum,
-				totalPrice: btiao.detailPage.info.totalPrice*productNum,
-				fromUser: btiao.loginMgr.user
+				totalPrice: btiao.detailPage.info.price*productNum,
+				fromUser: btiao.loginMgr.user,
+				orderDst: orderDst
 		}
 		btiao.util.putObj(url, obj, function(d) {
 			btiao.purchasePage.undispPurchaseAlert();
@@ -162,12 +172,75 @@ PurchasePage.prototype.purchase = function() {
 	});
 }
 
-function OrderListPage() {}
-OrderListPage.prototype.
+function OrderListPage() {
+	this.orders = {};
+	this.posId = "";
+}
+OrderListPage.prototype.prepare = function(posId) {
+	this.posId = posId;
+	
+	this.fillAllOrder("", numPer);
+}
+OrderListPage.prototype.fillAllOrder = function (lastOrderId, num) {
+	var url = productRoot+"/positions/"+this.posId+"/orders";
+	btiao.util.getAllObj(url, function(d){
+		if (d.errCode == 0) {
+			if (d.content.length == 0) {
+				$("#pgOrderListPage .noOrderTip").css("display", "block");
+			} else {
+				$("#pgOrderListPage .noOrderTip").css("display", "none");
+			}
+			
+			for (var idx in d.content) {
+				btiao.orderListPage.fillAOrder(d.content[idx]);
+			}
+			
+			$(".orderInfo").click(function(e){
+				var orderId = undefined;
+				var i=5;
+				var n = e.target;
+				while (orderId == undefined && i-->0 && n != null) {
+					orderId = $(n).attr("data-orderid");
+					n = n.parentNode;
+				}
+				
+				var orderInfo = btiao.orderListPage.orders[orderId];
+				btiao.orderDetailPage.prepare(orderInfo);
+			});
+			
+			$.mobile.changePage("#pgOrderListPage");
+			$("#lstOrderInfo").listview("refresh");
+		} else {
+			btiao.log.l("error:"+d.errCode);
+		}
+	}, num, lastOrderId);
+}
+OrderListPage.prototype.fillAOrder = function(orderInfo) {
+	$("#lstOrderInfo").append(
+			'<li data-theme="e">' +
+			'<a class="orderInfo" data-orderid="'+orderInfo.id+'" data-transition="slide">' +
+			'<h3>' + orderInfo.productDesc + '</h3>' +
+			'<p>总价: ' + orderInfo.totalPrice + '，数量：' + orderInfo.productNum + '送货位置：' + orderInfo.orderDst + '</p>' +
+			'</a></li>'
+	);
+	this.orders[orderInfo.id] = orderInfo;
+}
+
+function OrderDetailPage() {
+	this.orderInfo = null;
+}
+OrderDetailPage.prototype.prepare = function (orderInfo) {
+	this.orderInfo = orderInfo;
+	$("#labOrderId").text(this.orderInfo.id);
+	
+	$.mobile.changePage("#pgOrderDetailPage");
+}
 
 btiao.reg("firstPage", new FirstPage());
 btiao.reg("detailPage", new DetailPage());
 btiao.reg("purchasePage", new PurchasePage());
+btiao.reg("orderListPage", new OrderListPage());
+btiao.reg("orderDetailPage", new OrderDetailPage());
 
 })();
 

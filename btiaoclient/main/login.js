@@ -31,6 +31,9 @@ ClientPersist.prototype.set = function(name, value) {
 }
 
 function Util() {}
+Util.prototype.clearListViewData = function(selector) {
+	$(selector).empty();
+}
 Util.prototype.getObj = function (url, func) {
 	$.ajax({
 		type: "GET",
@@ -225,6 +228,13 @@ window.onload = function() {
 	});
 	$("#labProductNum").change(btiao.changePurchaseNum);
 	$("#labProductNum").slider("refresh");
+	
+	$("#actRefreshFirstPage").click(function(){
+		btiao.firstPage.prepare();
+	});
+	$("#actListOrders").click(function(){
+		btiao.firstPage.goToOrderListPage();
+	})
 }
 
 })();
