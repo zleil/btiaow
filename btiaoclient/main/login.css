@@ -1,3 +1,19 @@
 .alertArea {
 	color:red;
 }
+.orderState0{
+	color:blue;
+}
+.orderState1{
+	color:gray;
+}
+.orderState2{
+	color:gray;
+}
+.newLowPrice{
+	color:red;
+}
+.oldHighPrice{
+	color:gray;
+	text-decoration:line-through;
+}

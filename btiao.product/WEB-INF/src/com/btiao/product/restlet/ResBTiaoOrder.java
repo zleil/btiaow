@@ -68,9 +68,10 @@ public class ResBTiaoOrder extends ResBTBase {
 	}
 
 	@Override
+	@JsonCvtInfo(objClassName="com.btiao.product.domain.Order")
 	protected Object post(Object arg, Collection<String> attrList)
 			throws BTiaoExp {
-		// TODO Auto-generated method stub
+		CommonMgr.instance().updateObject((InfoMObject)arg, attrList);
 		return null;
 	}
 

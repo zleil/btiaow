@@ -26,7 +26,9 @@ public class Order extends InfoMObject {
 	
 	public String fromUser = "";
 	
-	public boolean discard = false;
+	public int state; //0:valid,1:discard,2:finished
 	
 	public String orderDst = "";
+	
+	public long createTime; //毫秒数，相对[UTC]1970.1.1 0点0分
 }

@@ -34,7 +34,7 @@
                 <h3>
                     私人电脑/手机/平板
                 </h3>
-                <a data-role="button" href="javascript:;"  id="btDevLogin">
+                <a data-role="button" id="btDevLogin">
                     设备账号登录
                 </a>
             </div>
@@ -56,7 +56,7 @@
                     </label>
                     <input name="" id="textinput2" placeholder="" value="" type="password">
                 </div>
-                <a data-role="button" href="#">
+                <a data-role="button">
                     登录
                 </a>
             </div>
@@ -67,7 +67,7 @@
 <!-- Home -->
 <div data-role="page" id="pgFirst">
     <div data-theme="a" data-role="header">
-	    <a data-role="button" id="actListOrders" data-theme="a" href="#page1" data-icon="grid" data-iconpos="left"
+	    <a data-role="button" id="actListOrders" data-theme="a" data-icon="grid" data-iconpos="left"
 	        class="ui-btn-right">
             订单
         </a>
@@ -77,7 +77,20 @@
     </div>
     <div data-role="content">
     	<h4>本区所有者：<span id="posOwner"></span>（<a class="button" id="actSendMsg2PosOwner">@他/她</a>）</h4>
+        <div id="checkboxes1" data-role="fieldcontain">
+            <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                <input checked="checked" id="actDisplayValidInfo" name="" type="checkbox">
+                <label for="actDisplayValidInfo">
+                    有效产品
+                </label>
+                <input id="actDisplayAllInfo" name="" type="checkbox">
+                <label for="actDisplayAllInfo">
+                    全部产品
+                </label>
+            </fieldset>
+        </div>
         <ul id="lstBlockInfo" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
+        <a id="actMoreBlockInfos" data-role="button">更多</a>
     </div>
     <div data-theme="a" data-role="footer" data-position="fixed">
         <div data-role="navbar" data-iconpos="top">
@@ -103,7 +116,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#page1" data-transition="fade" data-theme="" data-icon="info">
+                    <a data-transition="fade" data-theme="" data-icon="info">
                         消息
                     </a>
                 </li>
@@ -111,6 +124,7 @@
         </div>
     </div>
 </div>
+
 <div data-role="page" id="pgOrderListPage">
     <div data-theme="a" data-role="header">
     	<a data-role="button" href="#pgFirst" class="ui-btn-left">
@@ -122,9 +136,23 @@
     </div>
     <div data-role="content">
     	<h5 class="noOrderTip">当前还没有订单，别灰心，加油哦:-)~~~</h5>
-    	<ul id="lstOrderInfo" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
+    	<div id="checkboxes1" data-role="fieldcontain">
+            <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                <input checked="checked" id="actDisplayTodoOrder" name="" type="checkbox">
+                <label for="actDisplayTodoOrder">
+                    待发货-订单
+                </label>
+                <input id="actDisplayAllOrder" name="" type="checkbox">
+                <label for="actDisplayAllOrder">
+                    显示全部
+                </label>
+            </fieldset>
+        </div>
+    	<ul id="lstOrderInfo" data-split-icon="check" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
+    	<a id="actMoreOrders" data-role="button">更多</a>
     </div>
 </div>
+
 <div data-role="page" id="pgOrderDetailPage">
     <div data-theme="a" data-role="header">
     	<a data-role="button" href="#pgOrderListPage" class="ui-btn-left">
@@ -136,11 +164,16 @@
     </div>
     <div data-role="content">
     	<h5>订单号：<span id="labOrderId"></span></h5>
+    	<h5>订单状态：<span id="labState"></span></h5>
+    	<h5>购买时间：<span id="labCreateTime"></span></h5>
+    	<h5>总价：<span id="labOrderPrice"></span>，数量：<span id="labOrderProductNum"></span></h5>
+    	<br/>
+    	<h5>目标位置：<span id="labDst"></span></h5>
     	<h5>客户：<span id="labOrderfromUser"></span></h5>
     	<h5>产品描述：<span id="labOrderDesc"></span></h5>
-    	<h5>单价：<span id="labOrderPrice"></span>，数量：<span id="labOrderProductNum"></span></h5>
     </div>
 </div>
+
 <!-- Home -->
 <div data-role="page" id="pgDetail">
     <div data-theme="a" data-role="header">
@@ -150,7 +183,7 @@
         <h3 class="posName">
             小卖部6#0105  [望春园]
         </h3>
-        <a data-role="button" id="actEnterPurchase" href="#" class="ui-btn-right">
+        <a data-role="button" id="actEnterPurchase" class="ui-btn-right">
             购买
         </a>
     </div>
@@ -172,7 +205,7 @@
 	                <div data-role="fieldcontain">
 	                    <textarea name="" id="textarea4" placeholder=""></textarea>
 	                </div>
-	                <a data-role="button" href="#page1">
+	                <a data-role="button">
 	                    提交
 	                </a>
 	            </div>
@@ -184,6 +217,9 @@
 <!-- Home -->
 <div data-role="page" id="pgPurchase">
 	<div data-theme="a" data-role="header">
+		<a data-role="button" href="#pgDetail" class="ui-btn-left">
+            返回
+        </a>
         <h3>
                     订单填写
         </h3>
@@ -207,14 +243,11 @@
         <a data-role="button" id="actPurchase">
             购买
         </a>
-        <a data-role="button" id="actCancelPurchase" href="#pgDetail">
-            取消
-        </a>
         <div data-role="fieldcontain">
             <label for="textarea1">
                 备注
             </label>
-            <textarea name="" id="textarea1" placeholder=""></textarea>
+            <textarea name="" id="idProductMark" placeholder=""></textarea>
         </div>
     </div>
 </div>
