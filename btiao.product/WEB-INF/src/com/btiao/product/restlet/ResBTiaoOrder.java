@@ -43,19 +43,13 @@ public class ResBTiaoOrder extends ResBTBase {
 		}
 
 		Position pos = getPos();
-		
-		BTiaoUser fromUser = new BTiaoUser();
-		{
-			ArrayList<String> array = new ArrayList<String>();
-			array.add((((Order)arg).fromUser));
-			fromUser.initId(array);
-		}
+		BTiaoUser fromUser = getUser((Order)arg);
 		
 		InfoMBaseService base = CommonMgr.instance().base;
 		base.begin();
 		try {
 			CommonMgr.instance().addObjectRightAndDownRel(RelName.order_of_position, pos, (InfoMObject)arg, RelName.timeSeq, false);
-			CommonMgr.instance().addObjectRightAndDownRel(RelName.order_of_position, fromUser, (InfoMObject)arg, RelName.timeSeq_finishedOrder, true);
+			CommonMgr.instance().addObjectRightAndDownRel(RelName.order_of_user, fromUser, (InfoMObject)arg, RelName.ofUser_order, true);
 			base.success();
 		} catch (BTiaoExp e) {
 			base.failed();
@@ -80,15 +74,21 @@ public class ResBTiaoOrder extends ResBTBase {
 			Order orderOld = (Order) CommonMgr.instance().getObject(Order.class, 
 					SimpleFunc.getArrayList("fromUser", "state"));
 			
-			if (orderOld.state == Order.STATE_VALID && order.state == Order.STATE_FINISHED) {//finish
-				CommonMgr.instance().delObjectRightAndDownRel(RelName.order_of_position, pos, (InfoMObject)arg, RelName.timeSeq, true);
-				CommonMgr.instance().addObjectRightAndDownRel(RelName.finishedOrder_of_position, pos, orderOld, RelName.timeSeq_finishedOrder, true);
-				updateObj(order, attrList);
-			} else if (orderOld.state == Order.STATE_VALID && order.state == Order.STATE_DISCARD) {
-				CommonMgr.instance().delObjectRightAndDownRel(RelName.order_of_position, pos, (InfoMObject)arg, RelName.timeSeq, true);
-				CommonMgr.instance().addObjectRightAndDownRel(RelName.discardedOrder_of_position, pos, orderOld, RelName.timeSeq_discardedOrder, true);
+			BTiaoUser fromUser = getUser(orderOld);
+			
+			if (orderOld.state == Order.STATE_VALID && 
+				(order.state == Order.STATE_FINISHED || 
+				 order.state == Order.STATE_DISCARD)) {
+				
+				CommonMgr.instance().delObjectRightAndDownRel(RelName.order_of_position, pos, order, RelName.timeSeq, true);
+				CommonMgr.instance().addObjectRightAndDownRel(RelName.historyOrder_of_position, pos, order, RelName.timeSeqHistory, true);
+				
+				CommonMgr.instance().delObjectRightAndDownRel(RelName.order_of_user, fromUser, (InfoMObject)arg, RelName.ofUser_order, true);
+				CommonMgr.instance().addObjectRightAndDownRel(RelName.historyOrder_of_user, fromUser, (InfoMObject)arg, RelName.historyOfUser_order, true);
+				
 				updateObj(order, attrList);
 			}
+			
 			base.success();
 		} catch (BTiaoExp e) {
 			base.failed();
@@ -113,6 +113,17 @@ public class ResBTiaoOrder extends ResBTBase {
 		Position pos = new Position();
 		pos.initId(new ArrayList<String>(urlIds.subList(0, urlIds.size()-1)));
 		return pos;
+	}
+	
+	private BTiaoUser getUser(Order order) {
+		BTiaoUser fromUser = new BTiaoUser();
+		{
+			ArrayList<String> array = new ArrayList<String>();
+			array.add(order.fromUser);
+			fromUser.initId(array);
+		}
+		
+		return fromUser;
 	}
 
 	protected List<String> urlIds = new ArrayList<String>();

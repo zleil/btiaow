@@ -31,7 +31,7 @@ public class ResBTiaoUsrInfoExt extends ResBTBase {
 	@Override
 	@JsonCvtInfo(objClassName="com.btiao.product.domain.UsrInfoExt")
 	protected Object put(Object arg) throws BTiaoExp {
-		mgr.addObjectRightAndDownRel(RelName.usrExtInfoOfRoot, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
+		mgr.addObjectRightAndDownRel(RelName.usrExtInfo_of_root, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
 		return null;
 	}
 
@@ -43,7 +43,7 @@ public class ResBTiaoUsrInfoExt extends ResBTBase {
 			mgr.updateObject((InfoMObject)arg, attrList);
 		} catch (BTiaoExp e) {
 			if (e.errNo == ErrCode.OBJ_NOT_IN_INFO_MODEL) {
-				mgr.addObjectRightAndDownRel(RelName.usrExtInfoOfRoot, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
+				mgr.addObjectRightAndDownRel(RelName.usrExtInfo_of_root, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
 			}
 		}
 		return null;

@@ -318,8 +318,8 @@ window.onload = function() {
 		btiao.orderListPage.actDisplayTodoOrder();
 	})
 	
-	$("#actDisplayAllOrder").click(function(){
-		btiao.orderListPage.actDisplayAllOrder();
+	$("#actDisplayHistoryOrder").click(function(){
+		btiao.orderListPage.actDisplayHistoryOrder();
 	})
 }
 

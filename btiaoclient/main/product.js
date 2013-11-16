@@ -181,7 +181,7 @@ function OrderListPage() {
 	this.posId = "";
 	this.lastOrderId = "";
 	this.dispStyleTodo = "todo";
-	this.dispStyleAll = "all";
+	this.dispStyleHistory = "history";
 	this.displayStyle = this.dispStyleTodo;
 }
 OrderListPage.prototype.clearView = function() {
@@ -199,18 +199,18 @@ OrderListPage.prototype.actDisplayTodoOrder = function() {
 	if (this.displayStyle == this.dispStyleTodo) return;
 	
 	this.displayStyle = this.dispStyleTodo;
-	$("#actDisplayAllOrder").attr("checked","checked");
+	$("#actDisplayHistoryOrder").attr("checked","checked");
 	$("#actDisplayTodoOrder").removeAttr("checked");
 	
 	this.clearView();
 	
 	this.prepare(this.posId);
 }
-OrderListPage.prototype.actDisplayAllOrder = function() {
-	if (this.displayStyle == this.dispStyleAll) return;
+OrderListPage.prototype.actDisplayHistoryOrder = function() {
+	if (this.displayStyle == this.dispStyleHistory) return;
 	
-	this.displayStyle = this.dispStyleAll;
-	$("#actDisplayAllOrder").attr("checked","checked");
+	this.displayStyle = this.dispStyleHistory;
+	$("#actDisplayHistoryOrder").attr("checked","checked");
 	$("#actDisplayTodoOrder").removeAttr("checked");
 	
 	this.clearView();

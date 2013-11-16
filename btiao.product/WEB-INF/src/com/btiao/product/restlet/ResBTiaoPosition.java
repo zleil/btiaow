@@ -37,7 +37,7 @@ public class ResBTiaoPosition extends ResBTBase {
 //			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
 //		}
 
-		CommonMgr.instance().addObjectRightAndDownRel(RelName.posOfRoot, new BTiaoRoot(), info, RelName.timeSeq, false);
+		CommonMgr.instance().addObjectRightAndDownRel(RelName.pos_of_root, new BTiaoRoot(), info, RelName.timeSeq, false);
 		return null;
 	}
 
@@ -60,7 +60,7 @@ public class ResBTiaoPosition extends ResBTBase {
 	protected Object del(Object arg) throws BTiaoExp {
 		Position info = new Position();
 		info.initId(urlIds);
-		CommonMgr.instance().delObjectRightAndDownRel(RelName.posOfRoot, new BTiaoRoot(), info, RelName.timeSeq, false);
+		CommonMgr.instance().delObjectRightAndDownRel(RelName.pos_of_root, new BTiaoRoot(), info, RelName.timeSeq, false);
 		return null;
 	}
 

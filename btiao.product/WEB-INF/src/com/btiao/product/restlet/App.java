@@ -28,13 +28,12 @@ public class App extends Application {
 		//router.attach("/positions/{positionId}/infos", ResBTiaoBlockInfoGetFunc.class);
 		//router.attach("/positions/{positionId}/orders", RestBTiaoGetAll.class);
 		
-		def("/positions",BTiaoRoot.class,Position.class,RelName.posOfRoot,RelName.timeSeq,ids(),ids("lastId"));
+		def("/positions",BTiaoRoot.class,Position.class,RelName.pos_of_root,RelName.timeSeq,ids(),ids("lastId"));
 		
 		def("/positions/{posId}/orders",Position.class,Order.class,RelName.order_of_position,RelName.timeSeq,ids("posId"),ids("lastId"));
-		def("/positions/{posId}/finishedOrders",Position.class,Order.class,RelName.finishedOrder_of_position,RelName.timeSeq_finishedOrder,ids("posId"),ids("lastId"));
-		def("/positions/{posId}/discardedOrders",Position.class,Order.class,RelName.discardedOrder_of_position,RelName.timeSeq_discardedOrder,ids("posId"),ids("lastId"));
+		def("/positions/{posId}/historyOrders",Position.class,Order.class,RelName.historyOrder_of_position,RelName.timeSeqHistory,ids("posId"),ids("lastId"));
 		
-		def("/positions/{posId}/infos",Position.class,BlockInfo.class,RelName.blockInfo,RelName.timeSeq,ids("posId"),ids("lastId"));
+		def("/positions/{posId}/infos",Position.class,BlockInfo.class,RelName.blockInfo_of_position,RelName.timeSeq,ids("posId"),ids("lastId"));
 		
 		RestFilterBasicAuth authFilter = new RestFilterBasicAuth();
 		authFilter.setNext(router);

@@ -36,7 +36,7 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 //		}
 		Position pos = new Position();
 		pos.initId(posIdList);
-		CommonMgr.instance().addObjectRightAndDownRel(RelName.blockInfo, pos, (InfoMObject)arg, RelName.timeSeq, false);
+		CommonMgr.instance().addObjectRightAndDownRel(RelName.blockInfo_of_position, pos, (InfoMObject)arg, RelName.timeSeq, false);
 		return null;
 	}
 
@@ -59,7 +59,7 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 		Position pos = new Position();
 		pos.initId(posIdList);
 		
-		CommonMgr.instance().delObjectRightAndDownRel(RelName.blockInfo, pos, info, RelName.timeSeq, false);
+		CommonMgr.instance().delObjectRightAndDownRel(RelName.blockInfo_of_position, pos, info, RelName.timeSeq, false);
 		return null;
 	}
 	
