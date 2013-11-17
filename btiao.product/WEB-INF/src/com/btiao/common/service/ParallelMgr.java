@@ -1,6 +1,5 @@
 package com.btiao.common.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,16 +21,27 @@ public class ParallelMgr {
 			this.downRelName = dr;
 		}
 		
+		@Override
 		public int hashCode() {
 			return this.rightRelName.hashCode() + this.downRelName.hashCode() +
 					this.ofNode.hashCode() + this.nodeClass.hashCode();
 		}
 		
-		public boolean equals(ModelInfo m) {
+		@Override
+		public boolean equals(Object o) {
+			ModelInfo m = (ModelInfo)o;
 			return this.nodeClass == m.nodeClass &&
 					this.rightRelName.equals(m.rightRelName) &&
 					this.downRelName.equals(m.downRelName) &&
 					this.ofNode.isSameObj(m.ofNode);
+		}
+		
+		@Override
+		public String toString() {
+			return "ofNode=" + this.ofNode.toString() +
+					",nodeClass=" + nodeClass.getName() +
+					",rightRelName=" + this.rightRelName +
+					",downRelName=" + this.downRelName;
 		}
 	}
 	static private enum LockType {
@@ -43,6 +53,7 @@ public class ParallelMgr {
 		/**
 		 * model.
 		 */
+		@SuppressWarnings("unused")
 		public ModelInfo m;
 		
 		/**

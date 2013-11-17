@@ -66,6 +66,24 @@ public class CommonMgr {
 			InfoMObject to,
 			String downRelName, 
 			boolean justAddRel) throws BTiaoExp {
+		try {
+			ParallelMgr.ModelInfo m = new ParallelMgr.ModelInfo(from, to.getClass(),
+					rightRelName, downRelName);
+			if (!ParallelMgr.instance().writeAccess(m, 3000)) {
+				throw new BTiaoExp(ErrCode.TIME_OUT, "addObjectRightAndDownRel time,m="+m);
+			}
+			
+			_addObjectRightAndDownRel(rightRelName,from,to,downRelName,justAddRel);
+		} finally {
+			ParallelMgr.instance().release();
+		}
+	}
+	private void _addObjectRightAndDownRel(
+			String rightRelName, 
+			InfoMObject from, 
+			InfoMObject to,
+			String downRelName, 
+			boolean justAddRel) throws BTiaoExp {
 		base.begin();
 		try {
 			InfoMObject firstInfo = base.getFirstRelObj(from, 
@@ -89,6 +107,24 @@ public class CommonMgr {
 	}
 	
 	public void delObjectRightAndDownRel(String rightRelName, 
+			InfoMObject from, 
+			InfoMObject to,
+			String downRelName, 
+			boolean justDelRel) throws BTiaoExp {
+		try {
+			ParallelMgr.ModelInfo m = new ParallelMgr.ModelInfo(from, to.getClass(),
+					rightRelName, downRelName);
+			if (!ParallelMgr.instance().writeAccess(m, 3000)) {
+				throw new BTiaoExp(ErrCode.TIME_OUT, "delObjectRightAndDownRel time,m="+m);
+			}
+			
+			_delObjectRightAndDownRel(rightRelName,from,to,downRelName,justDelRel);
+		} finally {
+			ParallelMgr.instance().release();
+		}
+	}
+	
+	private void _delObjectRightAndDownRel(String rightRelName, 
 			InfoMObject from, 
 			InfoMObject to,
 			String downRelName, 
@@ -127,12 +163,28 @@ public class CommonMgr {
 		}
 	}
 	
-	public List<InfoMObject> getAllObjRightAndDownRel(InfoMObject parentObj, 
-			Class<?extends InfoMObject> objClz, String rightRel, 
-			InfoMObject lastObj, String downRel, int num) throws BTiaoExp {
+	public List<InfoMObject> getAllObjRightAndDownRel(InfoMObject from, 
+			Class<?extends InfoMObject> toClass, String rightRelName, 
+			InfoMObject lastObj, String downRelName, int num) throws BTiaoExp {
+		try {
+			ParallelMgr.ModelInfo m = new ParallelMgr.ModelInfo(from, toClass,
+					rightRelName, downRelName);
+			if (!ParallelMgr.instance().readAccess(m, 3000)) {
+				throw new BTiaoExp(ErrCode.TIME_OUT, "getAllObjRightAndDownRel time,m="+m);
+			}
+			
+			return _getAllObjRightAndDownRel(from,toClass,rightRelName,lastObj,downRelName, num);
+		} finally {
+			ParallelMgr.instance().release();
+		}
+	}
+	
+	private List<InfoMObject> _getAllObjRightAndDownRel(InfoMObject from, 
+			Class<?extends InfoMObject> toClass, String rightRelName, 
+			InfoMObject lastObj, String downRelName, int num) throws BTiaoExp {
 		if (lastObj == null) {
 			InfoMObject firstObj = 
-					base.getFirstRelObj(parentObj, new RelType(rightRel), objClz, true);
+					base.getFirstRelObj(from, new RelType(rightRelName), toClass, true);
 			
 			if (firstObj == null) {
 				return new ArrayList<InfoMObject>();
@@ -140,13 +192,13 @@ public class CommonMgr {
 				List<InfoMObject> ret = new ArrayList<InfoMObject>();
 				ret.add(firstObj);
 				if (num > 1) {
-					List<InfoMObject> otherRet = seqGet(downRel, firstObj, num-1);
+					List<InfoMObject> otherRet = seqGet(downRelName, firstObj, num-1);
 					ret.addAll(otherRet);
 				}
 				return ret;
 			}
 		} else {
-			return seqGet(downRel, lastObj, num);
+			return seqGet(downRelName, lastObj, num);
 		}
 	}
 	

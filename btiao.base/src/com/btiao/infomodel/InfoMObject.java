@@ -67,4 +67,32 @@ public abstract class InfoMObject implements Cloneable {
 			return null;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("{");
+		sb.append(this.getClass().getName());
+		sb.append(":");
+		
+		Field[] fs = this.getClass().getFields();
+		for (Field f : fs) {
+			try {
+				Object v = f.get(this);
+				String name = f.getName();
+				sb.append(name);
+				sb.append("=");
+				sb.append(v);
+				sb.append(",");
+			} catch (Exception e) {
+				e.printStackTrace();
+				BTiaoLog.logExp(BTiaoLog.get(), e, "InfoMObject failed to exe toString!");
+			}
+		}
+		
+		sb.append("}");
+		
+		return sb.toString();
+	}
 }
