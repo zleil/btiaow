@@ -381,7 +381,7 @@ function putOrder(posId, orderId, productId, productNum, totalPrice, fromUser) {
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+loginUser+'",token:"'+token+'"}, \
-			orderId: "'+orderId+'", \
+			id: "'+orderId+'", \
 			posId: "'+posId+'", \
 			productId: "'+productId+'", \
 			productNum: "'+productNum+'", \

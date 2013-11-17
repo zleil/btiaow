@@ -1,7 +1,7 @@
 .alertArea {
 	color:red;
 }
-.orderState0{
+.orderState0,.validInfoState{
 	color:blue;
 }
 .orderState1{
@@ -10,7 +10,7 @@
 .orderState2{
 	color:gray;
 }
-.newLowPrice{
+.newLowPrice,.historyInfoState{
 	color:red;
 }
 .oldHighPrice{

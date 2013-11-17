@@ -45,11 +45,6 @@ FirstPage.prototype.prepare = function() {
 	});
 }
 FirstPage.prototype.actDisplayValidInfo = function(){
-	if (this.displayValid) {
-		$("#actDisplayValidInfo").prop("checked",true).checkboxradio("refresh");
-		return;
-	}
-	
 	this.displayValid = true;
 	$("#actDisplayValidInfo").prop("checked",true).checkboxradio("refresh");
 	$("#actDisplayHistoryInfo").prop("checked",false).checkboxradio("refresh");
@@ -57,11 +52,6 @@ FirstPage.prototype.actDisplayValidInfo = function(){
 	this.fillBlockInfo("", numPer);
 }
 FirstPage.prototype.actDisplayHistoryInfo = function(){
-	if (!this.displayValid) {
-		$("#actDisplayHistoryInfo").prop("checked",true).checkboxradio("refresh");
-		return;
-	}
-	
 	this.displayValid = false;
 	$("#actDisplayValidInfo").prop("checked",false).checkboxradio("refresh");
 	$("#actDisplayHistoryInfo").prop("checked",true).checkboxradio("refresh");
@@ -75,17 +65,16 @@ FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
 			if (lastInfoId == "") {
 				this.infos = {};
 				btiao.util.clearListViewData("#lstBlockInfo");
-//				if (!btiao.firstPage.displayValid) {
-//					$("#lstBlockInfo").removeAttr("data-split-icon");
-//					$("#lstBlockInfo").removeAttr("data-divider-theme");
-//				} else {
-//					$("#lstBlockInfo").attr("data-split-icon","delete");
-//					$("#lstBlockInfo").attr("data-divider-theme","b");
-//				}
 			}
 			
 			for (var idx in d.content) {
 				btiao.firstPage.fillAInfo(d.content[idx]);
+			}
+			
+			if (d.content.length < num) {
+				$("#actMoreBlockInfos").addClass("ui-disabled");
+			} else {
+				$("#actMoreBlockInfos").removeClass("ui-disabled");
 			}
 			
 			$.mobile.changePage($("#pgFirst"));
@@ -104,13 +93,13 @@ FirstPage.prototype.onclickBlockInfo = function(elm) {
 FirstPage.prototype.fillAInfo = function (info) {
 	var html = "";
 	html += '<li data-theme="e" data-infoid="'+info.id+'">';
-	html += info.state==0?'<a onclick="btiao.firstPage.onclickBlockInfo(this);" data-transition="slide">':"";
+	html += '<a onclick="btiao.firstPage.onclickBlockInfo(this);" data-transition="slide">';
 	html += '<h3>'+info.desc+'</h3>';
 	html += '<p>现价：';
 	html += '<span'+((info.price < info.oldPrice) ? ' class="newLowPrice">':'>')+btiao.util.decoratePrice(info.price)+'</span>';
 	html += (info.price < info.oldPrice)? ('，<span class="oldHighPrice">原价：'+btiao.util.decoratePrice(info.oldPrice)+'</span>') : '';
 	html += '</p>';
-	html += info.state==0?'</a>':"";
+	html += '</a>';
 	html += info.state==0 ? this.getHistoryActHTML() : "";
 	html += '</li>';
 	
@@ -150,9 +139,27 @@ function DetailPage() {
 DetailPage.prototype.prepare = function (infoId) {
 	this.info = btiao.firstPage.infos[infoId];
 
+	$("#idInfoId").text(this.info.id);
 	$("#idInfoDesc").text(this.info.desc);
 	$("#idInfoPrice").text(btiao.util.decoratePrice(this.info.price));
-
+	$("#idInfoOldPrice").text(btiao.util.decoratePrice(this.info.oldPrice));
+	if (this.info.state !=0) {
+		$("#idInfoState").text("下架");
+		$("#idInfoState").removeAttr("class");
+		$("#idInfoState").addClass("historyInfoState");
+	} else {
+		$("#idInfoState").text("有效");
+		$("#idInfoState").removeAttr("class");
+		$("#idInfoState").addClass("validInfoState");
+	}
+	$("#idCreateTime").text(btiao.util.decorateTime(this.info.createTime));
+	
+	if (this.info.state != 0) {
+		$("#actEnterPurchase").addClass("ui-disabled");
+	} else {
+		$("#actEnterPurchase").removeClass("ui-disabled");
+	}
+	
 	$.mobile.changePage($("#pgDetail"));
 }
 
@@ -215,7 +222,6 @@ PurchasePage.prototype.purchase = function() {
 		var url = productRoot+"/positions/"+btiao.firstPage.curPosInfo.id+"/orders/__n";
 		
 		var orderDst = $("#orderDst").val();
-		var createTime = new Date().valueOf();
 		var obj = {
 				id: orderId,
 				posId: btiao.firstPage.curPosInfo.id,
@@ -224,8 +230,7 @@ PurchasePage.prototype.purchase = function() {
 				productNum: productNum,
 				totalPrice: btiao.detailPage.info.price*productNum,
 				fromUser: btiao.loginMgr.user,
-				orderDst: orderDst,
-				createTime: createTime
+				orderDst: orderDst
 		}
 		btiao.util.putObj(url, obj, function(d) {
 			btiao.purchasePage.undispPurchaseAlert();
@@ -256,11 +261,6 @@ OrderListPage.prototype.prepare = function(posId) {
 	this.fillAllOrder("", numPer);
 }
 OrderListPage.prototype.actDisplayTodoOrder = function() {
-	if (this.displayStyle == this.dispStyleTodo) {
-		$("#actDisplayTodoOrder").prop("checked", true).checkboxradio("refresh");
-		return;
-	}
-	
 	this.displayStyle = this.dispStyleTodo;
 	$("#actDisplayTodoOrder").prop("checked", true).checkboxradio("refresh");
 	$("#actDisplayHistoryOrder").prop("checked", false).checkboxradio("refresh");
@@ -269,11 +269,6 @@ OrderListPage.prototype.actDisplayTodoOrder = function() {
 	this.prepare(this.posId);
 }
 OrderListPage.prototype.actDisplayHistoryOrder = function() {
-	if (this.displayStyle == this.dispStyleHistory) {
-		$("#actDisplayHistoryOrder").prop("checked", true).checkboxradio("refresh");
-		return;
-	}
-	
 	this.displayStyle = this.dispStyleHistory;
 	$("#actDisplayTodoOrder").prop("checked", false).checkboxradio("refresh");
 	$("#actDisplayHistoryOrder").prop("checked", true).checkboxradio("refresh");
@@ -288,15 +283,16 @@ OrderListPage.prototype.fillAllOrder = function (lastOrderId, num) {
 	var url = productRoot+"/positions/"+this.posId+(this.displayStyle==this.dispStyleTodo ? "/orders" : "/historyOrders");
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
-			if (lastOrderId == "" && d.content.length == 0 && this.displayStyle == this.dispStyleTodo) {
+			if (lastOrderId == "" && d.content.length == 0 && btiao.orderListPage.displayStyle == this.dispStyleTodo) {
 				$("#pgOrderListPage .noOrderTip").css("display", "block");
 			} else {
 				$("#pgOrderListPage .noOrderTip").css("display", "none");
 			}
 			
-			if (d.content.length == 0) {
-				$("#actMoreOrders").buttonMarkup("disable");
-				$("#actMoreOrders").buttonMarkup("refresh");
+			if (d.content.length < num) {
+				$("#actMoreOrders").addClass("ui-disabled");
+			} else {
+				$("#actMoreOrders").removeClass("ui-disabled");
 			}
 			
 			for (var idx in d.content) {
@@ -401,11 +397,46 @@ OrderDetailPage.prototype.prepare = function (orderInfo) {
 	$.mobile.changePage($("#pgOrderDetailPage"));
 }
 
+function UpdateInfoPage(){
+	this.isCreate = undefined;
+	this.info = undefined;
+}
+UpdateInfoPage.prototype.prepare = function(isCreate, info) {
+	this.isCreate = isCreate;
+	if (!this.isCreate) {
+		this.info = info;
+		$("#inUpdateInfoDesc").text(this.info.desc);
+		$("#inUpdateInfoPrice").text(this.info.price);
+		$("#inUpdateInfoOldPrice").text(this.info.oldPrice);
+	}
+	$.mobile.changePage("#pgUpdateInfo");
+}
+UpdateInfoPage.prototype.actUpdateInfo = function() {
+	btiao.util.getId("infoId", function(infoId) {
+		var desc = $("#inUpdateInfoDesc").text();
+		var price = $("#inUpdateInfoPrice").text();
+		var oldPrice = $("#inUpdateInfoOldPrice").text();
+		
+		var obj = {
+				id: infoId,
+				type: "product",
+				posId: btiao.firstPage.curPosInfo.id,
+				desc: desc,
+				price: price,
+				oldPrice: oldPrice
+		}
+		btiao.util.putObj(url, obj, function(d) {		
+			$.mobile.changePage($("#pgFirst"));
+		});
+	});
+}
+
 btiao.reg("firstPage", new FirstPage());
 btiao.reg("detailPage", new DetailPage());
 btiao.reg("purchasePage", new PurchasePage());
 btiao.reg("orderListPage", new OrderListPage());
 btiao.reg("orderDetailPage", new OrderDetailPage());
+btiao.reg("updateInfoPage", new UpdateInfoPage());
 
 })();
 

@@ -26,8 +26,12 @@ public class BlockInfo extends InfoMObject {
 	public int state;
 	
 	public String desc = "";
+	
+	public long createTime = System.currentTimeMillis();
+	
 	public int price;
 	public int oldPrice;
+	
 	public String imgUrl = "";
 	
 	public int evaluteValue;

@@ -293,8 +293,8 @@ window.onload = function() {
 		return false;
 	});
 	
-	$("#actRefreshFirstPage").click(function(){
-		btiao.firstPage.prepare();
+	$("#actNewInfo").click(function(){
+		btiao.updateInfoPage.prepare(true);
 		return false;
 	});
 	$("#actMoreBlockInfos").click(function(){
@@ -334,6 +334,9 @@ window.onload = function() {
 		btiao.orderListPage.actDisplayHistoryOrder();
 	})
 	
+	$("#actUpdateInfo").click(function(){
+		btiao.updateInfoPage.actUpdateInfo();
+	});
 }
 
 })();
