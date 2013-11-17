@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
+import com.btiao.base.utils.BTiaoLog;
 
 public abstract class InfoMObject implements Cloneable {
 	/**
@@ -34,6 +35,28 @@ public abstract class InfoMObject implements Cloneable {
 				throw new BTiaoExp(ErrCode.INTERNEL_ERROR, e);
 			}
 		}
+	}
+	
+	public boolean isSameObj(InfoMObject o) {
+		if (o.getClass() != this.getClass()) return false;
+		
+		Field[] fs = this.getClass().getFields();
+		for (Field f : fs) {
+			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
+			if (!an.key()) continue;
+			
+			try {
+				if (!f.get(this).equals(f.get(o))) {
+					return false;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				BTiaoLog.logExp(BTiaoLog.get(), e, InfoMObject.class.getName()+" failed to exe isSame!");
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	@Override
