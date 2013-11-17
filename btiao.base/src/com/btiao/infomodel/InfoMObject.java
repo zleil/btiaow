@@ -37,15 +37,37 @@ public abstract class InfoMObject implements Cloneable {
 		}
 	}
 	
-	public boolean isSameObj(InfoMObject o) {
+	public int hashCode() {
+		int r = 0;
+		
+		Field[] fs = this.getClass().getFields();
+		for (Field f : fs) {
+			try {
+				InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
+				if (an == null || !an.key()) continue;
+				
+				Object v = f.get(this);
+				r += v.hashCode();
+			} catch (Exception e) {
+				e.printStackTrace();
+				BTiaoLog.logExp(BTiaoLog.get(), e, InfoMObject.class.getName()+" failed to exe isSame!");
+			}
+		}
+		
+		return r;
+	}
+	
+	@Override
+	public boolean equals(Object oo) {
+		InfoMObject o = (InfoMObject)oo;
 		if (o.getClass() != this.getClass()) return false;
 		
 		Field[] fs = this.getClass().getFields();
 		for (Field f : fs) {
-			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
-			if (!an.key()) continue;
-			
 			try {
+				InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
+				if (an == null || !an.key()) continue;
+				
 				if (!f.get(this).equals(f.get(o))) {
 					return false;
 				}

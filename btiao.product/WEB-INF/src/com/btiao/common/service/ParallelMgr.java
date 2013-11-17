@@ -33,15 +33,15 @@ public class ParallelMgr {
 			return this.nodeClass == m.nodeClass &&
 					this.rightRelName.equals(m.rightRelName) &&
 					this.downRelName.equals(m.downRelName) &&
-					this.ofNode.isSameObj(m.ofNode);
+					this.ofNode.equals(m.ofNode);
 		}
 		
 		@Override
 		public String toString() {
-			return "ofNode=" + this.ofNode.toString() +
+			return "{ofNode=" + this.ofNode.toString() +
 					",nodeClass=" + nodeClass.getName() +
 					",rightRelName=" + this.rightRelName +
-					",downRelName=" + this.downRelName;
+					",downRelName=" + this.downRelName + "}";
 		}
 	}
 	static private enum LockType {
@@ -99,7 +99,7 @@ public class ParallelMgr {
 		
 		while (t<=0 || (t>0 && t2>0)) {
 			synchronized (this) {
-				if (isOwner(m) || isModelReadLocked(m)) {
+				if (!isModeWriteLocked(m)) {
 					readLock(m);
 					return true;
 				} else {
@@ -126,6 +126,7 @@ public class ParallelMgr {
 					try {
 						t2 -= write_wait_interval;
 						this.wait(write_wait_interval);
+						System.out.println(Thread.currentThread()+".");
 					} catch (InterruptedException e) {}
 				}
 			}
@@ -152,7 +153,7 @@ public class ParallelMgr {
 		
 		//if no thread lock the model, delete the MA.
 		if (lastMA.owners.isEmpty()) {
-			model2MA.remove(lastMA);
+			model2MA.remove(lastMA.m);
 		}
 		
 		//remove the last MA locked by the thread
@@ -168,6 +169,8 @@ public class ParallelMgr {
 		Thread th = Thread.currentThread();
 		
 		List<MAInfo> mas = thread2MAs.get(th);
+		if (mas == null) return false;
+		
 		for (MAInfo ma : mas) {
 			if (m.equals(ma)) {
 				return true;
@@ -182,7 +185,7 @@ public class ParallelMgr {
 	 * @param m
 	 * @return
 	 */
-	private boolean isModelReadLocked(ModelInfo m) {
+	private boolean isModeWriteLocked(ModelInfo m) {
 		MAInfo ma = model2MA.get(m);
 		return ma != null && ma.lock == LockType.Write;
 	}

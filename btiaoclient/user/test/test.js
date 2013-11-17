@@ -435,7 +435,7 @@ function onload() {
 		putPos(1000001,"6#0105","6号楼小卖部", 100000000);
 		setTimeout(function(){
 			putPos(1000000,"望春园","北苑最好的小区，环境优雅，还有个小区幼儿园！", 0);
-		},1000);
+		},1);
 	});
 	$("#idGetPos").click(function(){
 		getPos(1000001);
@@ -452,9 +452,12 @@ function onload() {
 	
 	$("#idPutInfo").click(function(){
 		putInfo(1000001, 1, "脉动买一送一！", 450, 450);
-		setTimeout(function(){putInfo(1000001, 2, "康师傅方便面促销，10桶20元！", 2000, 3500);},1000);
-		setTimeout(function(){putInfo(1000001, 3, "可爱多，30元/12个！", 3000, 3600);},2000);
-		setTimeout(function(){putInfo(1000001, 4, "西芹，最后一把，半价甩！", 500, 800);},3000);
+//		setTimeout(function(){putInfo(1000001, 2, "康师傅方便面促销，10桶20元！", 2000, 3500);},1000);
+//		setTimeout(function(){putInfo(1000001, 3, "可爱多，30元/12个！", 3000, 3600);},2000);
+//		setTimeout(function(){putInfo(1000001, 4, "西芹，最后一把，半价甩！", 500, 800);},3000);
+		putInfo(1000001, 2, "康师傅方便面促销，10桶20元！", 2000, 3500);
+		putInfo(1000001, 3, "可爱多，30元/12个！", 3000, 3600);
+		putInfo(1000001, 4, "西芹，最后一把，半价甩！", 500, 800);
 	});
 	$("#idGetInfo").click(function(){
 		getInfo(1000001, 1);
@@ -468,9 +471,12 @@ function onload() {
 	});
 	$("#idDelInfo").click(function(){
 		delInfo(1000001, 1);
-		setTimeout(function(){delInfo(1000001, 2);},1000);
-		setTimeout(function(){delInfo(1000001, 3);},2000);
-		setTimeout(function(){delInfo(1000001, 4);},3000);
+		delInfo(1000001, 2);
+		delInfo(1000001, 3);
+		delInfo(1000001, 4);
+//		setTimeout(function(){delInfo(1000001, 2);},1000);
+//		setTimeout(function(){delInfo(1000001, 3);},2000);
+//		setTimeout(function(){delInfo(1000001, 4);},3000);
 	});
 	$("#idGetAllInfo").click(function(){
 		getAllInfo(1000001);
