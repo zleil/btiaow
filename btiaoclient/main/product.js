@@ -9,6 +9,7 @@ function FirstPage() {
 	this.usrExtInfo = undefined;
 	this.infos = {};
 	this.lastId = "";
+	this.displayValid = true; //false: display history info.
 }
 FirstPage.prototype.moreBlockInfos = function(){
 	this.fillBlockInfo(this.lastId, numPer);
@@ -43,13 +44,44 @@ FirstPage.prototype.prepare = function() {
 		});
 	});
 }
+FirstPage.prototype.actDisplayValidInfo = function(){
+	if (this.displayValid) {
+		$("#actDisplayValidInfo").prop("checked",true).checkboxradio("refresh");
+		return;
+	}
+	
+	this.displayValid = true;
+	$("#actDisplayValidInfo").prop("checked",true).checkboxradio("refresh");
+	$("#actDisplayHistoryInfo").prop("checked",false).checkboxradio("refresh");
+	
+	this.fillBlockInfo("", numPer);
+}
+FirstPage.prototype.actDisplayHistoryInfo = function(){
+	if (!this.displayValid) {
+		$("#actDisplayHistoryInfo").prop("checked",true).checkboxradio("refresh");
+		return;
+	}
+	
+	this.displayValid = false;
+	$("#actDisplayValidInfo").prop("checked",false).checkboxradio("refresh");
+	$("#actDisplayHistoryInfo").prop("checked",true).checkboxradio("refresh");
+	
+	this.fillBlockInfo("", numPer);
+}
 FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
-	var url = productRoot+"/positions/"+this.curPosInfo.id+"/infos";
+	var url = productRoot+"/positions/"+this.curPosInfo.id+(this.displayValid?"/infos":"/historyInfos");
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
 			if (lastInfoId == "") {
 				this.infos = {};
 				btiao.util.clearListViewData("#lstBlockInfo");
+//				if (!btiao.firstPage.displayValid) {
+//					$("#lstBlockInfo").removeAttr("data-split-icon");
+//					$("#lstBlockInfo").removeAttr("data-divider-theme");
+//				} else {
+//					$("#lstBlockInfo").attr("data-split-icon","delete");
+//					$("#lstBlockInfo").attr("data-divider-theme","b");
+//				}
 			}
 			
 			for (var idx in d.content) {
@@ -64,24 +96,52 @@ FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
 	}, num, lastInfoId);
 }
 FirstPage.prototype.onclickBlockInfo = function(elm) {
-	var infoId = $(elm).attr("data-infoid");
+	var infoElm = btiao.util.getSpecificUpperElm(elm, "data-infoid");
+	var infoId = $(infoElm).attr("data-infoid");
 	btiao.detailPage.prepare(infoId);
 	return false;
 }
 FirstPage.prototype.fillAInfo = function (info) {
 	var html = "";
-	html += '<li data-theme="e">';
-	html += '<a onclick="btiao.firstPage.onclickBlockInfo(this);" class="blockInfo" data-infoid="'+info.id+'" data-transition="slide">';
+	html += '<li data-theme="e" data-infoid="'+info.id+'">';
+	html += info.state==0?'<a onclick="btiao.firstPage.onclickBlockInfo(this);" data-transition="slide">':"";
 	html += '<h3>'+info.desc+'</h3>';
 	html += '<p>现价：';
 	html += '<span'+((info.price < info.oldPrice) ? ' class="newLowPrice">':'>')+btiao.util.decoratePrice(info.price)+'</span>';
 	html += (info.price < info.oldPrice)? ('，<span class="oldHighPrice">原价：'+btiao.util.decoratePrice(info.oldPrice)+'</span>') : '';
 	html += '</p>';
-	html += '</a></li>';
+	html += info.state==0?'</a>':"";
+	html += info.state==0 ? this.getHistoryActHTML() : "";
+	html += '</li>';
 	
 	$("#lstBlockInfo").append(html);
 	this.infos[info.id] = info;
 	this.lastId = info.id;
+}
+FirstPage.prototype.getHistoryActHTML = function() {
+	return '<a title="点击下架产品" onclick="btiao.firstPage.historyBlockInfo(this);"></a>';
+}
+FirstPage.prototype.historyBlockInfo = function(elm) {
+	var infoElm = btiao.util.getSpecificUpperElm(elm, "data-infoid");
+	var infoId = $(infoElm).attr("data-infoid");
+	
+	var url = productRoot+"/positions/"+btiao.firstPage.curPosInfo.id+"/infos/"+infoId;
+	var obj = {
+			id: infoId,
+			state:"1" //history
+	};
+	
+	var callback = function(d) {
+		$(callback.infoElm).remove();
+		
+		$("#lstBlockInfo").listview("refresh");
+		btiao.firstPage.infos[callback.infoId].state = 1;
+	};
+	callback.infoElm = infoElm;
+	callback.infoId = infoId;
+	btiao.util.postObj(url, obj, callback);
+	
+	return false;
 }
 
 function DetailPage() {
@@ -191,28 +251,32 @@ OrderListPage.prototype.clearView = function() {
 OrderListPage.prototype.prepare = function(posId) {
 	this.posId = posId;
 
-	this.clearView();
+	btiao.util.clearListViewData("#lstOrderInfo");
 	
 	this.fillAllOrder("", numPer);
 }
 OrderListPage.prototype.actDisplayTodoOrder = function() {
-	if (this.displayStyle == this.dispStyleTodo) return;
+	if (this.displayStyle == this.dispStyleTodo) {
+		$("#actDisplayTodoOrder").prop("checked", true).checkboxradio("refresh");
+		return;
+	}
 	
 	this.displayStyle = this.dispStyleTodo;
-	$("#actDisplayHistoryOrder").attr("checked","checked");
-	$("#actDisplayTodoOrder").removeAttr("checked");
-	
+	$("#actDisplayTodoOrder").prop("checked", true).checkboxradio("refresh");
+	$("#actDisplayHistoryOrder").prop("checked", false).checkboxradio("refresh");
 	this.clearView();
 	
 	this.prepare(this.posId);
 }
 OrderListPage.prototype.actDisplayHistoryOrder = function() {
-	if (this.displayStyle == this.dispStyleHistory) return;
+	if (this.displayStyle == this.dispStyleHistory) {
+		$("#actDisplayHistoryOrder").prop("checked", true).checkboxradio("refresh");
+		return;
+	}
 	
 	this.displayStyle = this.dispStyleHistory;
-	$("#actDisplayHistoryOrder").attr("checked","checked");
-	$("#actDisplayTodoOrder").removeAttr("checked");
-	
+	$("#actDisplayTodoOrder").prop("checked", false).checkboxradio("refresh");
+	$("#actDisplayHistoryOrder").prop("checked", true).checkboxradio("refresh");
 	this.clearView();
 	
 	this.prepare(this.posId);
@@ -221,10 +285,10 @@ OrderListPage.prototype.moreOrders = function() {
 	this.fillAllOrder(this.lastOrderId, numPer);
 }
 OrderListPage.prototype.fillAllOrder = function (lastOrderId, num) {
-	var url = productRoot+"/positions/"+this.posId+"/orders";
+	var url = productRoot+"/positions/"+this.posId+(this.displayStyle==this.dispStyleTodo ? "/orders" : "/historyOrders");
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
-			if (lastOrderId == "" && d.content.length == 0) {
+			if (lastOrderId == "" && d.content.length == 0 && this.displayStyle == this.dispStyleTodo) {
 				$("#pgOrderListPage .noOrderTip").css("display", "block");
 			} else {
 				$("#pgOrderListPage .noOrderTip").css("display", "none");
@@ -249,9 +313,10 @@ OrderListPage.prototype.fillAllOrder = function (lastOrderId, num) {
 OrderListPage.prototype.onclickOrderInfo = function(elm) {
 	var orderId = undefined;
 	var i=5;
-	var orderId = btiao.util.getSpecificUpperElm(elm, "data-orderid");
-	
+	var orderElm = btiao.util.getSpecificUpperElm(elm, "data-orderid");
+	var orderId = $(orderElm).attr("data-orderid");
 	var orderInfo = btiao.orderListPage.orders[orderId];
+	
 	btiao.orderDetailPage.prepare(orderInfo);
 	return false;
 }
@@ -278,12 +343,13 @@ OrderListPage.prototype.getFinishActHTML = function() {
 	return '<a title="点击完成交易" onclick="btiao.orderListPage.finishOrder(this);"></a>';
 }
 OrderListPage.prototype.finishOrder = function(elm) {
-	var orderId = btiao.util.getSpecificUpperElm(elm, "data-orderid");
+	var orderElm = btiao.util.getSpecificUpperElm(elm, "data-orderid");
+	var orderId = $(orderElm).attr("data-orderid");
 	var url = productRoot+"/positions/"+btiao.firstPage.curPosInfo.id+"/orders/"+orderId;
 	var obj = {
 			id: orderId,
 			state:"2"
-	}
+	};
 	
 	var callback = function(d) {
 		var stateE = $(".state",callback.elm.parentNode);
@@ -295,9 +361,9 @@ OrderListPage.prototype.finishOrder = function(elm) {
 		
 		$("#lstOrderInfo").listview("refresh");
 		btiao.orderListPage.orders[callback.orderId].state = 2;
-	}
+	};
 	callback.elm = elm;
-	callback.orderId =orderId;
+	callback.orderId = orderId;
 	btiao.util.postObj(url, obj, callback);
 }
 OrderListPage.prototype.getStateDesc = function(state) {

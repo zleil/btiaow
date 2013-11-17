@@ -83,13 +83,13 @@
                 <label for="actDisplayValidInfo">
                     有效产品
                 </label>
-                <input id="actDisplayAllInfo" name="" type="checkbox">
-                <label for="actDisplayAllInfo">
-                    全部产品
+                <input id="actDisplayHistoryInfo" name="" type="checkbox">
+                <label for="actDisplayHistoryInfo">
+                    已下架产品
                 </label>
             </fieldset>
         </div>
-        <ul id="lstBlockInfo" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
+        <ul id="lstBlockInfo" data-split-icon="delete" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
         <a id="actMoreBlockInfos" data-role="button">更多</a>
     </div>
     <div data-theme="a" data-role="footer" data-position="fixed">
@@ -135,8 +135,7 @@
         </h3>
     </div>
     <div data-role="content">
-    	<h5 class="noOrderTip">当前还没有订单，别灰心，加油哦:-)~~~</h5>
-    	<div id="checkboxes1" data-role="fieldcontain">
+    	<div id="orderFilter" data-role="fieldcontain">
             <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
                 <input checked="checked" id="actDisplayTodoOrder" name="" type="checkbox">
                 <label for="actDisplayTodoOrder">
@@ -148,6 +147,7 @@
                 </label>
             </fieldset>
         </div>
+        <h5 class="noOrderTip">当前还没有订单，别灰心，加油哦:-)~~~</h5>
     	<ul id="lstOrderInfo" data-split-icon="check" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
     	<a id="actMoreOrders" data-role="button">更多</a>
     </div>

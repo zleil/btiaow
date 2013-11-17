@@ -164,11 +164,17 @@ Util.prototype.getSpecificUpperElm = function (elm, attrName) {
 	var n = elm;
 	var r = undefined;
 	var i = 10;
+	
 	while (r == undefined && i-->0 && n != null) {
 		r = $(n).attr(attrName);
+		if (r != undefined) {
+			return n;
+		}
+		
 		n = n.parentNode;
 	}
-	return r;
+	
+	return null;
 }
 
 function LoginMgr() {
@@ -294,6 +300,12 @@ window.onload = function() {
 	$("#actMoreBlockInfos").click(function(){
 		btiao.firstPage.moreBlockInfos();
 	});
+	$("#actDisplayValidInfo").click(function(){
+		btiao.firstPage.actDisplayValidInfo();
+	});
+	$("#actDisplayHistoryInfo").click(function(){
+		btiao.firstPage.actDisplayHistoryInfo();
+	});
 	
 	$("#actListOrders").click(function(){
 		btiao.orderListPage.prepare(btiao.firstPage.curPosInfo.id);
@@ -321,6 +333,7 @@ window.onload = function() {
 	$("#actDisplayHistoryOrder").click(function(){
 		btiao.orderListPage.actDisplayHistoryOrder();
 	})
+	
 }
 
 })();

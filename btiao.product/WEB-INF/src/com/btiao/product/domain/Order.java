@@ -6,9 +6,11 @@ import com.btiao.infomodel.InfoMObjAttrDesc;
 import com.btiao.infomodel.InfoMObject;
 
 public class Order extends InfoMObject {
-	static public final int STATE_VALID = 0;
-	static public final int STATE_DISCARD = 1;
-	static public final int STATE_FINISHED = 2;
+	static public class State {
+		static public final int VALID = 0;
+		static public final int DISCARD = 1;
+		static public final int FINISHED = 2;
+	}
 
 	@Override
 	public boolean initId(List<String> urlIds) {

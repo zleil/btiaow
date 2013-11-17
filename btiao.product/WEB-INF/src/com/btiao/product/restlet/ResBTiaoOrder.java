@@ -72,22 +72,19 @@ public class ResBTiaoOrder extends ResBTBase {
 		base.begin();
 		try {
 			Order orderOld = (Order) CommonMgr.instance().getObject(Order.class, 
-					SimpleFunc.getArrayList("fromUser", "state"));
+					SimpleFunc.getArrayList(order.id));
 			
 			BTiaoUser fromUser = getUser(orderOld);
 			
-			if (orderOld.state == Order.STATE_VALID && 
-				(order.state == Order.STATE_FINISHED || 
-				 order.state == Order.STATE_DISCARD)) {
-				
+			if (orderOld.state != order.state && Order.State.VALID == orderOld.state) {
 				CommonMgr.instance().delObjectRightAndDownRel(RelName.order_of_position, pos, order, RelName.timeSeq, true);
 				CommonMgr.instance().addObjectRightAndDownRel(RelName.historyOrder_of_position, pos, order, RelName.timeSeqHistory, true);
 				
 				CommonMgr.instance().delObjectRightAndDownRel(RelName.order_of_user, fromUser, (InfoMObject)arg, RelName.ofUser_order, true);
 				CommonMgr.instance().addObjectRightAndDownRel(RelName.historyOrder_of_user, fromUser, (InfoMObject)arg, RelName.historyOfUser_order, true);
-				
-				updateObj(order, attrList);
 			}
+			
+			updateObj(order, attrList);
 			
 			base.success();
 		} catch (BTiaoExp e) {

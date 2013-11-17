@@ -9,7 +9,8 @@ public class RelName {
 	static public final String blockInfo_of_position = "blockInfo_of_position";
 	static public final String order_of_position = "order_of_position";
 	static public final String historyOrder_of_position = "historyOrder_of_position";
-	
+	static public final String historyBlockInfo_of_position = "historyBlockInfo_of_position";
+	//of user
 	static public final String order_of_user = "order_of_user";
 	static public final String historyOrder_of_user = "historyOrder_of_user";
 	

@@ -6,6 +6,11 @@ import com.btiao.infomodel.InfoMObjAttrDesc;
 import com.btiao.infomodel.InfoMObject;
 
 public class BlockInfo extends InfoMObject {
+	static public class State {
+		static public int VALID = 0;
+		static public int HISTORY = 1;
+	}
+	
 	@Override
 	public boolean initId(List<String> urlIds) {
 		this.id = urlIds.get(0);
@@ -17,6 +22,8 @@ public class BlockInfo extends InfoMObject {
 	
 	public String type = "product";
 	public String posId = "";
+	
+	public int state;
 	
 	public String desc = "";
 	public int price;

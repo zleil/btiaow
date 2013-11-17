@@ -6,9 +6,12 @@ import org.restlet.data.Form;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
+import com.btiao.base.utils.SimpleFunc;
 import com.btiao.common.service.CommonMgr;
+import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.BlockInfo;
+import com.btiao.product.domain.BlockInfo.State;
 import com.btiao.product.domain.Position;
 
 public class ResBTiaoBlockInfo extends ResBTBase {
@@ -44,10 +47,28 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 	@JsonCvtInfo(objClassName="com.btiao.product.domain.BlockInfo")
 	protected Object post(Object arg, Collection<String> attrList)
 			throws BTiaoExp {
-		InfoMObject info = (InfoMObject)arg;
-		info.initId(infoIdList);
-				
-		CommonMgr.instance().updateObject(info, attrList);
+		Position pos = new Position();
+		pos.initId(posIdList);
+		
+		BlockInfo info = (BlockInfo)arg;
+		
+		InfoMBaseService base = CommonMgr.instance().base;
+		base.begin();
+		try {
+			BlockInfo infoOld = (BlockInfo) CommonMgr.instance().getObject(BlockInfo.class, SimpleFunc.getArrayList(info.id));
+			if (infoOld.state != info.state && infoOld.state == State.VALID) {
+				CommonMgr.instance().delObjectRightAndDownRel(RelName.blockInfo_of_position, pos, info, RelName.timeSeq, true);
+				CommonMgr.instance().addObjectRightAndDownRel(RelName.historyBlockInfo_of_position, pos, info, RelName.timeSeqHistory, true);
+			}
+			CommonMgr.instance().updateObject(info, attrList);
+			base.success();
+		} catch (BTiaoExp e) {
+			base.failed();
+			throw e;
+		} finally {
+			base.finish();
+		}
+		
 		return null;
 	}
 
