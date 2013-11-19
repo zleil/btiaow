@@ -411,12 +411,42 @@ UpdateInfoPage.prototype.prepare = function(isCreate, info) {
 	}
 	$.mobile.changePage("#pgUpdateInfo");
 }
+UpdateInfoPage.prototype.checkValid = function(desc, price, oldPrice) {
+	var r = true;
+	if (!btiao.util.checkPriceValid(price)) {
+		$("#for_inUpdateInfoPrice").addClass("alertArea");
+		r = false;
+	} else {
+		$("#for_inUpdateInfoPrice").removeClass("alertArea");
+	}
+	if (!btiao.util.checkPriceValid(oldPrice)) {
+		r = false;
+		$("#for_inUpdateInfoOldPrice").addClass("alertArea");
+	} else {
+		$("#for_inUpdateInfoOldPrice").removeClass("alertArea");
+	}
+	if (desc == 0) {
+		r = false;
+		$("#for_inUpdateInfoDesc").addClass("alertArea");
+	} else {
+		$("#for_inUpdateInfoDesc").removeClass("alertArea");
+	}
+	return r;
+}
 UpdateInfoPage.prototype.actUpdateInfo = function() {
+	var desc = $("#inUpdateInfoDesc").val();
+	var price = $("#inUpdateInfoPrice").val();
+	var oldPrice = $("#inUpdateInfoOldPrice").val();
+	
+	if (!btiao.updateInfoPage.checkValid(desc, price, oldPrice)) {
+		return;
+	}
+	
 	btiao.util.getId("infoId", function(infoId) {
-		var desc = $("#inUpdateInfoDesc").text();
-		var price = $("#inUpdateInfoPrice").text();
-		var oldPrice = $("#inUpdateInfoOldPrice").text();
+		price = btiao.util.formIntPrice(price);
+		oldPrice = btiao.util.formIntPrice(oldPrice);
 		
+		var url = productRoot + "/positions/"+btiao.firstPage.curPosInfo.id+"/infos/" + infoId;
 		var obj = {
 				id: infoId,
 				type: "product",
@@ -426,7 +456,8 @@ UpdateInfoPage.prototype.actUpdateInfo = function() {
 				oldPrice: oldPrice
 		}
 		btiao.util.putObj(url, obj, function(d) {		
-			$.mobile.changePage($("#pgFirst"));
+			//$.mobile.changePage($("#pgFirst"));
+			btiao.firstPage.actDisplayValidInfo();
 		});
 	});
 }

@@ -262,23 +262,27 @@
             返回
         </a>
         <h3>
-                    新建
+                    新建产品
         </h3>
     </div>
     <div data-role="content">
         <div data-role="fieldcontain">
-            <label for="inUpdateInfoDesc"><h5>
-                描述
-            </h5></label>
+            <label for="inUpdateInfoDesc" id="for_inUpdateInfoDesc">
+                描述（不允许为空）
+            </label>
             <input name="" id="inUpdateInfoDesc" placeholder="请输入基本描述信息" value="" type="text">
-            <label for="inUpdateInfoPrice"><h5>
-                现价
-            </h5></label>
-            <input name="" id="inUpdateInfoPrice" placeholder="请输入基本描述信息" value="" type="text">
-            <label for="inUpdateInfoOldPrice"><h5>
-                原价
-            </h5></label>
-            <input name="" id="inUpdateInfoOldPrice" placeholder="请输入基本描述信息" value="" type="text">
+        </div>
+        <div data-role="fieldcontain">
+            <label for="inUpdateInfoPrice" id="for_inUpdateInfoPrice">
+                现价（单位：元，最小精确到分，如：4.50）
+            </label>
+            <input name="" id="inUpdateInfoPrice" placeholder="请输入现价" value="" type="text">
+        </div>
+        <div data-role="fieldcontain">
+            <label for="inUpdateInfoOldPrice" id="for_inUpdateInfoOldPrice">
+                原价（单位：元，最小精确到分，如：4.50）
+            </label>
+            <input name="" id="inUpdateInfoOldPrice" placeholder="请输入原价" value="" type="text">
         </div>
         <a data-role="button" id="actUpdateInfo">
             购买

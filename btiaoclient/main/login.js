@@ -129,8 +129,17 @@ Util.prototype.postObj = function(url, obj, func) {
 		}
 	});
 }
+/**
+ * 整数价格呈现时，要缩小呈现小数价格。
+ */
 Util.prototype.decoratePrice = function(price) {
 	return (price*1.0)/100;
+}
+/**
+ * 系统仅存储整数价格，所以需要放大，再存，呈现时再缩小还原。
+ */
+Util.prototype.formIntPrice = function(price) {
+	return parseInt(price*100);
 }
 Util.prototype.decorateTime = function(last) {
 	var now = new Date().valueOf();
@@ -175,6 +184,16 @@ Util.prototype.getSpecificUpperElm = function (elm, attrName) {
 	}
 	
 	return null;
+}
+Util.prototype.checkPriceValid = function (price) {
+	var str = price.toString();
+	if (str.match(/^[0-9]{1,8}$/) ||
+			str.match(/^[0-9]{1,8}\.[0-9]$/) ||
+			str.match(/^[0-9]{1,8}\.[0-9][0-9]$/)) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 function LoginMgr() {
