@@ -274,14 +274,15 @@ LoginMgr.prototype.devLogout = function () {
 }
 
 function Log() {
-	if (navigator.userAgent.match(/Android/i)) {
-		this.isAndroid = true;
+	if (navigator.userAgent.match(/Android/i) ||
+			navigator.userAgent.match(/iPhone/i)) {
+		this.isMobile = true;
 	} else {	
-		this.isAndroid = false;
+		this.isMobile = false;
 	}
 }
 Log.prototype.l = function (str) {
-	if (!!this.isAndroid) {
+	if (!!this.isMobile) {
 		alert(str);
 	} else {
 		alert(str);
