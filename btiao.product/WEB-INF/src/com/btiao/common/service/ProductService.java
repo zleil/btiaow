@@ -8,6 +8,7 @@ import com.btiao.base.exp.ErrCode;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.infomodel.RelType;
+import com.btiao.product.domain.AccessRight.Action;
 
 public class ProductService {
 	static public ProductService newService() {
@@ -30,6 +31,11 @@ public class ProductService {
 		}
 		
 		info.initId(urlIds);
+		
+		if (!RightMgr.instance().canDo(info, Action.GET, "", this.opUserId)) {
+			throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "getObject no right,user="+this.opUserId);
+		}
+		
 		if (base.get(info)) {
 			return info;
 		} else {
@@ -41,8 +47,13 @@ public class ProductService {
 
 	public void updateObject(
 			InfoMObject info, Collection<String> attrs) throws BTiaoExp {
+		if (!RightMgr.instance().canDo(info, Action.POST, "", this.opUserId)) {
+			throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "updateObject no right,user="+this.opUserId);
+		}
+		
 		base.begin();
 		try {
+			
 			InfoMObject newObj = info.clone();
 			if (!base.get(newObj)) {
 				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(newObj.toString()));
@@ -71,6 +82,10 @@ public class ProductService {
 					rightRelName, downRelName);
 			if (!ParallelMgr.instance().writeAccess(m, 3000)) {
 				throw new BTiaoExp(ErrCode.TIME_OUT, "addObjectRightAndDownRel time,m="+m);
+			}
+			
+			if (!RightMgr.instance().canDo(from, Action.PUT, rightRelName, this.opUserId)) {
+				throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "addObjectRightAndDownRel no right,user="+this.opUserId);
 			}
 			
 			_addObjectRightAndDownRel(rightRelName,from,to,downRelName,justAddRel);
@@ -116,6 +131,10 @@ public class ProductService {
 					rightRelName, downRelName);
 			if (!ParallelMgr.instance().writeAccess(m, 3000)) {
 				throw new BTiaoExp(ErrCode.TIME_OUT, "delObjectRightAndDownRel time,m="+m);
+			}
+			
+			if (!RightMgr.instance().canDo(from, Action.DELETE, rightRelName, this.opUserId)) {
+				throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "delObjectRightAndDownRel no right,user="+this.opUserId);
 			}
 			
 			_delObjectRightAndDownRel(rightRelName,from,to,downRelName,justDelRel);
@@ -171,6 +190,10 @@ public class ProductService {
 					rightRelName, downRelName);
 			if (!ParallelMgr.instance().readAccess(m, 3000)) {
 				throw new BTiaoExp(ErrCode.TIME_OUT, "getAllObjRightAndDownRel time,m="+m);
+			}
+			
+			if (!RightMgr.instance().canDo(from, Action.GETALL, rightRelName, this.opUserId)) {
+				throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "getAllObjRightAndDownRel no right,user="+this.opUserId);
 			}
 			
 			return _getAllObjRightAndDownRel(from,toClass,rightRelName,lastObj,downRelName, num);

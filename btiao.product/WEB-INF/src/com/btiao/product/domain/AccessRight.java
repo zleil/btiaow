@@ -19,7 +19,7 @@ public class AccessRight extends InfoMObject {
 		PUT,
 		POST,
 		DELETE,
-		GUT,
+		GET,
 		GETALL;
 	}
 	

@@ -68,7 +68,7 @@ public class RightMgr {
 		
 		List<AccessRight> allGroupRight = rights.groupRight.get(target);
 		if (allGroupRight == null || allGroupRight.size() == 0) {
-			checkOther(rights, target);
+			return checkOther(rights, target);
 		}
 		
 		boolean inGroup = false;
