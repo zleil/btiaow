@@ -44,14 +44,11 @@ public abstract class ResBTBase extends ServerResource {
 	
 	@Get(value="json")
 	public final JsonRepresentation btiaoGet() {
-		pre();
 		return commonPPD(null, OP.get);
 	}
 	
 	@Put(value="json:json")
 	public JsonRepresentation btiaoPut(JsonRepresentation arg) {
-		pre();
-		
 		if (arg == null) {
 			try {
 				arg = new JsonRepresentation(this.getRequest().getEntity());
@@ -65,13 +62,11 @@ public abstract class ResBTBase extends ServerResource {
 	
 	@Delete(value="json:json")
 	public JsonRepresentation btiaoDel(JsonRepresentation arg) {
-		pre();
 		return commonPPD(arg, OP.del);
 	}
 	
 	@Post(value="json:json")
 	public JsonRepresentation btiaoPost(JsonRepresentation arg) {
-		pre();
 		return commonPPD(arg, OP.post);
 	}
 	
@@ -199,6 +194,7 @@ public abstract class ResBTBase extends ServerResource {
 				if (op == OP.get) {
 					Form form = this.getReference().getQueryAsForm();
 					opUserId = (String)form.getFirstValue(RestFilterBasicAuth.ARG_NAME_USER);
+					pre();
 					contentRet = get(form);
 				} else {
 					JSONObject jao = null;
@@ -209,6 +205,8 @@ public abstract class ResBTBase extends ServerResource {
 					
 					Collection<String> attrList = new ArrayList<String>();
 					Object argObj = cvtJson2Obj(op, jao, attrList);
+					
+					pre();
 					if (op == OP.del) {
 						contentRet = del(argObj);
 					} else if (op == OP.post) {

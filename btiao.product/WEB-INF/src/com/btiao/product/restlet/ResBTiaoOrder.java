@@ -12,7 +12,7 @@ import com.btiao.base.model.BTiaoUser;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
 import com.btiao.base.utils.SimpleFunc;
-import com.btiao.common.service.CommonMgr;
+import com.btiao.common.service.ProductService;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.Order;
@@ -45,11 +45,11 @@ public class ResBTiaoOrder extends ResBTBase {
 		Position pos = getPos();
 		BTiaoUser fromUser = getUser((Order)arg);
 		
-		InfoMBaseService base = CommonMgr.instance().base;
+		InfoMBaseService base = ProductService.newService().base;
 		base.begin();
 		try {
-			CommonMgr.instance().addObjectRightAndDownRel(RelName.order_of_position, pos, (InfoMObject)arg, RelName.timeSeq, false);
-			CommonMgr.instance().addObjectRightAndDownRel(RelName.order_of_user, fromUser, (InfoMObject)arg, RelName.ofUser_order, true);
+			ProductService.newService().addObjectRightAndDownRel(RelName.order_of_position, pos, (InfoMObject)arg, RelName.timeSeq, false);
+			ProductService.newService().addObjectRightAndDownRel(RelName.order_of_user, fromUser, (InfoMObject)arg, RelName.ofUser_order, true);
 			base.success();
 		} catch (BTiaoExp e) {
 			base.failed();
@@ -68,20 +68,20 @@ public class ResBTiaoOrder extends ResBTBase {
 		Order order = (Order)arg;
 		Position pos = getPos();
 		
-		InfoMBaseService base = CommonMgr.instance().base;
+		InfoMBaseService base = ProductService.newService().base;
 		base.begin();
 		try {
-			Order orderOld = (Order) CommonMgr.instance().getObject(Order.class, 
+			Order orderOld = (Order) ProductService.newService().getObject(Order.class, 
 					SimpleFunc.getArrayList(order.id));
 			
 			BTiaoUser fromUser = getUser(orderOld);
 			
 			if (orderOld.state != order.state && Order.State.VALID == orderOld.state) {
-				CommonMgr.instance().delObjectRightAndDownRel(RelName.order_of_position, pos, order, RelName.timeSeq, true);
-				CommonMgr.instance().addObjectRightAndDownRel(RelName.historyOrder_of_position, pos, order, RelName.timeSeqHistory, true);
+				ProductService.newService().delObjectRightAndDownRel(RelName.order_of_position, pos, order, RelName.timeSeq, true);
+				ProductService.newService().addObjectRightAndDownRel(RelName.historyOrder_of_position, pos, order, RelName.timeSeqHistory, true);
 				
-				CommonMgr.instance().delObjectRightAndDownRel(RelName.order_of_user, fromUser, (InfoMObject)arg, RelName.ofUser_order, true);
-				CommonMgr.instance().addObjectRightAndDownRel(RelName.historyOrder_of_user, fromUser, (InfoMObject)arg, RelName.historyOfUser_order, true);
+				ProductService.newService().delObjectRightAndDownRel(RelName.order_of_user, fromUser, (InfoMObject)arg, RelName.ofUser_order, true);
+				ProductService.newService().addObjectRightAndDownRel(RelName.historyOrder_of_user, fromUser, (InfoMObject)arg, RelName.historyOfUser_order, true);
 			}
 			
 			updateObj(order, attrList);
@@ -103,7 +103,7 @@ public class ResBTiaoOrder extends ResBTBase {
 	}
 	
 	private void updateObj(Order order, Collection<String> attrList) throws BTiaoExp {
-		CommonMgr.instance().updateObject(order, attrList);
+		ProductService.newService().updateObject(order, attrList);
 	}
 	
 	private Position getPos() {

@@ -7,7 +7,7 @@ import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
 import com.btiao.base.utils.SimpleFunc;
-import com.btiao.common.service.CommonMgr;
+import com.btiao.common.service.ProductService;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.BlockInfo;
@@ -22,11 +22,13 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 		
 		infoIdList.add(infoId);
 		posIdList.add(posId);
+		
+		svc.opUserId = this.opUserId;
 	}
 	
 	@Override
 	protected Object get(Form form) throws BTiaoExp {
-		return CommonMgr.instance().getObject(BlockInfo.class, infoIdList);
+		return svc.getObject(BlockInfo.class, infoIdList);
 	}
 
 	@Override
@@ -39,7 +41,7 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 //		}
 		Position pos = new Position();
 		pos.initId(posIdList);
-		CommonMgr.instance().addObjectRightAndDownRel(RelName.blockInfo_of_position, pos, (InfoMObject)arg, RelName.timeSeq, false);
+		svc.addObjectRightAndDownRel(RelName.blockInfo_of_position, pos, (InfoMObject)arg, RelName.timeSeq, false);
 		return null;
 	}
 
@@ -52,15 +54,15 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 		
 		BlockInfo info = (BlockInfo)arg;
 		
-		InfoMBaseService base = CommonMgr.instance().base;
+		InfoMBaseService base = svc.base;
 		base.begin();
 		try {
-			BlockInfo infoOld = (BlockInfo) CommonMgr.instance().getObject(BlockInfo.class, SimpleFunc.getArrayList(info.id));
+			BlockInfo infoOld = (BlockInfo) svc.getObject(BlockInfo.class, SimpleFunc.getArrayList(info.id));
 			if (infoOld.state != info.state && infoOld.state == State.VALID) {
-				CommonMgr.instance().delObjectRightAndDownRel(RelName.blockInfo_of_position, pos, info, RelName.timeSeq, true);
-				CommonMgr.instance().addObjectRightAndDownRel(RelName.historyBlockInfo_of_position, pos, info, RelName.timeSeqHistory, true);
+				svc.delObjectRightAndDownRel(RelName.blockInfo_of_position, pos, info, RelName.timeSeq, true);
+				svc.addObjectRightAndDownRel(RelName.historyBlockInfo_of_position, pos, info, RelName.timeSeqHistory, true);
 			}
-			CommonMgr.instance().updateObject(info, attrList);
+			svc.updateObject(info, attrList);
 			base.success();
 		} catch (BTiaoExp e) {
 			base.failed();
@@ -80,10 +82,11 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 		Position pos = new Position();
 		pos.initId(posIdList);
 		
-		CommonMgr.instance().delObjectRightAndDownRel(RelName.blockInfo_of_position, pos, info, RelName.timeSeq, false);
+		svc.delObjectRightAndDownRel(RelName.blockInfo_of_position, pos, info, RelName.timeSeq, false);
 		return null;
 	}
 	
+	private ProductService svc = ProductService.newService();
 	private ArrayList<String> infoIdList = new ArrayList<String>();
 	private ArrayList<String> posIdList = new ArrayList<String>();
 }

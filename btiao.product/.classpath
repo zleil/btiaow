@@ -16,5 +16,8 @@
 	<classpathentry kind="lib" path="/third/lib/org.restlet.ext.xstream.jar"/>
 	<classpathentry kind="lib" path="/third/lib/org.restlet.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/btiao.base"/>
+	<classpathentry kind="lib" path="/third/lib/log4j-1.2-api-2.0-beta8.jar"/>
+	<classpathentry kind="lib" path="/third/lib/log4j-api-2.0-beta8.jar"/>
+	<classpathentry kind="lib" path="/third/lib/log4j-core-2.0-beta8.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>

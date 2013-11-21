@@ -10,7 +10,7 @@ import com.btiao.base.exp.ErrCode;
 import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
-import com.btiao.common.service.CommonMgr;
+import com.btiao.common.service.ProductService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.UsrInfoExt;
 
@@ -56,5 +56,5 @@ public class ResBTiaoUsrInfoExt extends ResBTBase {
 	}
 
 	private String usrId = "";
-	private CommonMgr mgr = CommonMgr.instance();
+	private ProductService mgr = ProductService.newService();
 }

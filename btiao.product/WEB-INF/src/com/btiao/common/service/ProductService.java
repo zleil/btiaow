@@ -9,15 +9,15 @@ import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.infomodel.RelType;
 
-public class CommonMgr {
-	static public CommonMgr instance() {
+public class ProductService {
+	static public ProductService newService() {
 		if (inst == null) {
-			inst = new CommonMgr();
+			inst = new ProductService();
 		}
 		return inst;
 	}
 	
-	static private CommonMgr inst;
+	static private ProductService inst;
 	
 	public InfoMObject getObject(
 			Class<?extends InfoMObject>infoClz, List<String> urlIds) throws BTiaoExp {
@@ -231,7 +231,9 @@ public class CommonMgr {
 		return sb.toString();
 	}
 	
-	private CommonMgr() {}
+	private ProductService() {}
 	
 	public InfoMBaseService base = InfoMBaseService.instance();
+	
+	public String opUserId;
 }

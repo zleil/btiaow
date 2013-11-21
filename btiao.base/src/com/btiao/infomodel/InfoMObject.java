@@ -117,4 +117,6 @@ public abstract class InfoMObject implements Cloneable {
 		
 		return sb.toString();
 	}
+	
+	public String ownerUser = "";
 }

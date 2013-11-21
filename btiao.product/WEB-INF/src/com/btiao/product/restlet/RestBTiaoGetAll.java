@@ -11,7 +11,7 @@ import org.restlet.data.Reference;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.oif.restlet.ResBTBase;
-import com.btiao.common.service.CommonMgr;
+import com.btiao.common.service.ProductService;
 import com.btiao.infomodel.InfoMObject;
 
 public class RestBTiaoGetAll extends ResBTBase {
@@ -156,5 +156,5 @@ public class RestBTiaoGetAll extends ResBTBase {
 	protected String lastId;
 	protected int num;
 	
-	protected CommonMgr mgr = CommonMgr.instance();
+	protected ProductService mgr = ProductService.newService();
 }

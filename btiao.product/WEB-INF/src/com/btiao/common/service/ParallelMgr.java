@@ -53,7 +53,6 @@ public class ParallelMgr {
 		/**
 		 * model.
 		 */
-		@SuppressWarnings("unused")
 		public ModelInfo m;
 		
 		/**

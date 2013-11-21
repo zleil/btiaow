@@ -13,6 +13,8 @@ public class RelName {
 	//of user
 	static public final String order_of_user = "order_of_user";
 	static public final String historyOrder_of_user = "historyOrder_of_user";
+	//of any
+	static public final String right_of_ = "right_of_";
 	
 	//self relationships
 	static public final String historyOfUser_order = "historyUser_order";

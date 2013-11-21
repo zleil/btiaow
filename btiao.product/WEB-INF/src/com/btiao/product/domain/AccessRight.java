@@ -1,44 +1,55 @@
 package com.btiao.product.domain;
 
 import java.util.List;
-
-import com.btiao.base.utils.BTiaoLog;
 import com.btiao.infomodel.InfoMObject;
 
 public class AccessRight extends InfoMObject {
+	static public class CONST {
+		static public final String gIdOwner = "Owner";
+		static public final String gIdOther = "Other";
+		static public final String gIdPrefix = "gid_";
+	}
 	static public class Right{
-		static public int ALLOW = 0;
-		static public int NOTALLOW = 1;
+		static public final int ALLOW = 0;
+		static public final int NOTALLOW = 1;
 		
-		static public int DEFAULT = ALLOW;
+		static public final int DEFAULT = ALLOW;
 	}
 	static public enum Action {
-		PUT,POST,DELETE,GUT,GETALL;
+		PUT,
+		POST,
+		DELETE,
+		GUT,
+		GETALL;
 	}
+	
+	/**
+	 * action id.
+	 * @see Action
+	 */
+	public String action;
+	
+	/**
+	 * the default value is "", it represents self right.<br>
+	 * otherwise, it represents sub resource right of self.<br>
+	 */
+	public String relName = "";
+	
+	/**
+	 * group id.<br>
+	 * @see CONST
+	 */
+	public String gId;
+	
+	/**
+	 * it represents the right value of the rightName.<br>
+	 * @see Right
+	 */
+	public int value = Right.DEFAULT;
 
 	@Override
 	public boolean initId(List<String> urlIds) {
-		return true;
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
-	public Action getAction() {
-		String[] splits = name.split("_");
-		return Action.valueOf(splits[0]);
-	}
-	
-	public Class<?extends InfoMObject> getResClass() {
-		String[] splits = name.split("_");
-		String className = "com.btiao.product.domain." + splits[1];
-		try {
-			return (Class<? extends InfoMObject>) Class.forName(className);
-		} catch (Exception e) {
-			Logger log = BTiaoLog.get();
-			BTiaoLog.logExp(, e, "getResClass from "+this.name+" failed!");
-			return null;
-		}
-	}
-
-	public String name;
-	
-	public String value;
 }
