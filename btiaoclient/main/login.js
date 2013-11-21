@@ -195,6 +195,19 @@ Util.prototype.checkPriceValid = function (price) {
 		return false;
 	}
 }
+Util.prototype.tip = function(info, errCode) {
+	$("#btiaoTip p").text("(@_@)" + info + ((!!errCode)?"."+errCode+".":""));
+	
+	if (!!this.timerCloseTip) {
+		clearTimeout(this.timerCloseTip);
+	}
+	
+	$("#btiaoTip").popup("open");
+	this.timerCloseTip = setTimeout(function(){
+		this.timerCloseTip = undefined;
+		$("#btiaoTip").popup("close");
+	},3000);
+}
 
 function LoginMgr() {
 	this.logined = false;
@@ -299,6 +312,8 @@ window.onload = function() {
 	if (!!oldInit) {
 		(oldInit)();
 	}
+	
+	$("#btiaoTip").popup();
 	
 	$("#labProductNum").slider({
 		theme:"c",trackTheme:"c",highlight:true,mini:false

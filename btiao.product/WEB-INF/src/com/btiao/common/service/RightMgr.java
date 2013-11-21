@@ -95,6 +95,9 @@ public class RightMgr {
 		AccessRight right = rights.otherRight.get(target);
 		if (right == null) {
 			//default owner right
+			if (target.act == Action.GET || target.act == Action.GETALL) {
+				return true; //default get is allow
+			}
 			return false;
 		} else {
 			return right.value == Right.ALLOW;

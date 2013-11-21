@@ -202,6 +202,7 @@ PurchasePage.prototype.checkOrderDst = function () {
 }
 PurchasePage.prototype.dispPurchaseAlert = function () {
 	$("#orderDstNote").addClass("alertArea");
+	btiao.util.tip("输入有误哦~");
 }
 PurchasePage.prototype.undispPurchaseAlert = function () {
 	$("#orderDstNote").removeClass("alertArea");
@@ -233,10 +234,14 @@ PurchasePage.prototype.purchase = function() {
 				orderDst: orderDst
 		}
 		btiao.util.putObj(url, obj, function(d) {
-			btiao.purchasePage.undispPurchaseAlert();
-			btiao.purchasePage.setLastOrderDst();
-			
-			$.mobile.changePage($("#pgFirst"));
+			if (d.errCode != 0) {
+				btiao.util.tip("添加订单出错", d.errCode);
+			} else {
+				btiao.purchasePage.undispPurchaseAlert();
+				btiao.purchasePage.setLastOrderDst();
+				
+				$.mobile.changePage($("#pgFirst"));
+			}
 		});
 	});
 }
@@ -439,6 +444,7 @@ UpdateInfoPage.prototype.actUpdateInfo = function() {
 	var oldPrice = $("#inUpdateInfoOldPrice").val();
 	
 	if (!btiao.updateInfoPage.checkValid(desc, price, oldPrice)) {
+		btiao.util.tip("输入有误哦~");
 		return;
 	}
 	
@@ -455,9 +461,13 @@ UpdateInfoPage.prototype.actUpdateInfo = function() {
 				price: price,
 				oldPrice: oldPrice
 		}
-		btiao.util.putObj(url, obj, function(d) {		
+		btiao.util.putObj(url, obj, function(d) {
 			//$.mobile.changePage($("#pgFirst"));
-			btiao.firstPage.actDisplayValidInfo();
+			if (d.errCode != 0) {
+				btiao.util.tip("添加信息错误", d.errCode);
+			} else {
+				btiao.firstPage.actDisplayValidInfo();
+			}
 		});
 	});
 }
