@@ -2,21 +2,19 @@ package com.btiao.product.restlet;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.restlet.data.Form;
-
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
-import com.btiao.base.oif.restlet.ResBTBase;
-import com.btiao.common.service.ProductService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.UsrInfoExt;
 
-public class ResBTiaoUsrInfoExt extends ResBTBase {
+public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
 	@Override
 	protected void pre() {
+		super.pre();
+		
 		usrId = this.getAttribute("usrId");
 	}
 	
@@ -24,14 +22,14 @@ public class ResBTiaoUsrInfoExt extends ResBTBase {
 	protected Object get(Form form) throws BTiaoExp {
 		ArrayList<String> idList = new ArrayList<String>();
 		idList.add(usrId);
-		Object r = mgr.getObject(UsrInfoExt.class, idList);
+		Object r = svc.getObject(UsrInfoExt.class, idList);
 		return r;
 	}
 
 	@Override
 	@JsonCvtInfo(objClassName="com.btiao.product.domain.UsrInfoExt")
 	protected Object put(Object arg) throws BTiaoExp {
-		mgr.addObjectRightAndDownRel(RelName.usrExtInfo_of_root, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
+		svc.addObjectRightAndDownRel(RelName.usrExtInfo_of_root, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
 		return null;
 	}
 
@@ -40,10 +38,10 @@ public class ResBTiaoUsrInfoExt extends ResBTBase {
 	protected Object post(Object arg, Collection<String> attrList)
 			throws BTiaoExp {
 		try {
-			mgr.updateObject((InfoMObject)arg, attrList);
+			svc.updateObject((InfoMObject)arg, attrList);
 		} catch (BTiaoExp e) {
 			if (e.errNo == ErrCode.OBJ_NOT_IN_INFO_MODEL) {
-				mgr.addObjectRightAndDownRel(RelName.usrExtInfo_of_root, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
+				svc.addObjectRightAndDownRel(RelName.usrExtInfo_of_root, new BTiaoRoot(), (InfoMObject) arg, RelName.timeSeq, false);
 			}
 		}
 		return null;
@@ -56,5 +54,4 @@ public class ResBTiaoUsrInfoExt extends ResBTBase {
 	}
 
 	private String usrId = "";
-	private ProductService mgr = ProductService.newService();
 }

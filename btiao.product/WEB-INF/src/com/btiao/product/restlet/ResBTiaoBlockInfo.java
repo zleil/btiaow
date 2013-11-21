@@ -5,25 +5,23 @@ import java.util.Collection;
 import org.restlet.data.Form;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
-import com.btiao.base.oif.restlet.ResBTBase;
 import com.btiao.base.utils.SimpleFunc;
-import com.btiao.common.service.ProductService;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.BlockInfo;
 import com.btiao.product.domain.BlockInfo.State;
 import com.btiao.product.domain.Position;
 
-public class ResBTiaoBlockInfo extends ResBTBase {
+public class ResBTiaoBlockInfo extends ResBTiaoProduct {
 	@Override
 	protected void pre() {
+		super.pre();
+		
 		String posId = this.getAttribute("positionId");
 		String infoId = this.getAttribute("infoId");
 		
 		infoIdList.add(infoId);
 		posIdList.add(posId);
-		
-		svc.opUserId = this.opUserId;
 	}
 	
 	@Override
@@ -86,7 +84,6 @@ public class ResBTiaoBlockInfo extends ResBTBase {
 		return null;
 	}
 	
-	private ProductService svc = ProductService.newService();
 	private ArrayList<String> infoIdList = new ArrayList<String>();
 	private ArrayList<String> posIdList = new ArrayList<String>();
 }

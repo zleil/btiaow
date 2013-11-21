@@ -3,28 +3,26 @@ package com.btiao.product.restlet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.restlet.data.Form;
-
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
-import com.btiao.base.oif.restlet.ResBTBase;
-import com.btiao.common.service.ProductService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.Position;
 
-public class ResBTiaoPosition extends ResBTBase {
+public class ResBTiaoPosition extends ResBTiaoProduct {
 	@Override
 	protected void pre() {
+		super.pre();
+		
 		String posId = this.getAttribute("positionId");
 		urlIds.add(posId);
 	}
 	
 	@Override
 	protected Object get(Form form) throws BTiaoExp {
-		return ProductService.newService().getObject(Position.class, urlIds);
+		return svc.getObject(Position.class, urlIds);
 	}
 
 	@Override
@@ -37,7 +35,7 @@ public class ResBTiaoPosition extends ResBTBase {
 //			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
 //		}
 
-		ProductService.newService().addObjectRightAndDownRel(RelName.pos_of_root, new BTiaoRoot(), info, RelName.timeSeq, false);
+		svc.addObjectRightAndDownRel(RelName.pos_of_root, new BTiaoRoot(), info, RelName.timeSeq, false);
 		return null;
 	}
 
@@ -52,7 +50,7 @@ public class ResBTiaoPosition extends ResBTBase {
 			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
 		}
 		
-		ProductService.newService().updateObject(info, attrs);
+		svc.updateObject(info, attrs);
 		return null;
 	}
 
@@ -60,7 +58,7 @@ public class ResBTiaoPosition extends ResBTBase {
 	protected Object del(Object arg) throws BTiaoExp {
 		Position info = new Position();
 		info.initId(urlIds);
-		ProductService.newService().delObjectRightAndDownRel(RelName.pos_of_root, new BTiaoRoot(), info, RelName.timeSeq, false);
+		svc.delObjectRightAndDownRel(RelName.pos_of_root, new BTiaoRoot(), info, RelName.timeSeq, false);
 		return null;
 	}
 
