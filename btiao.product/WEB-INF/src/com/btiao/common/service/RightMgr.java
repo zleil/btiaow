@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.btiao.base.model.BTiaoRoot;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.AccessRight;
 import com.btiao.product.domain.AccessRight.Action;
@@ -124,6 +125,13 @@ public class RightMgr {
 		//TODO
 		//1. …Ë÷√objµƒownerUser in every object in base project.
 		//2. 
+		if (uId.equals("_mgr0")) {
+			return true;
+		}
+		if (obj.ownerUser.equals(uId)) {
+			return true;
+		}
+		
 		return false;
 	}
 	

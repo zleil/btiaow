@@ -534,7 +534,7 @@ function onload() {
 		for (var idx=0; idx<allInput.length; ++idx) {
 			var input = $(allInput[idx]);
 			var name = input.attr("id");
-			var value = input.attr("value");
+			var value = input.val();
 			urlTemplate = urlTemplate.replace("{"+name+"}", value);
 		}
 		

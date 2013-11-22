@@ -7,14 +7,11 @@ import java.util.List;
 import java.util.Map;
 import org.restlet.data.Form;
 import org.restlet.data.Reference;
-
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
-import com.btiao.base.oif.restlet.ResBTBase;
-import com.btiao.common.service.ProductService;
 import com.btiao.infomodel.InfoMObject;
 
-public class RestBTiaoGetAll extends ResBTBase {
+public class RestBTiaoGetAll extends ResBTiaoProduct {
 	static public class Def {
 		public String idOfUrl; 
 		public Class<?extends InfoMObject> parentClass;
@@ -53,6 +50,11 @@ public class RestBTiaoGetAll extends ResBTBase {
 	static private Map<String,Def> defs = new HashMap<String,Def>();
 	
 	@Override
+	protected void pre() {
+		super.pre();
+	}
+	
+	@Override
 	protected Object get(Form form) throws BTiaoExp {
 		String func = form.getFirstValue("func");
 		
@@ -70,7 +72,7 @@ public class RestBTiaoGetAll extends ResBTBase {
 			InfoMObject parentObj = getParentObj();
 			InfoMObject lastObj = getLastObj(form);
 			
-			return mgr.getAllObjRightAndDownRel(parentObj, 
+			return svc.getAllObjRightAndDownRel(parentObj, 
 					def.objClass, def.rightRelName,
 					lastObj, def.downRelName, num);
 		}
@@ -155,6 +157,4 @@ public class RestBTiaoGetAll extends ResBTBase {
 	protected Def def;
 	protected String lastId;
 	protected int num;
-	
-	protected ProductService mgr = ProductService.newService();
 }

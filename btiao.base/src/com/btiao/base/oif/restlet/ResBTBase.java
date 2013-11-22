@@ -193,7 +193,7 @@ public abstract class ResBTBase extends ServerResource {
 			try {
 				if (op == OP.get) {
 					Form form = this.getReference().getQueryAsForm();
-					opUserId = (String)form.getFirstValue(RestFilterBasicAuth.ARG_NAME_USER);
+					opUserId = (String)form.getFirstValue(RestFilterBasicAuth.OP_USER_INFO_NAME+"["+RestFilterBasicAuth.ARG_NAME_USER+"]");
 					pre();
 					contentRet = get(form);
 				} else {
