@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="WARN">
+  
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+    <RollingFile name="btiaoFile" fileName="btlogs/btiao.log" filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+      <PatternLayout>
+        <pattern>d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="20 MB"/>
+      </Policies>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+	<Logger name="btiao" level="info" additivity="true">
+      <appender-ref ref="btiaoFile"/>
+    </Logger>
+    <Root level="info">
+      <appender-ref ref="Console"/>
+      <appender-ref ref="btiaoFile"/>
+    </Root>
+  </Loggers>
+</configuration>

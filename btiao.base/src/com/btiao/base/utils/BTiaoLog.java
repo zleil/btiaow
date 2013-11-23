@@ -4,15 +4,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class BTiaoLog {
 	static public Logger get() {
-		return Logger.getLogger("btiao");
+		return LogManager.getLogger("btiao");
 	}
 	
 	static public Logger get(String name) {
-		return Logger.getLogger(name);
+		return LogManager.getLogger(name);
 	}
 	
 	static public void logExp(Logger log, Throwable e) {

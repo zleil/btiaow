@@ -2,7 +2,9 @@ package com.btiao.user.service;
 
 import java.security.SecureRandom;
 import java.util.Collection;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.Logger;
+
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.model.BTiaoUser;

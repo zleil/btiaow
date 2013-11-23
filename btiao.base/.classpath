@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="/third/lib/jaxen-1.1-beta-6.jar"/>
 	<classpathentry kind="lib" path="/third/lib/jaxme-api-0.3.jar"/>
 	<classpathentry kind="lib" path="/third/lib/jsr173_1.0_api.jar"/>
-	<classpathentry kind="lib" path="/third/lib/log4j-1.2-api-2.0-beta8.jar"/>
 	<classpathentry kind="lib" path="/third/lib/log4j-api-2.0-beta8.jar"/>
 	<classpathentry kind="lib" path="/third/lib/log4j-core-2.0-beta8.jar"/>
 	<classpathentry kind="lib" path="/third/lib/msv-20030807.jar"/>

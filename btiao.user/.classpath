@@ -12,7 +12,6 @@
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/jsp-api.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/el-api.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/annotations-api.jar"/>
-	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/log4j-1.2-api-2.0-beta8.jar"/>
 	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/log4j-api-2.0-beta8.jar"/>
 	<classpathentry kind="lib" path="D:/dev/git/btiaow/third/lib/log4j-core-2.0-beta8.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>

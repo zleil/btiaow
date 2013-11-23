@@ -1,0 +1,6 @@
+jre:
+http://download.oracle.com/otn-pub/java/jdk/7u45-b18/jre-7u45-linux-x64.tar.gz?AuthParam=1385126786_f799733fb3e8533d14276e2254a8987e
+
+tomcat:
+http://apache.dataguru.cn/tomcat/tomcat-7/v7.0.47/bin/apache-tomcat-7.0.47.tar.gz
+
