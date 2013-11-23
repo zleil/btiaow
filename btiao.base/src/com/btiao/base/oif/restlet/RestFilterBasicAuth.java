@@ -36,6 +36,8 @@ public class RestFilterBasicAuth extends Filter {
 	static public final String ARG_NAME_TOKEN = "token";
 	
 	protected int beforeHandle(Request request, Response response) {
+		System.exit(1);
+		System.out.println("========---here!");
 		if (request.getMethod() == Method.GET) {
 			return doHandleGet(request, response);
 		} else {

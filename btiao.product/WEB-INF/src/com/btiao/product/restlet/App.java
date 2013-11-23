@@ -9,6 +9,7 @@ import org.restlet.routing.Router;
 
 import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.oif.restlet.RestFilterBasicAuth;
+import com.btiao.base.utils.BTiaoLog;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.BlockInfo;
 import com.btiao.product.domain.Order;
@@ -38,6 +39,8 @@ public class App extends Application {
 		
 		RestFilterBasicAuth authFilter = new RestFilterBasicAuth();
 		authFilter.setNext(router);
+		
+		BTiaoLog.get().warn("btiao/product restlet app is ok!");
 		return authFilter;
 	}
 	

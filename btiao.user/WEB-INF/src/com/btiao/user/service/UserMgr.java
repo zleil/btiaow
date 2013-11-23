@@ -206,9 +206,8 @@ public class UserMgr implements UserService {
 		try {
 			return InfoMBaseService.instance().get(info);
 		} catch (BTiaoExp e) {
-			String errMsg = e + "\n" + "uid="+uId+",token="+token;
-			System.err.println(errMsg);
-			log.error(errMsg);
+			String errMsg = "uid="+uId+",token="+token;
+			BTiaoLog.logExp(log, e, errMsg);
 			return false;
 		}
 	}
@@ -258,8 +257,7 @@ public class UserMgr implements UserService {
 			base.failed();
 			
 			String errMsg = "add super user failed!";
-			System.err.println(errMsg);
-			log.error(errMsg);
+			BTiaoLog.logExp(log, e, errMsg);
 		} finally {
 			base.finish();
 		}
