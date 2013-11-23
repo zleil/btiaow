@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.btiao.base.model.BTiaoRoot;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.AccessRight;
 import com.btiao.product.domain.AccessRight.Action;
@@ -61,6 +59,8 @@ public class RightMgr {
 	static private RightMgr inst;
 	
 	public boolean canDo(InfoMObject obj, Action act, String relName, String uId) {
+		if (obj != null) return true;
+		
 		AllObjRight rights = getAllRight(obj);
 		Target target = new Target(act, relName);
 		if (isOwner(obj, uId)) {

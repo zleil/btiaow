@@ -10,12 +10,10 @@ import org.apache.logging.log4j.Logger;
 
 public class BTiaoLog {
 	static public Logger get() {
-		System.out.println("---------------");
 		return LogManager.getLogger("btiao");
 	}
 	
 	static public Logger get(String name) {
-		System.out.println("-----------x---");
 		return LogManager.getLogger(name);
 	}
 	
