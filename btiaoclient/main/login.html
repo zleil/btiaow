@@ -22,7 +22,7 @@
 <body class="home ui-mobile-viewport ui-overlay-c">
 <!-- Home -->
 <div data-role="page" id="pgLogin">
-	<div data-theme="a" data-role="header">
+	<div data-theme="a" data-role="header" data-position="fixed">
         <h3>
                     欢迎访问便条网
         </h3>
@@ -66,10 +66,10 @@
 
 <!-- Home -->
 <div data-role="page" id="pgFirst">
-    <div data-theme="a" data-role="header">
-	    <a data-role="button" id="actListOrders" data-theme="a" data-icon="grid" data-iconpos="left"
+    <div data-theme="a" data-role="header" data-position="fixed">
+    	<a data-role="button" href="#pgMoreAction" data-theme="a" data-iconpos="left"
 	        class="ui-btn-right">
-            订单
+            ...
         </a>
         <h3 class="posName">
             小卖部6#0105  [望春园]
@@ -126,7 +126,7 @@
 </div>
 
 <div data-role="page" id="pgOrderListPage">
-    <div data-theme="a" data-role="header">
+    <div data-theme="a" data-role="header" data-position="fixed">
     	<a data-role="button" href="#pgFirst" class="ui-btn-left">
             返回
         </a>
@@ -154,7 +154,7 @@
 </div>
 
 <div data-role="page" id="pgOrderDetailPage">
-    <div data-theme="a" data-role="header">
+    <div data-theme="a" data-role="header" data-position="fixed">
     	<a data-role="button" href="#pgOrderListPage" class="ui-btn-left">
             返回
         </a>
@@ -176,7 +176,7 @@
 
 <!-- Home -->
 <div data-role="page" id="pgDetail">
-    <div data-theme="a" data-role="header">
+    <div data-theme="a" data-role="header" data-position="fixed">
         <a data-role="button" href="#pgFirst" class="ui-btn-left">
             返回
         </a>
@@ -219,13 +219,16 @@
 
 <!-- Home -->
 <div data-role="page" id="pgPurchase">
-	<div data-theme="a" data-role="header">
+	<div data-theme="a" data-role="header" data-position="fixed">
 		<a data-role="button" href="#pgDetail" class="ui-btn-left">
             返回
         </a>
         <h3>
                     订单填写
         </h3>
+        <a data-role="button" id="actPurchase" class="ui-btn-right">
+            购买
+        </a>
     </div>
     <div data-role="content">
         <div data-role="fieldcontain">
@@ -239,13 +242,10 @@
         </div>
         <div data-role="fieldcontain">
             <label for="orderDst" id="orderDstNote"><h5>
-                本小区送货地址(必须为8个数字，楼、单元、层、房号各占2数字，若无单元编号，则填写00)
+                本小区送货地址，店铺所在小区之外暂不支持送货。(温馨提示：必须为8个数字，楼、单元、层、房号各占2数字，若无单元编号，则填写00)
             </h5></label>
             <input name="" id="orderDst" placeholder="如：填01020304，代表1号楼2单元3层4号房" value="" type="text">
         </div>
-        <a data-role="button" id="actPurchase">
-            购买
-        </a>
         <div data-role="fieldcontain">
             <label for="textarea1">
                 备注
@@ -257,13 +257,16 @@
 
 <!-- Home -->
 <div data-role="page" id="pgUpdateInfo">
-	<div data-theme="a" data-role="header">
+	<div data-theme="a" data-role="header" data-position="fixed">
 		<a data-role="button" href="#pgFirst" class="ui-btn-left">
             返回
         </a>
         <h3>
                     新建产品
         </h3>
+        <a data-role="button" id="actUpdateInfo" class="ui-btn-right">
+            确定
+        </a>
     </div>
     <div data-role="content">
         <div data-role="fieldcontain">
@@ -284,11 +287,76 @@
             </label>
             <input name="" id="inUpdateInfoOldPrice" placeholder="请输入原价" value="" type="text">
         </div>
-        <a data-role="button" id="actUpdateInfo">
+    </div>
+</div>
+<!-- Home -->
+<div data-role="page" id="pgUsrExtInfo">
+	<div data-theme="a" data-role="header" data-position="fixed">
+		<a data-role="button" href="#pgFirst" class="ui-btn-left">
+            返回
+        </a>
+        <h3>
+                    个人信息设置
+        </h3>
+        <a data-role="button" id="actSetUsrInfo" class="ui-btn-right">
             确定
         </a>
     </div>
+    <div data-role="content">
+        <div data-role="fieldcontain">
+        	<h5>
+        	<p class="multiLineLab">温馨提示：1. 用户名被设置后，暂时不能再次被修改</p>
+        	<p class="multiLineLab">温馨提示：2. 若未设置用户名，则您更话手机/平板后，账户信息很难找回</p>
+        	</h5>
+            <label for="inUsrExtInfoFuid" id="for_inUsrExtInfoFuid">
+                用户名，不能和别人重复，必须填写，不能以数字或下划线开头
+            </label>
+            <input name="" id="inUsrExtInfoFuid" placeholder="请输入您的用户名" value="" type="text">
+        </div>
+        <div data-role="fieldcontain">
+            <label for="inUsrExtInfoPos" id="for_inUsrExtInfoPos">
+               登录后首次查看的便条网位置
+            </label>
+            <input name="" id="inUsrExtInfoPos" placeholder="请输入默认的便条网位置" value="1000001" type="text">
+        </div>
+        <div data-role="fieldcontain">
+        	<h5>温馨提示：填写如下信息后在社区内购物会更方便</h5>
+            <label for="inUsrExtInfoLivePos" id="for_inUsrExtInfoLivePos">
+                您居住社区对应的便条网位置
+            </label>
+            <input name="" id="inUsrExtInfoLivePos" placeholder="请输入您所在小区的位置" value="" type="text">
+        </div>
+        <div data-role="fieldcontain">
+            <label for="inUsrExtInfoLocationOfLivePos" id="for_inUsrExtInfoLocationOfLivePos">
+                您居住社区的位置编号(温馨提示：必须为8个数字，楼、单元、层、房号各占2数字，若无单元编号，则填写00)
+            </label>
+            <input name="" id="inUsrExtInfoLocationOfLivePos" placeholder="请输入社区位置编号" value="" type="text">
+        </div>
+    </div>
 </div>
+
+<!-- Home -->
+<div data-role="page" id="pgMoreAction">
+	<div data-theme="a" data-role="header" data-position="fixed">
+        <h3>
+                    操作清单
+        </h3>
+    </div>
+    <div data-role="content">
+        <a data-role="button" id="actListOrders" data-theme="a" data-iconpos="left">
+            订单
+        </a>
+        <a data-role="button" id="actEnterUsrExtInfo" data-theme="a" data-iconpos="left">
+            个人设置
+        </a>
+    </div>
+    <div data-role="content">
+        <a data-role="button" href="#pgFirst">
+            取消
+        </a>
+    </div>
+</div>
+        
 <div data-role="popup" id="btiaoTip" data-theme="a">
     <p>???</p>
 </div>

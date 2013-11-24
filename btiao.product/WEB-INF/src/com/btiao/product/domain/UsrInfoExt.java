@@ -6,6 +6,7 @@ import com.btiao.infomodel.InfoMObjAttrDesc;
 import com.btiao.infomodel.InfoMObject;
 
 public class UsrInfoExt extends InfoMObject {
+	static public final String FRIEND_UID_ATTR = "friendUid";
 
 	@Override
 	public boolean initId(List<String> urlIds) {
@@ -16,6 +17,10 @@ public class UsrInfoExt extends InfoMObject {
 	@InfoMObjAttrDesc(key=true)
 	public String usrId;
 	
-	public String positionId;
-	public String locationOfPos; //position中的位置
+	public String friendUid;
+	
+	public String positionId = "";
+	
+	public String posToLive = "";
+	public String locationOfPos = "00000000"; //position中的位置
 }

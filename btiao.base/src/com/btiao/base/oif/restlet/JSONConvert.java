@@ -1,6 +1,7 @@
 package com.btiao.base.oif.restlet;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -41,6 +42,10 @@ public class JSONConvert {
 	public void json2obj(JSONObject jo, Object obj, Collection<String> attrList) {
 		Field[] fields = obj.getClass().getFields();
 		for (Field f : fields) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			
 			String name = f.getName();
 			String typeName = f.getType().getName();
 			try {
@@ -75,6 +80,10 @@ public class JSONConvert {
 	public void obj2json(Object obj, JSONObject jo) {
 		Field[] fields = obj.getClass().getFields();
 		for (Field f : fields) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			
 			String name = f.getName();
 			try {
 				Object value = f.get(obj);

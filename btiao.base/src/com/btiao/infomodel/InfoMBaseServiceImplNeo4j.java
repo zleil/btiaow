@@ -1,6 +1,7 @@
 package com.btiao.infomodel;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -438,6 +439,10 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	private void setNodeAttrs(Node n, InfoMObject o) throws BTiaoExp {
 		Field[] fs = o.getClass().getFields();
 		for (Field f : fs) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			
 			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
 			if (an != null && !an.store()) {
 				continue;
@@ -460,6 +465,10 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 	void setObjAttrs(InfoMObject o, Node n) throws BTiaoExp {
 		Field[] fs = o.getClass().getFields();
 		for (Field f : fs) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			
 			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
 			if (an != null && !an.store()) {
 				continue;
@@ -501,6 +510,10 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		
 		Field[] fs = o.getClass().getFields();
 		for (Field f : fs) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			
 			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
 			if (an == null || !an.key()) {
 				continue;
@@ -598,6 +611,10 @@ public class InfoMBaseServiceImplNeo4j extends InfoMBaseService {
 		
 		Field[] fs = clz.getFields();
 		for (Field f : fs) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			
 			InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
 			if (an == null || !an.key()) {
 				continue;

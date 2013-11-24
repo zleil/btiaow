@@ -16,4 +16,6 @@ public class ErrCode {
 	static public int INTERNEL_ERROR = 1000;
 	static public int TIME_OUT = 1001;
 	static public int USER_HAVE_NO_RIGHT = 1002;
+	static public int CANNOT_MODIFY_FRIEND_UID = 1003;
+	static public int WRONG_FRIEND_UID = 1004;
 }

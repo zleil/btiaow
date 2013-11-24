@@ -99,6 +99,13 @@ Util.prototype.getInnerJsonStr = function (obj) {
 	}
 	return r;
 }
+Util.prototype.putOrPosObj = function(isPut, url, obj, func) {
+	if (isPut) {
+		this.putObj(url, obj, func);
+	} else {
+		this.postObj(url, obj, func);
+	}
+}
 Util.prototype.putObj = function(url, obj, func) {
 	$.ajax({
 		type: "PUT",
@@ -372,6 +379,15 @@ window.onload = function() {
 	$("#actUpdateInfo").click(function(){
 		btiao.updateInfoPage.actUpdateInfo();
 	});
+	
+	$("#actEnterUsrExtInfo").click(function(){
+		btiao.usrExtInfoPage.prepare();
+	});
+	
+	$("#actSetUsrInfo").click(function() {
+		btiao.usrExtInfoPage.actSetUsrInfo();
+	})
+	
 }
 
 })();

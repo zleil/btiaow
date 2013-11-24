@@ -1,6 +1,7 @@
 package com.btiao.infomodel;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import com.btiao.base.exp.ErrCode;
 import com.btiao.base.utils.BTiaoLog;
 
 public abstract class InfoMObject implements Cloneable {
+	static public final String OWNER_USER_ATTR = "ownerUser";
+	
 	/**
 	 * use urlId to initialize infomobject's key attributes.<br>
 	 * note: there maybe more than 1 attributes which composite the urlId.<br>
@@ -42,6 +45,10 @@ public abstract class InfoMObject implements Cloneable {
 		
 		Field[] fs = this.getClass().getFields();
 		for (Field f : fs) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			
 			try {
 				InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
 				if (an == null || !an.key()) continue;
@@ -64,6 +71,10 @@ public abstract class InfoMObject implements Cloneable {
 		
 		Field[] fs = this.getClass().getFields();
 		for (Field f : fs) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			
 			try {
 				InfoMObjAttrDesc an = f.getAnnotation(InfoMObjAttrDesc.class);
 				if (an == null || !an.key()) continue;
@@ -100,6 +111,10 @@ public abstract class InfoMObject implements Cloneable {
 		
 		Field[] fs = this.getClass().getFields();
 		for (Field f : fs) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			
 			try {
 				Object v = f.get(this);
 				String name = f.getName();

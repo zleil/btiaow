@@ -19,6 +19,7 @@ public class App extends Application {
 		router.attach("/users/{userId}", ResBTiaoUser.class);
 		router.attach("/users/{userId}/auth/{token}", ResBTiaoUserLogInfo.class);
 		
+		
 		RestFilterBasicAuth authFilter = new RestFilterBasicAuth();
 		authFilter.setNext(router);
 		

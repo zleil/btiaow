@@ -1,0 +1,43 @@
+root --> position --> info(product) 
+                  --> order
+
+
+user --> order
+
+
+用户创建订单对权限的要求：
+1. postion上，<add,order_of_postion> 需要给other开权限
+2. user上，<add,order_of_postion> 需要给user开权限
+
+商家查看订单要求：
+1. postion上，<getall,order_of_postion> 需要给商家开权限
+
+商家修改订单状态：
+1. postion上，<add/delete,order_of_postion> 需要给商家开权限
+1. user上，<add/delete,order_of_postion> 需要给商家开权限
+
+用户查看自己订单的要求：
+2. user上，<getall,order_of_postion> 需要给user开权限
+
+postion上，<add,order_of_postion> 需要给other开权限
+           <getall,order_of_postion> 需要给商家开权限
+           <add/delete,order_of_postion> 需要给商家开权限
+           
+user上，<add,order_of_postion> 需要给user开权限
+        <add/delete,order_of_postion> 需要给商家开权限
+        <getall,order_of_postion> 需要给user开权限
+
+user的owner给user，other上增加<add/delete,order_of_postion>
+position的owenr给商家，other上增加<add,order_of_postion>
+
+简单方案：
+1. 创建user时，user的owner给user
+2. 创建position时，position的owenr给商家
+3. 在权限管理中，直接针对user和position写死other权限
+	user上，<<add/delete,order_of_postion>, other, allow>
+	position上，<<add/delete,order_of_postion>, other, allow>
+
+支持position的转让功能
+1. 设置设备帐号的友好名称，通过绑定友好名称到position的映射
+2. 友好名称的设置，要求：root,<add,userext_of_root>,other,allow
+

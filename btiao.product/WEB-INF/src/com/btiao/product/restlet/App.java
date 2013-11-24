@@ -18,7 +18,7 @@ import com.btiao.product.restlet.RestBTiaoGetAll.Def;
 
 
 public class App extends Application {
-	public Restlet createInboundRoot() {
+	public Restlet createInboundRoot() {		
 		router.attach("/positions/{positionId}", ResBTiaoPosition.class);
 		router.attach("/positions/{positionId}/infos/{infoId}", ResBTiaoBlockInfo.class);
 		router.attach("/positions/{positionId}/orders/{orderId}", ResBTiaoOrder.class);

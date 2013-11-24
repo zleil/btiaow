@@ -211,7 +211,6 @@ PurchasePage.prototype.setLastOrderDst = function () {
 	var value = $("#orderDst").val();
 	btiao.clientPersist.set("btiao.orderDst", value);
 }
-
 PurchasePage.prototype.purchase = function() {
 	if (!this.checkOrderDst()) {
 		this.dispPurchaseAlert();
@@ -472,12 +471,98 @@ UpdateInfoPage.prototype.actUpdateInfo = function() {
 	});
 }
 
+function UsrExtInfoPage() {
+	this.usrExtInfo = undefined;
+}
+UsrExtInfoPage.prototype.prepare = function() {
+	this.usrExtInfo = undefined;
+	
+	var usrInfoExturl = productRoot + "/usrInfoExt/" + btiao.loginMgr.user;
+	btiao.util.getObj(usrInfoExturl, function(d){
+		var ext = btiao.usrExtInfoPage.usrExtInfo;
+		
+		if (d.errCode == 0) {
+			ext = btiao.usrExtInfoPage.usrExtInfo = d.content;
+		} else {
+			//OBJ_NOT_IN_INFO_MODEL = 101
+			if (d.errCode != 101) {
+				btiao.util.tip("获取个人信息失败", d.errCode);
+			}
+		}
+		
+		$.mobile.changePage("#pgUsrExtInfo");
+		btiao.usrExtInfoPage.setUsrInfoToUi(ext);
+	});
+}
+UsrExtInfoPage.prototype.setUsrInfoToUi = function (ext) {
+	if (!ext) return;
+	
+	if (!!ext.friendUid && ext.friendUid != "") {
+		$("#inUsrExtInfoFuid").val(ext.friendUid);
+		$("#inUsrExtInfoFuid").textinput("option", "disabled", true);
+	}
+	
+	$("#inUsrExtInfoPos").val(ext.positionId);
+	$("#inUsrExtInfoLivePos").val(ext.posToLive);
+	$("#inUsrExtInfoLocationOfLivePos").val(ext.locationOfPos);
+}
+//get obj from ui, if any data is invalid, then give tips and return null
+UsrExtInfoPage.prototype.getUsrInfoFromUi = function () {
+	var valid = true;
+	var obj = {};
+	
+	obj.friendUid = $("#inUsrExtInfoFuid").val();
+	if (obj.friendUid == "" || obj.friendUid.length > 20 ||
+		!!obj.friendUid.match(/^[0-9|_]/)) {
+		$("#for_inUsrExtInfoFuid").addClass("alertArea");
+		valid = false;
+	} else {
+		$("#for_inUsrExtInfoFuid").removeClass("alertArea");
+	}
+	
+	obj.positionId = $("#inUsrExtInfoPos").val();
+	obj.posToLive = $("#inUsrExtInfoLivePos").val();
+	
+	obj.locationOfPos = $("#inUsrExtInfoLocationOfLivePos").val();
+	if (obj.locationOfPos != "" && !obj.locationOfPos.match(/^[0-9]{8,8}$/)) {
+		$("#for_inUsrExtInfoLocationOfLivePos").addClass("alertArea");
+		valid = false;
+	} else {
+		$("#for_inUsrExtInfoLocationOfLivePos").removeClass("alertArea");
+	}
+	
+	return valid ? obj : null;
+}
+UsrExtInfoPage.prototype.actSetUsrInfo = function () {
+	var usrInfoExturl = productRoot + "/usrInfoExt/" + btiao.loginMgr.user;
+	var obj = this.getUsrInfoFromUi();
+	if (obj == null) {
+		return;
+	}
+	
+	var isPut = true;
+	if (!!this.usrExtInfo) {
+		isPut = false;
+	}
+	
+	btiao.util.putOrPosObj(isPut, usrInfoExturl, obj, function(d){
+		if (d.errCode == 0) {
+			btiao.usrExtInfoPage.usrExtInfo = obj;
+			
+			$.mobile.changePage("#pgFirst");
+		} else {
+			btiao.util.tip("用户名重复哦", d.errCode);
+		}
+	});
+}
+
 btiao.reg("firstPage", new FirstPage());
 btiao.reg("detailPage", new DetailPage());
 btiao.reg("purchasePage", new PurchasePage());
 btiao.reg("orderListPage", new OrderListPage());
 btiao.reg("orderDetailPage", new OrderDetailPage());
 btiao.reg("updateInfoPage", new UpdateInfoPage());
+btiao.reg("usrExtInfoPage", new UsrExtInfoPage());
 
 })();
 

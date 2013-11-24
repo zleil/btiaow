@@ -6,6 +6,12 @@ public class BTiaoExp extends Exception {
 	 */
 	private static final long serialVersionUID = -5694149100044209600L;
 
+	public BTiaoExp(int errNo) {
+		super("pls see error number!");
+		this.errNo = errNo;
+		this.src = null;
+	}
+	
 	public BTiaoExp(int errNo, String extInfo) {
 		super(extInfo);
 		this.errNo = errNo;
