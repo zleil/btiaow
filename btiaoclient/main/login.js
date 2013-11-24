@@ -202,8 +202,31 @@ Util.prototype.checkPriceValid = function (price) {
 		return false;
 	}
 }
+Util.prototype.nullFunc = function(){}
+Util.prototype.tipOver = function(info, errCode, closeFunc) {
+	var txt = this.decorateTip(info, errCode);
+	$("#btiaoOverTip").text(txt);
+	$("#btiaoOverTip").popup("open");
+	
+	if (!!closeFunc) {
+		$("#btiaoOverTip").on("popupafterclose", closeFunc);
+	} else {
+		$("#btiaoOverTip").on("popupafterclose", this.nullFunc);
+	}	
+}
+Util.prototype.decorateTip = function(info, errCode) {
+	var hasErr = (!!errCode && errCode != 0);
+	var txt = "(@_@)" + 
+		(hasErr ? "抱歉，" : "") +
+		info + 
+		(hasErr ? ("."+errCode+".") : "");
+	
+	return txt;
+}
 Util.prototype.tip = function(info, errCode) {
-	$("#btiaoTip p").text("(@_@)" + info + ((!!errCode)?"."+errCode+".":""));
+	var txt = this.decorateTip(info, errCode);
+	
+	$("#btiaoTip").text(txt);
 	
 	if (!!this.timerCloseTip) {
 		clearTimeout(this.timerCloseTip);
@@ -213,12 +236,13 @@ Util.prototype.tip = function(info, errCode) {
 	this.timerCloseTip = setTimeout(function(){
 		this.timerCloseTip = undefined;
 		$("#btiaoTip").popup("close");
-	},3000);
+	},2300);
 }
 
 function LoginMgr() {
 	this.logined = false;
 	this.user = undefined;
+	this.friendUid = undefined;
 	this.token = undefined;
 }
 LoginMgr.prototype.getDevUserId = function () {
@@ -242,7 +266,35 @@ LoginMgr.prototype.genDevUserId = function () {
 	var devUserId = "007_" + myDate.getTime();
 	return devUserId;
 }
+LoginMgr.prototype.usrLogin = function (, usrPasswd) {
+	var friendUid = $("#inUserNameToLogin").val();
+	var usrPasswd = $("#inUserPasswdToLogin").val();
+	
+	$.ajax({
+		type: "PUT",
+		url: userRoot+"/fusers/"+friendUid+logNodeName+"/0",
+		contentType: "application/json; charset=UTF-8",
+		data: '{ \
+			__opUsrInfo:{uId:"'+friendUid+'",token:""}, \
+			id:"'+friendUid+'", +\
+			passwd:'+usrPasswd+', \
+			authType:0 \
+		}',
+		success: function(d) {
+			if (d.errCode == 0) {
+				this.logined = true;
 
+				btiao.loginMgr.friendUid = friendUid;
+				btiao.loginMgr.user = d.content.user;
+				btiao.loginMgr.token = d.content.token;
+				
+				btiao.firstPage.prepare();
+			} else {
+				btiao.util.tip("用户名或密码错误");
+			}
+		}
+	});
+}
 LoginMgr.prototype.devLogin = function () {
 	var loginUser = this.getDevUserId();
 	var usrPasswd = loginUser;
@@ -259,14 +311,14 @@ LoginMgr.prototype.devLogin = function () {
 		}',
 		success: function(d) {
 			if (d.errCode == 0) {
-				this.logined = false;
+				this.logined = true;
 
 				btiao.loginMgr.user = loginUser;
 				btiao.loginMgr.token = d.content.token;
 				
 				btiao.firstPage.prepare();
 			} else {
-				alert("login error!");
+				btiao.util.tip("密码错误");
 			}
 		}
 	});
@@ -321,6 +373,7 @@ window.onload = function() {
 	}
 	
 	$("#btiaoTip").popup();
+	$("#btiaoOverTip").popup({overlayTheme: "a"});
 	
 	$("#labProductNum").slider({
 		theme:"c",trackTheme:"c",highlight:true,mini:false
@@ -388,6 +441,16 @@ window.onload = function() {
 		btiao.usrExtInfoPage.actSetUsrInfo();
 	})
 	
+	$("#actToHomeArea").click(function(){
+		var ext = btiao.usrExtInfoPage.usrExtInfo;
+		if (!!ext) {
+			if (!!ext.positionId && ext.positionId != "") {
+				btiao.firstPage.enterPosition(ext.positionId);
+			} else {
+				btiao.util.tip("您还未设置此个人信息，从右上角入口进入!");
+			}
+		}
+	})
 }
 
 })();

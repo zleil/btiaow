@@ -39,5 +39,5 @@ position的owenr给商家，other上增加<add,order_of_postion>
 
 支持position的转让功能
 1. 设置设备帐号的友好名称，通过绑定友好名称到position的映射
-2. 友好名称的设置，要求：root,<add,userext_of_root>,other,allow
+2. 用户扩展信息设置，友好名称的设置，要求：root,<add,userext_of_root>,other,allow
 

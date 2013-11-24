@@ -290,5 +290,5 @@ public class UserMgr implements UserService {
 	
 	Logger log = BTiaoLog.get();
 	
-	InfoMBaseService base = InfoMBaseService.instance();
+	public InfoMBaseService base = InfoMBaseService.instance();
 }

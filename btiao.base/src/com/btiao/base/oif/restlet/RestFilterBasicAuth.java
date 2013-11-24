@@ -86,7 +86,8 @@ public class RestFilterBasicAuth extends Filter {
 		String uriStr = request.getResourceRef().toUri().toString();
 		//must match all the path elment, 
 		//otherwise there may increase the chance of security fault.
-		if (!(uriStr.matches("^http://[^/]*/btiao/usrmgr/users/[^/]*/auth/0$"))) {
+		if (!(uriStr.matches("^http://[^/]*/btiao/usrmgr/users/[^/]*/auth/0$")) &&
+			!(uriStr.matches("^http://[^/]*/btiao/usrmgr/fusers/[^/]*/auth/0$"))) {
 			return false;
 		}
 		

@@ -6,7 +6,6 @@ var numPer = 10;
 //function definition and init-code
 function FirstPage() {
 	this.curPosInfo = undefined;
-	this.usrExtInfo = undefined;
 	this.infos = {};
 	this.lastId = "";
 	this.displayValid = true; //false: display history info.
@@ -19,29 +18,45 @@ FirstPage.prototype.prepare = function() {
 	btiao.util.getObj(usrInfoExturl, function(d){
 		var curPosId = undefined;
 		if (d.errCode == 0) {
-			this.usrExtInfo = d.content;
-			curPosId = this.usrExtInfo.positionId;
+			btiao.usrExtInfoPage.usrExtInfo = d.content;
+			curPosId = btiao.usrExtInfoPage.usrExtInfo.positionId;
 		}
 		
-		if (curPosId == undefined) curPosId = "1000001";
+		var defaultToPos = "1000001";
+		if (curPosId == undefined) curPosId = defaultToPos;
 		
-		var posUrl = productRoot+"/positions/"+curPosId;
-		btiao.util.getObj(posUrl, function(d){
-			if (d.errCode != 0) {
-				btiao.log.l("failed to get position info!");
+		btiao.firstPage.enterPosition(curPosId, defaultToPos);
+	});
+}
+//if enter curPosId failed, try to enter defaultToPos if you give this argument.
+FirstPage.prototype.enterPosition = function(curPosId, defaultToPos){
+	var posUrl = productRoot+"/positions/"+curPosId;
+	btiao.util.getObj(posUrl, function(d){
+		if (d.errCode != 0) {
+			if (defaultToPos == undefined){
+				btiao.util.tip("您访问的位置不存在了，更改下个人设置吧");
+				return;
+			} else {
+				//此时应该是”回家“的动作
+				btiao.util.tipOver("您设置的默认位置不存在了，建议进入默认位置后修改个人设置", 0,
+					function(){
+						btiao.firstPage.enterPosition(defaultToPos);
+					}
+				);
+				
 				return;
 			}
-			
+		} else {
 			btiao.firstPage.curPosInfo = d.content;
-			
-			var h3 = $(".posName");
-			h3.empty();
-			h3.append(btiao.firstPage.curPosInfo.name);
-			
-			$("#posOwner").text(btiao.firstPage.curPosInfo.owner);
-			
-			btiao.firstPage.fillBlockInfo("", numPer);
-		});
+		}
+		
+		var h3 = $(".posName");
+		h3.empty();
+		h3.append(btiao.firstPage.curPosInfo.name);
+		
+		$("#posOwner").text(btiao.firstPage.curPosInfo.owner);
+		
+		btiao.firstPage.fillBlockInfo("", numPer);
 	});
 }
 FirstPage.prototype.actDisplayValidInfo = function(){
@@ -174,7 +189,7 @@ PurchasePage.prototype.prepare = function(info) {
 	this.changePurchaseNum();
 	
 	var lastDst = btiao.clientPersist.get("btiao.orderDst");
-	var usrExtInfo = btiao.firstPage.usrExtInfo;
+	var usrExtInfo = btiao.usrExtInfoPage.usrExtInfo;
 	if (lastDst == undefined && 
 		undefined != usrExtInfo && usrExtInfo.locationOfPos != ""){
 		$("#orderDst").val(usrExtInfo.locationOfPos);
@@ -475,24 +490,27 @@ function UsrExtInfoPage() {
 	this.usrExtInfo = undefined;
 }
 UsrExtInfoPage.prototype.prepare = function() {
-	this.usrExtInfo = undefined;
-	
-	var usrInfoExturl = productRoot + "/usrInfoExt/" + btiao.loginMgr.user;
-	btiao.util.getObj(usrInfoExturl, function(d){
-		var ext = btiao.usrExtInfoPage.usrExtInfo;
-		
-		if (d.errCode == 0) {
-			ext = btiao.usrExtInfoPage.usrExtInfo = d.content;
-		} else {
-			//OBJ_NOT_IN_INFO_MODEL = 101
-			if (d.errCode != 101) {
-				btiao.util.tip("获取个人信息失败", d.errCode);
+	if (!this.usrExtInfo) {
+		var usrInfoExturl = productRoot + "/usrInfoExt/" + btiao.loginMgr.user;
+		btiao.util.getObj(usrInfoExturl, function(d){
+			var ext = btiao.usrExtInfoPage.usrExtInfo;
+			
+			if (d.errCode == 0) {
+				ext = btiao.usrExtInfoPage.usrExtInfo = d.content;
+			} else {
+				//OBJ_NOT_IN_INFO_MODEL = 101
+				if (d.errCode != 101) {
+					btiao.util.tip("获取个人信息失败", d.errCode);
+				}
 			}
-		}
-		
+			
+			$.mobile.changePage("#pgUsrExtInfo");
+			btiao.usrExtInfoPage.setUsrInfoToUi(ext);
+		});
+	} else {
 		$.mobile.changePage("#pgUsrExtInfo");
-		btiao.usrExtInfoPage.setUsrInfoToUi(ext);
-	});
+		btiao.usrExtInfoPage.setUsrInfoToUi(btiao.usrExtInfoPage.usrExtInfo);
+	}
 }
 UsrExtInfoPage.prototype.setUsrInfoToUi = function (ext) {
 	if (!ext) return;
@@ -511,24 +529,33 @@ UsrExtInfoPage.prototype.getUsrInfoFromUi = function () {
 	var valid = true;
 	var obj = {};
 	
-	obj.friendUid = $("#inUsrExtInfoFuid").val();
-	if (obj.friendUid == "" || obj.friendUid.length > 20 ||
-		!!obj.friendUid.match(/^[0-9|_]/)) {
+	var friendUid = $("#inUsrExtInfoFuid").val();
+	if (friendUid == "" || friendUid.length > 20 ||
+		!!friendUid.match(/^[0-9|_]/)) {
 		$("#for_inUsrExtInfoFuid").addClass("alertArea");
 		valid = false;
 	} else {
 		$("#for_inUsrExtInfoFuid").removeClass("alertArea");
+		obj.friendUid = friendUid;
 	}
 	
-	obj.positionId = $("#inUsrExtInfoPos").val();
-	obj.posToLive = $("#inUsrExtInfoLivePos").val();
+	var positionId = $("#inUsrExtInfoPos").val();
+	if (positionId != "") {
+		obj.positionId = positionId;
+	}
 	
-	obj.locationOfPos = $("#inUsrExtInfoLocationOfLivePos").val();
-	if (obj.locationOfPos != "" && !obj.locationOfPos.match(/^[0-9]{8,8}$/)) {
+	var posToLive = $("#inUsrExtInfoLivePos").val();
+	if (posToLive != "") {
+		obj.posToLive = posToLive;
+	}
+	
+	var locationOfPos = $("#inUsrExtInfoLocationOfLivePos").val();
+	if (locationOfPos != "" && !locationOfPos.match(/^[0-9]{8,8}$/)) {
 		$("#for_inUsrExtInfoLocationOfLivePos").addClass("alertArea");
 		valid = false;
 	} else {
 		$("#for_inUsrExtInfoLocationOfLivePos").removeClass("alertArea");
+		obj.locationOfPos = locationOfPos;
 	}
 	
 	return valid ? obj : null;

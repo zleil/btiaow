@@ -1,4 +1,4 @@
-package com.btiao.product.domain;
+package com.btiao.base.model;
 
 import java.util.List;
 

@@ -8,9 +8,9 @@ import org.restlet.data.Form;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.model.BTiaoRoot;
+import com.btiao.base.model.FriendUserId;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.infomodel.InfoMObject;
-import com.btiao.product.domain.FriendUserId;
 import com.btiao.product.domain.UsrInfoExt;
 
 public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
@@ -68,6 +68,7 @@ public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
 		ext.ownerUser = this.opUserId;//Owner是自己
 		
 		try {
+			//不允许修改友好id和owner
 			List<String> attrList2 = new ArrayList<String>();
 			for (String attr : attrList) {
 				if (attr.equals(UsrInfoExt.FRIEND_UID_ATTR) ||

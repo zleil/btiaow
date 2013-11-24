@@ -7,6 +7,7 @@ import org.restlet.data.Form;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.model.BTiaoUser;
+import com.btiao.base.model.FriendUserId;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.oif.restlet.ResBTBase;
 import com.btiao.user.domain.BTiaoUserLogInfo;
@@ -21,6 +22,7 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 	protected void pre() {
 		uIdFromUrl = this.getAttribute("userId");
 		token = this.getAttribute("token");
+		fUId = this.getAttribute("fUId");
 	}
 
 	/**
@@ -47,6 +49,13 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 	@JsonCvtInfo(objClassName="com.btiao.base.model.BTiaoUser")
 	protected Object put(Object arg) throws BTiaoExp {
 		BTiaoUser u = (BTiaoUser)arg;
+		if (this.fUId != null && !this.fUId.equals("")) {
+			FriendUserId fuidInfo = new FriendUserId();
+			fuidInfo.friendId = this.fUId;
+			UserMgr.instance().base.get(fuidInfo);
+			u.id = fuidInfo.deviceId;
+			uIdFromUrl = u.id;
+		}
 		
 		if (!u.id.equals(uIdFromUrl) ||
 			!token.equals(reserved_loginId)) {
@@ -92,4 +101,5 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 
 	private String uIdFromUrl;
 	private String token;
+	private String fUId;
 }
