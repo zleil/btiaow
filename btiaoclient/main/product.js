@@ -513,6 +513,11 @@ UsrExtInfoPage.prototype.prepare = function() {
 	}
 }
 UsrExtInfoPage.prototype.setUsrInfoToUi = function (ext) {
+	$("#for_inUserPasswdInfo").removeClass("alertArea");
+	$("#for_inUserPasswdInfo2").removeClass("alertArea");
+	$("#for_inUsrExtInfoFuid").removeClass("alertArea");
+	$("#for_inUsrExtInfoLocationOfLivePos").removeClass("alertArea");
+	
 	if (!ext) return;
 	
 	if (!!ext.friendUid && ext.friendUid != "") {
@@ -537,6 +542,23 @@ UsrExtInfoPage.prototype.getUsrInfoFromUi = function () {
 	} else {
 		$("#for_inUsrExtInfoFuid").removeClass("alertArea");
 		obj.friendUid = friendUid;
+	}
+	
+	var passwd = $("#inUserPasswdInfo").val();
+	var passwd2 = $("#inUserPasswdInfo2").val();
+	if (passwd != "" || passwd2 != "") {
+		if (passwd != passwd2) {
+			valid =false;
+			$("#for_inUserPasswdInfo").addClass("alertArea");
+			$("#for_inUserPasswdInfo2").addClass("alertArea");
+		} else {
+			obj.passwd = passwd;
+			$("#for_inUserPasswdInfo").removeClass("alertArea");
+			$("#for_inUserPasswdInfo2").removeClass("alertArea");
+		}
+	} else {
+		$("#for_inUserPasswdInfo").removeClass("alertArea");
+		$("#for_inUserPasswdInfo2").removeClass("alertArea");
 	}
 	
 	var positionId = $("#inUsrExtInfoPos").val();
@@ -575,6 +597,7 @@ UsrExtInfoPage.prototype.actSetUsrInfo = function () {
 	btiao.util.putOrPosObj(isPut, usrInfoExturl, obj, function(d){
 		if (d.errCode == 0) {
 			btiao.usrExtInfoPage.usrExtInfo = obj;
+			btiao.clientPersist.set("btiao.devPasswd", obj.passwd);
 			
 			$.mobile.changePage("#pgFirst");
 		} else {

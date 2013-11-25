@@ -9,8 +9,15 @@ function ClientPersist() {
 	this.map = {};
 	this.map["btiao.devUserId"] = true;
 	this.map["btiao.orderDst"] = true;
+	this.map["btiao.devPasswd"] = true;
 }
-ClientPersist.prototype.test = 1;
+ClientPersist.prototype.clearAll = function() {
+	if (undefined == localStorage) return;
+	
+	for (var name in this.map) {
+		delete localStorage[name];
+	}
+}
 ClientPersist.prototype.get = function(name) {
 	if (undefined == localStorage) return undefined;
 	
@@ -266,7 +273,7 @@ LoginMgr.prototype.genDevUserId = function () {
 	var devUserId = "007_" + myDate.getTime();
 	return devUserId;
 }
-LoginMgr.prototype.usrLogin = function (, usrPasswd) {
+LoginMgr.prototype.usrLogin = function () {
 	var friendUid = $("#inUserNameToLogin").val();
 	var usrPasswd = $("#inUserPasswdToLogin").val();
 	
@@ -276,8 +283,8 @@ LoginMgr.prototype.usrLogin = function (, usrPasswd) {
 		contentType: "application/json; charset=UTF-8",
 		data: '{ \
 			__opUsrInfo:{uId:"'+friendUid+'",token:""}, \
-			id:"'+friendUid+'", +\
-			passwd:'+usrPasswd+', \
+			id:"'+friendUid+'", \
+			passwd:"'+usrPasswd+'", \
 			authType:0 \
 		}',
 		success: function(d) {
@@ -285,8 +292,11 @@ LoginMgr.prototype.usrLogin = function (, usrPasswd) {
 				this.logined = true;
 
 				btiao.loginMgr.friendUid = friendUid;
-				btiao.loginMgr.user = d.content.user;
+				btiao.loginMgr.user = d.content.uId;
 				btiao.loginMgr.token = d.content.token;
+				
+				btiao.clientPersist.set("btiao.devUserId", btiao.loginMgr.user);
+				btiao.clientPersist.set("btiao.devPasswd", usrPasswd);
 				
 				btiao.firstPage.prepare();
 			} else {
@@ -295,9 +305,17 @@ LoginMgr.prototype.usrLogin = function (, usrPasswd) {
 		}
 	});
 }
+LoginMgr.prototype.getPasswd = function() {
+	return btiao.clientPersist.get("btiao.devPasswd");
+}
 LoginMgr.prototype.devLogin = function () {
 	var loginUser = this.getDevUserId();
-	var usrPasswd = loginUser;
+	var usrPasswd = this.getPasswd();
+	var newDevice = false;
+	if (usrPasswd == undefined) {
+		newDevice = true;
+		usrPasswd = loginUser;
+	}
 	
 	$.ajax({
 		type: "PUT",
@@ -315,6 +333,9 @@ LoginMgr.prototype.devLogin = function () {
 
 				btiao.loginMgr.user = loginUser;
 				btiao.loginMgr.token = d.content.token;
+				
+				btiao.clientPersist.set("btiao.devUserId", btiao.loginMgr.user);
+				btiao.clientPersist.set("btiao.devPasswd", usrPasswd);
 				
 				btiao.firstPage.prepare();
 			} else {
@@ -382,10 +403,17 @@ window.onload = function() {
 		btiao.purchasePage.changePurchaseNum();
 	});
 	$("#labProductNum").slider("refresh");
+	
+	$("#actClearDeviceInfo").click(function(){
+		btiao.clientPersist.clearAll();
+	})
 
 	$("#btDevLogin").click(function(){
 		btiao.loginMgr.devLogin()
 		return false;
+	});
+	$("#actUsrLogin").click(function(){
+		btiao.loginMgr.usrLogin();
 	});
 	
 	$("#actNewInfo").click(function(){

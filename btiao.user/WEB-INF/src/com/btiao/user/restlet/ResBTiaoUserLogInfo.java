@@ -51,10 +51,12 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 		BTiaoUser u = (BTiaoUser)arg;
 		if (this.fUId != null && !this.fUId.equals("")) {
 			FriendUserId fuidInfo = new FriendUserId();
-			fuidInfo.friendId = this.fUId;
-			UserMgr.instance().base.get(fuidInfo);
+			fuidInfo.friendId = u.id; //this.fUId is encoded, can't use for GB2312
+			if (!UserMgr.instance().base.get(fuidInfo)) {
+				throw new BTiaoExp(ErrCode.AUTH_FAILED);
+			}
 			u.id = fuidInfo.deviceId;
-			uIdFromUrl = u.id;
+			this.uIdFromUrl = u.id;
 		}
 		
 		if (!u.id.equals(uIdFromUrl) ||
@@ -66,6 +68,9 @@ public class ResBTiaoUserLogInfo extends ResBTBase {
 		String token = UserMgr.instance().login(u.id, u.passwd, u.authType);
 		
 		BTiaoUserLogInfo r = new BTiaoUserLogInfo("", token);
+		if (this.fUId != null && !this.fUId.equals("")){
+			r.uId = this.uIdFromUrl;
+		}
 		return r;
 	}
 

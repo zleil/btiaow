@@ -8,6 +8,7 @@ import org.restlet.data.Form;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.model.BTiaoRoot;
+import com.btiao.base.model.BTiaoUser;
 import com.btiao.base.model.FriendUserId;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.infomodel.InfoMObject;
@@ -46,6 +47,8 @@ public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
 			fuid.friendId = ext.friendUid;
 			fuid.deviceId = ext.usrId;
 			
+			changePasswd(ext);
+			
 			svc.base.add(fuid);
 			svc.addObjectRightAndDownRel(RelName.usrExtInfo_of_root, new BTiaoRoot(), ext, RelName.timeSeq, false);
 			
@@ -57,6 +60,18 @@ public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
 			svc.base.finish();
 		}
 		return null;
+	}
+	
+	private void changePasswd(UsrInfoExt ext) throws BTiaoExp {
+		if (ext.passwd.equals("")) {
+			return;
+		}
+		
+		BTiaoUser usr = new BTiaoUser();
+		usr.id = ext.usrId;
+		svc.base.get(usr);
+		usr.passwd = ext.passwd;
+		svc.base.mdf(usr);
 	}
 
 	@Override
@@ -78,6 +93,8 @@ public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
 				
 				attrList2.add(attr);
 			}
+			
+			changePasswd(ext);
 			
 			svc.updateObject(ext, attrList);
 		} catch (BTiaoExp e) {

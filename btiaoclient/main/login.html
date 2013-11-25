@@ -28,7 +28,6 @@
         </h3>
     </div>
     <div data-role="content">
-
         <div data-role="collapsible-set">
             <div data-role="collapsible" data-collapsed="false">
                 <h3>
@@ -56,11 +55,15 @@
                     </label>
                     <input name="" id="inUserPasswdToLogin" placeholder="" value="" type="password">
                 </div>
-                <a data-role="button">
+                <a data-role="button" id="actUsrLogin">
                     登录
                 </a>
             </div>
         </div>
+        <h5 class="alertArea">若非私人设备，用后点击如下按钮！</h5>
+        <a data-role="button" id="actClearDeviceInfo">
+            清除此设备上个人资料
+        </a>
     </div>
 </div>
 
@@ -303,15 +306,27 @@
         </a>
     </div>
     <div data-role="content">
-        <div data-role="fieldcontain">
-        	<h5>
+        <h5>
         	<p class="multiLineLab">温馨提示：1. 用户名被设置后，暂时不能再次被修改</p>
         	<p class="multiLineLab">温馨提示：2. 若未设置用户名，则您更话手机/平板后，账户信息很难找回</p>
-        	</h5>
+        </h5>
+        <div data-role="fieldcontain">
             <label for="inUsrExtInfoFuid" id="for_inUsrExtInfoFuid">
                 用户名，不能和别人重复，必须填写，不能以数字或下划线开头
             </label>
             <input name="" id="inUsrExtInfoFuid" placeholder="请输入您的用户名" value="" type="text">
+        </div>
+        <div data-role="fieldcontain">
+        	<label for="inUserPasswdInfo" id="for_inUserPasswdInfo">
+                        密码(两密码必须相同，若不修改则必须都为空)
+            </label>
+            <input name="" id="inUserPasswdInfo" placeholder="" value="" type="password">
+        </div>
+        <div data-role="fieldcontain">
+            <label for="inUserPasswdInfo2" id="for_inUserPasswdInfo2">
+                       再次输入密码
+            </label>
+            <input name="" id="inUserPasswdInfo2" placeholder="" value="" type="password">
         </div>
         <div data-role="fieldcontain">
             <label for="inUsrExtInfoPos" id="for_inUsrExtInfoPos">

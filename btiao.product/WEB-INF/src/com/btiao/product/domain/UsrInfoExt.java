@@ -19,6 +19,8 @@ public class UsrInfoExt extends InfoMObject {
 	
 	public String friendUid;
 	
+	public String passwd = "";
+	
 	public String positionId = "";
 	
 	public String posToLive = "";
