@@ -5,10 +5,79 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.Logger;
+
+import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.utils.BTiaoLog;
 import com.btiao.infomodel.InfoMObject;
+import com.btiao.product.domain.Position;
 
 public class ParallelMgr {
+	public static void main(String[] args) {
+		final ParallelMgr mgr = ParallelMgr.instance();
+		final ModelInfo m = new ModelInfo(new BTiaoRoot(), Position.class, "", "");
+		
+		Object handle = mgr.writeAccess(m, 2000);
+		assert(mgr.inst.model2MAList.size() == 1);
+		mgr.release(handle);
+		assert(mgr.inst.model2MAList.size() == 0);
+		
+		handle = mgr.writeAccess(m, 2000);
+		new Thread() {
+			public void run(){
+				Object hd = mgr.writeAccess(m, 1000);
+				assert(hd == null);
+			}
+		}.start();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		mgr.release(handle);
+		
+		new Thread() {
+			public void run(){
+				Object hd = mgr.writeAccess(m, 1000);
+				assert(hd != null);
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				mgr.release(hd);
+			}
+		}.start();
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		handle = mgr.readAccess(m, 1000);
+		assert(handle == null);
+		handle = mgr.writeAccess(m, 1000);
+		assert(handle == null);
+		
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		handle = mgr.readAccess(m, 1000);
+		assert(handle != null);
+		
+		try {
+			assert(false);
+			System.out.println("set -ea argument to run!");
+		}catch (Throwable e) {
+			System.out.println("success!");
+		}
+	}
 	static public class ModelInfo {
 		public InfoMObject ofNode;
 		public Class<?extends InfoMObject> nodeClass;
