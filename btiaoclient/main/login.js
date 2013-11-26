@@ -479,6 +479,14 @@ window.onload = function() {
 			}
 		}
 	})
+	
+	$("#actToUpArea").click(function(){
+		var pid = btiao.firstPage.curPosInfo.pid;
+		if (pid == undefined || pid == "") {
+			btiao.util.tip("已经到最顶级了")
+		}
+		btiao.firstPage.enterPosition(pid);
+	});
 }
 
 })();

@@ -1,10 +1,11 @@
 package com.btiao.common.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import org.apache.logging.log4j.Logger;
+import com.btiao.base.utils.BTiaoLog;
 import com.btiao.infomodel.InfoMObject;
 
 public class ParallelMgr {
@@ -49,7 +50,7 @@ public class ParallelMgr {
 		Read
 	}
 	
-	static private class MAInfo {
+	static private class AModelLockInfo {
 		/**
 		 * model.
 		 */
@@ -63,13 +64,19 @@ public class ParallelMgr {
 		public LockType lock;
 		
 		/**
-		 * Map the owner thread to locked times.<br> 
+		 * owner thread.
 		 */
-		public Map<Thread,Integer> owners = new HashMap<Thread,Integer>();
+		public Thread th;
 		
-		public MAInfo(ModelInfo m, LockType lock) {
+		public AModelLockInfo(Thread th, ModelInfo m, LockType lock) {
 			this.m = m;
 			this.lock = lock;
+			this.th = th;
+		}
+		
+		@Override
+		public String toString() {
+			return "<lockInfo:"+lock+","+th+","+m+">";
 		}
 	}
 	
@@ -93,14 +100,15 @@ public class ParallelMgr {
 	 * @return true, can do read access.
 	 *         false, time is out and haven't get a lock.
 	 */
-	public boolean readAccess(ModelInfo m, final long t) {
+	public AModelLockInfo readAccess(ModelInfo m, final long t) {
 		long t2 = t;
 		
 		while (t<=0 || (t>0 && t2>0)) {
 			synchronized (this) {
-				if (!isModeWriteLocked(m)) {
-					readLock(m);
-					return true;
+				if (noWriteLock(m) || isOwner(m)) {
+					AModelLockInfo handle = createLock(m, LockType.Read);
+					log.info("get:"+handle);
+					return handle;
 				} else {
 					try {
 						t2 -= read_wait_interval;
@@ -110,17 +118,18 @@ public class ParallelMgr {
 			}
 		}
 		
-		return false;
+		return null;
 	}
 	
-	public boolean writeAccess(ModelInfo m, final long t) {
+	public AModelLockInfo writeAccess(ModelInfo m, final long t) {
 		long t2 = t;
 		
 		while (t<=0 || (t>0 && t2>0)) {
 			synchronized (this) {	
-				if (isOwner(m) || !isModelLocked(m)) {
-					writeLock(m);
-					return true;
+				if (noLock(m) || onlyMine(m)) {
+					AModelLockInfo handle = createLock(m, LockType.Write);
+					log.info("get:"+handle);
+					return handle;
 				} else {
 					try {
 						t2 -= write_wait_interval;
@@ -131,127 +140,96 @@ public class ParallelMgr {
 			}
 		}
 		
-		return false;
+		return null;
 	}
 	
-	public synchronized void release() {
-		Thread th = Thread.currentThread();
-		List<MAInfo> mas = thread2MAs.get(th);
-		if (mas == null) {
-			return;
-		}
+	public synchronized void release(Object handle) {
+		if (handle == null) return;
 		
-		//thread can relock one model, decrement until release all.
-		MAInfo lastMA = mas.get(mas.size()-1);
-		Integer times = lastMA.owners.get(th) - 1;
-		if (times == 0) {
-			lastMA.owners.remove(th);
-		} else {
-			lastMA.owners.put(th, times);
-		}
-		
-		//if no thread lock the model, delete the MA.
-		if (lastMA.owners.isEmpty()) {
-			model2MA.remove(lastMA.m);
-		}
-		
-		//remove the last MA locked by the thread
-		mas.remove(mas.size()-1);
-		
-		//if current thread haven't locked any model, remove all related info.
-		if (mas.size() == 0) {
-			thread2MAs.remove(th);
+		ModelInfo m = ((AModelLockInfo)handle).m;
+		List<AModelLockInfo> infos = this.model2MAList.get(m);
+		if (infos != null) {
+			for (int i=0; i<infos.size(); ++i) {
+				AModelLockInfo info = infos.get(i);
+				if (handle == info) {
+					log.info("rel:"+handle);
+					infos.remove(i);
+					break;
+				}
+			}
+			
+			if (infos.size() == 0) {
+				this.model2MAList.remove(m);
+			}
 		}
 	}
 	
 	private boolean isOwner(ModelInfo m) {
 		Thread th = Thread.currentThread();
 		
-		List<MAInfo> mas = thread2MAs.get(th);
-		if (mas == null) return false;
-		
-		for (MAInfo ma : mas) {
-			if (m.equals(ma)) {
-				return true;
+		List<AModelLockInfo> infos = this.model2MAList.get(m);
+		if (infos != null) {
+			for (int i=0; i<infos.size(); ++i) {
+				AModelLockInfo info = infos.get(i);
+				if (info.th == th) {
+					return true;
+				}
 			}
 		}
 		
 		return false;
 	}
 	
-	/**
-	 * check if there is a write lock on the specific model.
-	 * @param m
-	 * @return
-	 */
-	private boolean isModeWriteLocked(ModelInfo m) {
-		MAInfo ma = model2MA.get(m);
-		return ma != null && ma.lock == LockType.Write;
+	private boolean onlyMine(ModelInfo m) {
+		Thread th = Thread.currentThread();
+		
+		List<AModelLockInfo> infos = this.model2MAList.get(m);
+		Thread owner = infos.get(0).th;
+		return infos.size() == 1 && owner == th;
+	}
+
+	private boolean noLock(ModelInfo m) {
+		return this.model2MAList.get(m) == null;
 	}
 	
-	/**
-	 * check if there is a lock on the specific model.
-	 * @param m
-	 * @return
-	 */
-	private boolean isModelLocked(ModelInfo m) {
-		return model2MA.containsKey(m);
+	private boolean noWriteLock(ModelInfo m) {		
+		List<AModelLockInfo> infos = this.model2MAList.get(m);
+		if (infos != null) {
+			for (int i=0; i<infos.size(); ++i) {
+				AModelLockInfo info = infos.get(i);
+				if (info.lock == LockType.Write) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	/**
 	 * put a read lock.
 	 * @param m
 	 */
-	private void readLock(ModelInfo m) {
-		MAInfo ma = createLockOnModel(m, LockType.Read);
-		setRelOfThread(ma);
-	}
-	
-	private void writeLock(ModelInfo m) {
-		MAInfo ma = createLockOnModel(m, LockType.Write);
-		setRelOfThread(ma);
-	}
-	
-	private void setRelOfThread(MAInfo ma) {		
+	private AModelLockInfo createLock(ModelInfo m, LockType lck) {
+		List<AModelLockInfo> infos = this.model2MAList.get(m);
+		if (infos == null) {
+			infos = new ArrayList<AModelLockInfo>();
+			this.model2MAList.put(m, infos);
+		}
+		
 		Thread th = Thread.currentThread();
-
-		Integer times = ma.owners.get(th);
-		if (times == null) {
-			ma.owners.put(th, 1);
-		} else {
-			ma.owners.put(th, times+1);
-		}
+		AModelLockInfo info = new AModelLockInfo(th, m, lck);
+		infos.add(info);
 		
-		List<MAInfo> mas = thread2MAs.get(th);
-		if (mas == null) {
-			mas = new LinkedList<MAInfo>();
-			thread2MAs.put(th, mas);
-		}
-		
-		mas.add(ma);
-	}
-	
-	private MAInfo createLockOnModel(ModelInfo m, LockType lck) {
-		MAInfo ma = model2MA.get(m);
-		if (ma == null) {
-			ma = new MAInfo(m, lck);
-			model2MA.put(m, ma);
-		}
-		
-		return ma;
+		return info;
 	}
 	
 	/**
-	 * Map a model to MA.<br>
+	 * Map a model to all the lock information.<br>
 	 * If a model has a entry in this data, then the model must have been <br>
 	 * locked by a thread.<br>
 	 */
-	private Map<ModelInfo,MAInfo> model2MA = new HashMap<ModelInfo,MAInfo>();
-	
-	/**
-	 * Map thread to all its owned MAs.<br>
-	 * Thread can relock a model, one lock a model, no mater lock or relock,<br>
-	 * there will be a MA add the MAs.<br>
-	 */
-	private Map<Thread,List<MAInfo>> thread2MAs = new HashMap<Thread,List<MAInfo>>();
+	private Map<ModelInfo,List<AModelLockInfo>> model2MAList = new HashMap<ModelInfo,List<AModelLockInfo>>();
+
+	private Logger log = BTiaoLog.get();
 }

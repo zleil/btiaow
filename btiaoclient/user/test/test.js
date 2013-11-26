@@ -432,7 +432,7 @@ function onload() {
 	
 	$("#putSimplePositions").click(function(){
 		//省、市、区、区域、小区、家、个人
-		putPos(1000001,"6#0105","6号楼小卖部", 100000000);
+		putPos(1000001,"6#0105","6号楼小卖部", 1000000);
 		setTimeout(function(){
 			putPos(1000000,"望春园","北苑最好的小区，环境优雅，还有个小区幼儿园！", 0);
 		},1);

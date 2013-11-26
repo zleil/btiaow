@@ -77,10 +77,12 @@ public class ProductService {
 			InfoMObject to,
 			String downRelName, 
 			boolean justAddRel) throws BTiaoExp {
+		Object handle = null;
 		try {
 			ParallelMgr.ModelInfo m = new ParallelMgr.ModelInfo(from, to.getClass(),
 					rightRelName, downRelName);
-			if (!ParallelMgr.instance().writeAccess(m, 3000)) {
+			handle = ParallelMgr.instance().writeAccess(m, 3000);
+			if (handle == null) {
 				throw new BTiaoExp(ErrCode.TIME_OUT, "addObjectRightAndDownRel time,m="+m);
 			}
 			
@@ -90,7 +92,7 @@ public class ProductService {
 			
 			_addObjectRightAndDownRel(rightRelName,from,to,downRelName,justAddRel);
 		} finally {
-			ParallelMgr.instance().release();
+			ParallelMgr.instance().release(handle);
 		}
 	}
 	private void _addObjectRightAndDownRel(
@@ -126,10 +128,12 @@ public class ProductService {
 			InfoMObject to,
 			String downRelName, 
 			boolean justDelRel) throws BTiaoExp {
+		Object handle = null;
 		try {
 			ParallelMgr.ModelInfo m = new ParallelMgr.ModelInfo(from, to.getClass(),
 					rightRelName, downRelName);
-			if (!ParallelMgr.instance().writeAccess(m, 3000)) {
+			handle = ParallelMgr.instance().writeAccess(m, 3000);
+			if (handle == null) {
 				throw new BTiaoExp(ErrCode.TIME_OUT, "delObjectRightAndDownRel time,m="+m);
 			}
 			
@@ -139,7 +143,7 @@ public class ProductService {
 			
 			_delObjectRightAndDownRel(rightRelName,from,to,downRelName,justDelRel);
 		} finally {
-			ParallelMgr.instance().release();
+			ParallelMgr.instance().release(handle);
 		}
 	}
 	
@@ -185,10 +189,12 @@ public class ProductService {
 	public List<InfoMObject> getAllObjRightAndDownRel(InfoMObject from, 
 			Class<?extends InfoMObject> toClass, String rightRelName, 
 			InfoMObject lastObj, String downRelName, int num) throws BTiaoExp {
+		Object handle = null;
 		try {
 			ParallelMgr.ModelInfo m = new ParallelMgr.ModelInfo(from, toClass,
 					rightRelName, downRelName);
-			if (!ParallelMgr.instance().readAccess(m, 3000)) {
+			handle = ParallelMgr.instance().readAccess(m, 3000);
+			if (handle == null) {
 				throw new BTiaoExp(ErrCode.TIME_OUT, "getAllObjRightAndDownRel time,m="+m);
 			}
 			
@@ -198,7 +204,7 @@ public class ProductService {
 			
 			return _getAllObjRightAndDownRel(from,toClass,rightRelName,lastObj,downRelName, num);
 		} finally {
-			ParallelMgr.instance().release();
+			ParallelMgr.instance().release(handle);
 		}
 	}
 	
