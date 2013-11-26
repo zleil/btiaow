@@ -14,6 +14,7 @@ import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.BlockInfo;
 import com.btiao.product.domain.Order;
 import com.btiao.product.domain.Position;
+import com.btiao.product.domain.UsrInfoExt;
 import com.btiao.product.restlet.RestBTiaoGetAll.Def;
 
 
@@ -30,6 +31,7 @@ public class App extends Application {
 		//router.attach("/positions/{positionId}/orders", RestBTiaoGetAll.class);
 		
 		def("/positions",BTiaoRoot.class,Position.class,RelName.pos_of_root,RelName.timeSeq,ids(),ids("lastId"));
+		def("/usrInfoExt",BTiaoRoot.class,UsrInfoExt.class,RelName.usrExtInfo_of_root,RelName.timeSeq,ids(),ids("lastId"));
 		
 		def("/positions/{posId}/orders",Position.class,Order.class,RelName.order_of_position,RelName.timeSeq,ids("posId"),ids("lastId"));
 		def("/positions/{posId}/historyOrders",Position.class,Order.class,RelName.historyOrder_of_position,RelName.timeSeqHistory,ids("posId"),ids("lastId"));

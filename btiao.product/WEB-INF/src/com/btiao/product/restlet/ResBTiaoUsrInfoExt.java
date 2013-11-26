@@ -11,6 +11,7 @@ import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.model.BTiaoUser;
 import com.btiao.base.model.FriendUserId;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
+import com.btiao.base.utils.BTiaoLog;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.UsrInfoExt;
 
@@ -48,6 +49,7 @@ public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
 			fuid.deviceId = ext.usrId;
 			
 			changePasswd(ext);
+			ext.passwd = "";
 			
 			svc.base.add(fuid);
 			svc.addObjectRightAndDownRel(RelName.usrExtInfo_of_root, new BTiaoRoot(), ext, RelName.timeSeq, false);
@@ -82,6 +84,7 @@ public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
 		ext.usrId = this.opUserId;//用户信息只能由用户自己创建
 		ext.ownerUser = this.opUserId;//Owner是自己
 		
+		svc.base.begin();
 		try {
 			//不允许修改友好id和owner
 			List<String> attrList2 = new ArrayList<String>();
@@ -96,9 +99,17 @@ public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
 			
 			changePasswd(ext);
 			
+			ext.passwd = "";
 			svc.updateObject(ext, attrList);
+			
+			svc.base.success();
 		} catch (BTiaoExp e) {
+			BTiaoLog.logExp(log, e);
+			
+			svc.base.failed();
 			throw e;
+		} finally {
+			svc.base.finish();
 		}
 		return null;
 	}
