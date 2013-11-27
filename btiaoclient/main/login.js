@@ -487,6 +487,10 @@ window.onload = function() {
 		}
 		btiao.firstPage.enterPosition(pid);
 	});
+	
+	$("#actListDownArea").click(function(){
+		btiao.subPosPage.prepare();
+	});
 }
 
 })();

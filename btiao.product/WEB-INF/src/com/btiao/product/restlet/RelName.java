@@ -10,6 +10,7 @@ public class RelName {
 	static public final String order_of_position = "order_of_position";
 	static public final String historyOrder_of_position = "historyOrder_of_position";
 	static public final String historyBlockInfo_of_position = "historyBlockInfo_of_position";
+	static public final String subPos_of_pos = "subPos_of_pos";
 	//of user
 	static public final String order_of_user = "order_of_user";
 	static public final String historyOrder_of_user = "historyOrder_of_user";
@@ -21,4 +22,5 @@ public class RelName {
 	static public final String ofUser_order = "userOrder";
 	static public final String timeSeq = "timeSeq";	
 	static public final String timeSeqHistory = "timeSeqHistory";
+	static public final String neighborPos = "neighborPos";
 }

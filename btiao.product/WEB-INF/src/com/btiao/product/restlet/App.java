@@ -39,6 +39,8 @@ public class App extends Application {
 		def("/positions/{posId}/infos",Position.class,BlockInfo.class,RelName.blockInfo_of_position,RelName.timeSeq,ids("posId"),ids("lastId"));
 		def("/positions/{posId}/historyInfos",Position.class,BlockInfo.class,RelName.historyBlockInfo_of_position,RelName.timeSeqHistory,ids("posId"),ids("lastId"));
 		
+		def("/positions/{posId}/subPositions",Position.class,Position.class,RelName.subPos_of_pos,RelName.neighborPos,ids("posId"),ids("lastId"));
+		
 		RestFilterBasicAuth authFilter = new RestFilterBasicAuth();
 		authFilter.setNext(router);
 		

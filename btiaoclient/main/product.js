@@ -606,6 +606,32 @@ UsrExtInfoPage.prototype.actSetUsrInfo = function () {
 	});
 }
 
+function SubPosPage() {}
+SubPosPage.prototype.prepare = function() {
+	btiao.util.clearListViewData("#subPositions");
+	this.fillAllSubPos();
+}
+SubPosPage.prototype.fillAllSubPos = function() {
+	var url = productRoot+"/positions/"+btiao.firstPage.curPosInfo.id+"/subPositions";
+	btiao.util.getAllObj(url, function(d){
+		if (d.errCode == 0) {
+			for (var idx in d.content) {
+				var pos = d.content[idx];
+				$("#subPositions").append(
+						'<li data-theme="e" data-posid="'+pos+'">' +
+						'<a onclick="btiao.firstPage.enterPosition('+pos.id+');" data-transition="slide">'+pos.name+'</a>' +
+						'</li>'
+				);
+			}
+			
+			$.mobile.changePage($("#pgSubPos"));
+			$("#subPositions").listview("refresh");
+		} else {
+			btiao.util.tip("获取子位置失败");
+		}
+	}, numPer, "");
+}
+
 btiao.reg("firstPage", new FirstPage());
 btiao.reg("detailPage", new DetailPage());
 btiao.reg("purchasePage", new PurchasePage());
@@ -613,6 +639,7 @@ btiao.reg("orderListPage", new OrderListPage());
 btiao.reg("orderDetailPage", new OrderDetailPage());
 btiao.reg("updateInfoPage", new UpdateInfoPage());
 btiao.reg("usrExtInfoPage", new UsrExtInfoPage());
+btiao.reg("subPosPage", new SubPosPage());
 
 })();
 
