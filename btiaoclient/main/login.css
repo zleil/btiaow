@@ -4,6 +4,9 @@
 .alertArea {
 	color:red;
 }
+.highLight{
+	color:blue;
+}
 .orderState0,.validInfoState{
 	color:blue;
 }

@@ -31,9 +31,9 @@
         <div data-role="collapsible-set">
             <div data-role="collapsible" data-collapsed="false">
                 <h3>
-                    私人电脑/手机/平板（建议）
+                   <span class="highLight">私人</span>电脑/手机/平板（建议）
                 </h3>
-                <a data-role="button" id="btDevLogin">
+                <a data-role="button" data-theme="a" id="btDevLogin">
                     设备账号登录
                 </a>
             </div>
@@ -55,13 +55,13 @@
                     </label>
                     <input name="" id="inUserPasswdToLogin" placeholder="" value="" type="password">
                 </div>
-                <a data-role="button" id="actUsrLogin">
+                <a data-role="button" data-theme="a" id="actUsrLogin">
                     登录
                 </a>
             </div>
         </div>
         <h5 class="alertArea">若非私人电脑/手机/平板，用后点击如下按钮！</h5>
-        <a data-role="button" id="actClearDeviceInfo">
+        <a data-role="button" data-theme="a" id="actClearDeviceInfo">
             清除此设备上个人资料
         </a>
     </div>
@@ -93,7 +93,7 @@
             </fieldset>
         </div>
         <ul id="lstBlockInfo" data-split-icon="delete" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
-        <a id="actMoreBlockInfos" data-role="button">更多</a>
+        <a id="actMoreBlockInfos" data-role="button" data-theme="a">更多</a>
     </div>
     <div data-theme="a" data-role="footer" data-position="fixed">
         <div data-role="navbar" data-iconpos="top">
@@ -130,7 +130,7 @@
 
 <div data-role="page" id="pgOrderListPage">
     <div data-theme="a" data-role="header" data-position="fixed">
-    	<a data-role="button" href="#pgFirst" class="ui-btn-left">
+    	<a data-role="button" data-theme="a" href="#pgFirst" class="ui-btn-left">
             返回
         </a>
         <h3>
@@ -152,13 +152,13 @@
         </div>
         <h5 class="noOrderTip">当前还没有订单，别灰心，加油哦:-)~~~</h5>
     	<ul id="lstOrderInfo" data-split-icon="check" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
-    	<a id="actMoreOrders" data-role="button">更多</a>
+    	<a id="actMoreOrders" data-role="button" data-theme="a">更多</a>
     </div>
 </div>
 
 <div data-role="page" id="pgOrderDetailPage">
     <div data-theme="a" data-role="header" data-position="fixed">
-    	<a data-role="button" href="#pgOrderListPage" class="ui-btn-left">
+    	<a data-role="button" data-theme="a" href="#pgOrderListPage" class="ui-btn-left">
             返回
         </a>
         <h3>
@@ -180,13 +180,13 @@
 <!-- Home -->
 <div data-role="page" id="pgDetail">
     <div data-theme="a" data-role="header" data-position="fixed">
-        <a data-role="button" href="#pgFirst" class="ui-btn-left">
+        <a data-role="button" data-theme="a" href="#pgFirst" class="ui-btn-left">
             返回
         </a>
         <h3 class="posName">
             小卖部6#0105  [望春园]
         </h3>
-        <a data-role="button" id="actEnterPurchase" class="ui-btn-right">
+        <a data-role="button" data-theme="a" id="actEnterPurchase" class="ui-btn-right">
             购买
         </a>
     </div>
@@ -211,7 +211,7 @@
 	                <div data-role="fieldcontain">
 	                    <textarea name="" id="textarea4" placeholder=""></textarea>
 	                </div>
-	                <a data-role="button">
+	                <a data-role="button" data-theme="a" >
 	                    提交
 	                </a>
 	            </div>
@@ -223,13 +223,13 @@
 <!-- Home -->
 <div data-role="page" id="pgPurchase">
 	<div data-theme="a" data-role="header" data-position="fixed">
-		<a data-role="button" href="#pgDetail" class="ui-btn-left">
+		<a data-role="button" data-theme="a" href="#pgDetail" class="ui-btn-left">
             返回
         </a>
         <h3>
                     订单填写
         </h3>
-        <a data-role="button" id="actPurchase" class="ui-btn-right">
+        <a data-role="button" data-theme="a" id="actPurchase" class="ui-btn-right">
             购买
         </a>
     </div>
@@ -238,7 +238,7 @@
             <label for="labProductNum"><h5>
                 购买个数
             </h5></label>
-            <input id="labProductNum" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="slider" name="labProductNum" value="1" min="1" max="10" data-highlight="true">
+            <input id="labProductNum" type="range" name="slider" value="1" min="1" max="10" data-highlight="false">
 	        <h3>
 	            总价：<span id="labTotalPrice">0</span>元
 	        </h3>
@@ -250,7 +250,7 @@
             <input name="" id="orderDst" placeholder="如：填01020304，代表1号楼2单元3层4号房" value="" type="text">
         </div>
         <div data-role="fieldcontain">
-            <label for="textarea1">
+            <label for="idProductMark">
                 备注
             </label>
             <textarea name="" id="idProductMark" placeholder=""></textarea>
@@ -261,13 +261,13 @@
 <!-- Home -->
 <div data-role="page" id="pgUpdateInfo">
 	<div data-theme="a" data-role="header" data-position="fixed">
-		<a data-role="button" href="#pgFirst" class="ui-btn-left">
+		<a data-role="button" data-theme="a" href="#pgFirst" class="ui-btn-left">
             返回
         </a>
         <h3>
                     新建产品
         </h3>
-        <a data-role="button" id="actUpdateInfo" class="ui-btn-right">
+        <a data-role="button" data-theme="a" id="actUpdateInfo" class="ui-btn-right">
             确定
         </a>
     </div>
@@ -282,7 +282,7 @@
             <label for="inUpdateInfoPrice" id="for_inUpdateInfoPrice">
                 现价（单位：元，最小精确到分，如：4.50）
             </label>
-            <input name="" id="inUpdateInfoPrice" placeholder="请输入现价" value="" type="text">
+            <input name="" id="inUpdateInfoPrice" placeholder="请输入现价" value="" min="0" type="number">
         </div>
         <div data-role="fieldcontain">
             <label for="inUpdateInfoOldPrice" id="for_inUpdateInfoOldPrice">
@@ -295,13 +295,13 @@
 <!-- Home -->
 <div data-role="page" id="pgUsrExtInfo">
 	<div data-theme="a" data-role="header" data-position="fixed">
-		<a data-role="button" href="#pgFirst" class="ui-btn-left">
+		<a data-role="button" data-theme="a" href="#pgFirst" class="ui-btn-left">
             返回
         </a>
         <h3>
                     个人信息设置
         </h3>
-        <a data-role="button" id="actSetUsrInfo" class="ui-btn-right">
+        <a data-role="button" data-theme="a" id="actSetUsrInfo" class="ui-btn-right">
             确定
         </a>
     </div>
@@ -345,7 +345,7 @@
             <label for="inUsrExtInfoLocationOfLivePos" id="for_inUsrExtInfoLocationOfLivePos">
                 您居住社区的位置编号(温馨提示：必须为8个数字，楼、单元、层、房号各占2数字，若无单元编号，则填写00)
             </label>
-            <input name="" id="inUsrExtInfoLocationOfLivePos" placeholder="请输入社区位置编号" value="" type="text">
+            <input name="" id="inUsrExtInfoLocationOfLivePos" placeholder="如：填01020304，代表1号楼2单元3层4号房" value="" type="text">
         </div>
     </div>
 </div>
@@ -366,7 +366,7 @@
         </a>
     </div>
     <div data-role="content">
-        <a data-role="button" href="#pgFirst">
+        <a data-role="button" data-theme="a" href="#pgFirst">
             取消
         </a>
     </div>
@@ -375,7 +375,7 @@
 <!-- Home -->
 <div data-role="page" id="pgSubPos">
 	<div data-theme="a" data-role="header" data-position="fixed">
-		<a data-role="button" href="#pgFirst" class="ui-btn-left">
+		<a data-role="button" href="#pgFirst" data-theme="a" class="ui-btn-left">
             返回
         </a>
         <h3>
@@ -386,7 +386,7 @@
         <ul id="subPositions" data-split-icon="check" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
     </div>
     <div data-role="content">
-        <a data-role="button" id="actMoreSubPos">
+        <a data-role="button" data-theme="a" id="actMoreSubPos">
             更多
         </a>
     </div>

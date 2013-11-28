@@ -396,13 +396,11 @@ window.onload = function() {
 	$("#btiaoTip").popup();
 	$("#btiaoOverTip").popup({overlayTheme: "a"});
 	
-	$("#labProductNum").slider({
-		theme:"c",trackTheme:"c",highlight:true,mini:false
-	});
+	//$("#labProductNum").slider();
 	$("#labProductNum").change(function(){
 		btiao.purchasePage.changePurchaseNum();
 	});
-	$("#labProductNum").slider("refresh");
+	//$("#labProductNum").slider("refresh");
 	
 	$("#actClearDeviceInfo").click(function(){
 		btiao.clientPersist.clearAll();
@@ -475,21 +473,30 @@ window.onload = function() {
 			if (!!ext.positionId && ext.positionId != "") {
 				btiao.firstPage.enterPosition(ext.positionId);
 			} else {
-				btiao.util.tip("您还未设置此个人信息，从右上角入口进入!");
+				btiao.util.tip("您还未设置此个人信息，从右上角入口进入吧");
 			}
+		} else {
+			btiao.util.tipOver("您还未设置此个人信息，现在就去啦", 0, function(){
+				btiao.usrExtInfoPage.prepare();
+			});
 		}
 	})
 	
 	$("#actToUpArea").click(function(){
 		var pid = btiao.firstPage.curPosInfo.pid;
 		if (pid == undefined || pid == "") {
-			btiao.util.tip("已经到最顶级了")
+			btiao.util.tip("已经到最顶级了");
+			return;
 		}
 		btiao.firstPage.enterPosition(pid);
 	});
 	
 	$("#actListDownArea").click(function(){
 		btiao.subPosPage.prepare();
+	});
+	
+	$("#actMoreSubPos").click(function(){
+		btiao.subPosPage.moreSub();
 	});
 }
 

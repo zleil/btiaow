@@ -54,7 +54,7 @@ FirstPage.prototype.enterPosition = function(curPosId, defaultToPos){
 		h3.empty();
 		h3.append(btiao.firstPage.curPosInfo.name);
 		
-		$("#posOwner").text(btiao.firstPage.curPosInfo.owner);
+		$("#posOwner").text(btiao.firstPage.curPosInfo.ownerUser);
 		
 		btiao.firstPage.fillBlockInfo("", numPer);
 	});
@@ -180,9 +180,18 @@ DetailPage.prototype.prepare = function (infoId) {
 
 function PurchasePage () {
 	this.info = null;
+	this.hasSetPurchaseNum = false;
 }
 PurchasePage.prototype.prepare = function(info) {
 	this.info = info;
+	
+	$.mobile.changePage($("#pgPurchase"));
+	if (!this.hasSetPurchaseNum) {
+		$("#labProductNum").change(function(){
+			btiao.purchasePage.changePurchaseNum();
+		});
+		this.hasSetPurchaseNum = true;
+	}
 	
 	$('#labProductNum').val(1);
 	$('#labProductNum').slider("refresh");
@@ -201,16 +210,14 @@ PurchasePage.prototype.prepare = function(info) {
 			}
 		} catch (e) {}
 	}
-	
-	$.mobile.changePage($("#pgPurchase"));
 }
 PurchasePage.prototype.changePurchaseNum = function() {
 	if (this.info == null) return;
 	
 	var num = parseInt($('#labProductNum').val());
 	var price = this.info.price;
-	var truePrice = btiao.util.decoratePrice(price);
-	$('#labTotalPrice').text(truePrice*num);
+	var truePrice = btiao.util.decoratePrice(price*num);
+	$('#labTotalPrice').text(truePrice);
 }
 PurchasePage.prototype.checkOrderDst = function () {
 	return !!$("#orderDst").val().match(/[0-9]{8}/);
@@ -237,6 +244,7 @@ PurchasePage.prototype.purchase = function() {
 		var url = productRoot+"/positions/"+btiao.firstPage.curPosInfo.id+"/orders/__n";
 		
 		var orderDst = $("#orderDst").val();
+		var mark = $("#idProductMark").val();
 		var obj = {
 				id: orderId,
 				posId: btiao.firstPage.curPosInfo.id,
@@ -245,7 +253,8 @@ PurchasePage.prototype.purchase = function() {
 				productNum: productNum,
 				totalPrice: btiao.detailPage.info.price*productNum,
 				fromUser: btiao.loginMgr.user,
-				orderDst: orderDst
+				orderDst: orderDst,
+				mark: mark
 		}
 		btiao.util.putObj(url, obj, function(d) {
 			if (d.errCode != 0) {
@@ -341,12 +350,14 @@ OrderListPage.prototype.getOrderStateClass = function(state) {
 OrderListPage.prototype.fillAOrder = function(orderInfo) {
 	var finishActHtml = (orderInfo.state == 0) ? this.getFinishActHTML() : '';
 	var totalPrice = btiao.util.decoratePrice(orderInfo.totalPrice);
+	var markTxt = ((!!orderInfo.mark)&&orderInfo.mark!='')?('<p class="highLight">备注：'+orderInfo.mark+'</p>'):'';
 	$("#lstOrderInfo").append(
 			'<li data-theme="e" data-orderid="'+orderInfo.id+'">' +
 			'<a onclick="btiao.orderListPage.onclickOrderInfo(this);" class="orderInfo data-transition="slide">' +
 			'<h3>' + orderInfo.productDesc + '</h3>' +
 			'<p><span class="state '+this.getOrderStateClass(orderInfo.state)+'">'+this.getStateDesc(orderInfo.state)+'</span>，订购时间： ' + btiao.util.decorateTime(orderInfo.createTime) + '</p>' +
 			'<p>总价： ' + totalPrice + '元，数量：' + orderInfo.productNum + '，送货位置：' + orderInfo.orderDst + '</p>' +
+			markTxt +
 			'</a>'+
 			finishActHtml +
 			'</li>'
@@ -606,15 +617,25 @@ UsrExtInfoPage.prototype.actSetUsrInfo = function () {
 	});
 }
 
-function SubPosPage() {}
+function SubPosPage() {
+	this.lastId = "";
+}
 SubPosPage.prototype.prepare = function() {
 	btiao.util.clearListViewData("#subPositions");
-	this.fillAllSubPos();
+	this.fillAllSubPos("", numPer);
 }
-SubPosPage.prototype.fillAllSubPos = function() {
+SubPosPage.prototype.moreSub = function() {
+	moreSub(this.lastId, numPer*2);
+}
+SubPosPage.prototype.fillAllSubPos = function(lastId, num) {
 	var url = productRoot+"/positions/"+btiao.firstPage.curPosInfo.id+"/subPositions";
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
+			if (d.content.length == 0) {
+				btiao.util.tip("没有子位置");
+				return;
+			}
+			
 			for (var idx in d.content) {
 				var pos = d.content[idx];
 				$("#subPositions").append(
@@ -622,6 +643,12 @@ SubPosPage.prototype.fillAllSubPos = function() {
 						'<a onclick="btiao.firstPage.enterPosition('+pos.id+');" data-transition="slide">'+pos.name+'</a>' +
 						'</li>'
 				);
+				this.lastId = pos.id;
+			}
+			if (d.content.length < num) {
+				$("#actMoreSubPos").addClass("ui-disabled");
+			} else {
+				$("#actMoreSubPos").removeClass("ui-disabled");
 			}
 			
 			$.mobile.changePage($("#pgSubPos"));
@@ -629,7 +656,7 @@ SubPosPage.prototype.fillAllSubPos = function() {
 		} else {
 			btiao.util.tip("获取子位置失败");
 		}
-	}, numPer, "");
+	}, num, lastId);
 }
 
 btiao.reg("firstPage", new FirstPage());

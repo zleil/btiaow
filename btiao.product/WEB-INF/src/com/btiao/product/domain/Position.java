@@ -23,9 +23,4 @@ public class Position extends InfoMObject {
 	public String name = "";
 	public String desc = "";
 	public String imgUrl = "";
-	
-	/**
-	 * user name of the owner
-	 */
-	public String owner = "";
 }

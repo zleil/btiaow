@@ -18,6 +18,7 @@ import org.restlet.resource.ServerResource;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.utils.BTiaoLog;
+import com.btiao.infomodel.InfoMObject;
 
 public abstract class ResBTBase extends ServerResource {
 	static private enum OP {
@@ -213,6 +214,7 @@ public abstract class ResBTBase extends ServerResource {
 					} else if (op == OP.post) {
 						contentRet = post(argObj, attrList);
 					} else if (op == OP.put) {
+						((InfoMObject)argObj).ownerUser = this.opUserId;
 						contentRet = put(argObj);
 					}
 				}

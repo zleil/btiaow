@@ -36,6 +36,7 @@ public class ResBTiaoPosition extends ResBTiaoProduct {
 //			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
 //		}
 
+		pos.ownerUser = this.opUserId;
 		svc.base.begin();
 		try {
 			svc.addObjectRightAndDownRel(RelName.pos_of_root, new BTiaoRoot(), pos, RelName.timeSeq, false);
@@ -83,6 +84,8 @@ public class ResBTiaoPosition extends ResBTiaoProduct {
 	protected Object del(Object arg) throws BTiaoExp {
 		Position pos = new Position();
 		pos.initId(urlIds);
+		
+		svc.base.begin();
 		try {
 			if (hasSubPos(pos)) {
 				throw new BTiaoExp(ErrCode.CANNOT_DEL_POS_HAVE_SUBS, "pos="+pos);

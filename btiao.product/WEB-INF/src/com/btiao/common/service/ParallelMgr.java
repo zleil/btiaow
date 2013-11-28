@@ -149,7 +149,7 @@ public class ParallelMgr {
 		}
 	}
 	
-	static public ParallelMgr instance() {
+	static public synchronized ParallelMgr instance() {
 		if (inst == null) {
 			inst = new ParallelMgr();
 		}

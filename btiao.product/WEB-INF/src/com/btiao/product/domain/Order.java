@@ -36,4 +36,6 @@ public class Order extends InfoMObject {
 	public String orderDst = "";
 	
 	public long createTime = System.currentTimeMillis(); //毫秒数，相对[UTC]1970.1.1 0点0分
+	
+	public String mark = "";
 }
