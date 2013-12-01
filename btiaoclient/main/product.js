@@ -48,6 +48,7 @@ FirstPage.prototype.enterPosition = function(curPosId, defaultToPos){
 			}
 		} else {
 			btiao.firstPage.curPosInfo = d.content;
+			btiao.util.changeTitle(btiao.firstPage.curPosInfo.name);
 		}
 		
 		var h3 = $(".posName");
@@ -95,7 +96,7 @@ FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
 			$.mobile.changePage($("#pgFirst"));
 			$("#lstBlockInfo").listview("refresh");
 		} else {
-			btiao.log.l("error:"+d.errCode);
+			btiao.util.tip("获取信息失败", d.errCode);
 		}
 	}, num, lastInfoId);
 }
@@ -283,9 +284,6 @@ OrderListPage.prototype.clearView = function() {
 }
 OrderListPage.prototype.prepare = function(posId) {
 	this.posId = posId;
-
-	btiao.util.clearListViewData("#lstOrderInfo");
-	
 	this.fillAllOrder("", numPer);
 }
 OrderListPage.prototype.actDisplayTodoOrder = function() {
@@ -311,6 +309,11 @@ OrderListPage.prototype.fillAllOrder = function (lastOrderId, num) {
 	var url = productRoot+"/positions/"+this.posId+(this.displayStyle==this.dispStyleTodo ? "/orders" : "/historyOrders");
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
+			if (lastOrderId == "") {
+				this.orders = {};
+				btiao.util.clearListViewData("#lstOrderInfo");
+			}
+			
 			if (lastOrderId == "" && d.content.length == 0 && btiao.orderListPage.displayStyle == this.dispStyleTodo) {
 				$("#pgOrderListPage .noOrderTip").css("display", "block");
 			} else {
@@ -330,7 +333,7 @@ OrderListPage.prototype.fillAllOrder = function (lastOrderId, num) {
 			$.mobile.changePage($("#pgOrderListPage"));
 			$("#lstOrderInfo").listview("refresh");
 		} else {
-			btiao.log.l("error:"+d.errCode);
+			btiao.util.tip("获取订单失败", d.errCode);
 		}
 	}, num, lastOrderId);
 }
@@ -568,8 +571,9 @@ UsrExtInfoPage.prototype.getUsrInfoFromUi = function () {
 			$("#for_inUserPasswdInfo2").removeClass("alertArea");
 		}
 	} else {
-		$("#for_inUserPasswdInfo").removeClass("alertArea");
-		$("#for_inUserPasswdInfo2").removeClass("alertArea");
+		valid =false;
+		$("#for_inUserPasswdInfo").addClass("alertArea");
+		$("#for_inUserPasswdInfo2").addClass("alertArea");
 	}
 	
 	var positionId = $("#inUsrExtInfoPos").val();
@@ -621,7 +625,6 @@ function SubPosPage() {
 	this.lastId = "";
 }
 SubPosPage.prototype.prepare = function() {
-	btiao.util.clearListViewData("#subPositions");
 	this.fillAllSubPos("", numPer);
 }
 SubPosPage.prototype.moreSub = function() {
@@ -634,6 +637,10 @@ SubPosPage.prototype.fillAllSubPos = function(lastId, num) {
 			if (d.content.length == 0) {
 				btiao.util.tip("没有子位置");
 				return;
+			}
+			
+			if (lastId == "") {
+				btiao.util.clearListViewData("#subPositions");
 			}
 			
 			for (var idx in d.content) {
@@ -658,6 +665,34 @@ SubPosPage.prototype.fillAllSubPos = function(lastId, num) {
 		}
 	}, num, lastId);
 }
+function ChgPosOwnerPage () {}
+ChgPosOwnerPage.prototype.prepare = function (){
+	$("#for_inNewPosOwner").removeClass("alertArea");
+	$.mobile.changePage("#pgChangePosOwner");
+}
+ChgPosOwnerPage.prototype.actChangePosOwner = function () {
+	var newOwnerId = $("#inNewPosOwner").val();
+	if (newOwnerId == "" || newOwnerId.match(/^[_|0-9].*$/)) {
+		$("#for_inNewPosOwner").addClass("alertArea");
+		btiao.util.tip("无效账号");
+		return;
+	} else {
+		$("#for_inNewPosOwner").removeClass("alertArea");
+	}
+	
+	var posId = btiao.firstPage.curPosInfo.id;
+	var url = productRoot + "/positions/" + posId;
+	btiao.util.postObj(url, 
+		{uid:posId, ownerUser:newOwnerId}, 
+		function(d){
+			if (d.errCode != 0) {
+				btiao.util.tip("设置失败，可能是无效帐号", d.errCode);
+			} else {
+				$.mobile.changePage("#pgFirst");
+			}
+		}
+	);
+}
 
 btiao.reg("firstPage", new FirstPage());
 btiao.reg("detailPage", new DetailPage());
@@ -667,6 +702,7 @@ btiao.reg("orderDetailPage", new OrderDetailPage());
 btiao.reg("updateInfoPage", new UpdateInfoPage());
 btiao.reg("usrExtInfoPage", new UsrExtInfoPage());
 btiao.reg("subPosPage", new SubPosPage());
+btiao.reg("chgPosOwnerPage", new ChgPosOwnerPage());
 
 })();
 

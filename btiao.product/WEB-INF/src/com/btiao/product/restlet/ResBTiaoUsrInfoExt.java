@@ -27,8 +27,23 @@ public class ResBTiaoUsrInfoExt extends ResBTiaoProduct {
 	protected Object get(Form form) throws BTiaoExp {
 		ArrayList<String> idList = new ArrayList<String>();
 		idList.add(usrId);
-		Object r = svc.getObject(UsrInfoExt.class, idList);
-		return r;
+		try {
+			Object r = svc.getObject(UsrInfoExt.class, idList);
+			return r;
+		} catch (BTiaoExp e) {
+			if (e.errNo == ErrCode.OBJ_NOT_IN_INFO_MODEL &&
+				this.usrId.equals("_mgr0")) {
+				UsrInfoExt ext = new UsrInfoExt();
+				ext.usrId = this.usrId;
+				ext.friendUid = this.usrId;
+				ext.ownerUser = this.usrId;
+				ext.positionId = "1000001";
+				svc.addObjectRightAndDownRel(RelName.usrExtInfo_of_root, new BTiaoRoot(), ext, RelName.timeSeq, false);
+				return ext;
+			}
+			
+			throw e;
+		}
 	}
 
 	@Override

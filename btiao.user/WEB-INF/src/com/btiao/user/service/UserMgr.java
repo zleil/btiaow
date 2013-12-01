@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.model.BTiaoUser;
+import com.btiao.base.model.FriendUserId;
 import com.btiao.base.service.UserService;
 import com.btiao.base.utils.BTiaoLog;
 import com.btiao.infomodel.InfoMBaseService;
@@ -247,10 +248,15 @@ public class UserMgr implements UserService {
 		BTiaoUser u = new BTiaoUser(ROOT_USER_ID);
 		u.nick = "super user";
 		u.passwd = passwdHash(ROOT_USER_PASSWD);
+		
+		FriendUserId fuid = new FriendUserId();
+		fuid.deviceId = u.id;
+		fuid.friendId = u.id;
 
 		base.begin();
 		try {
 			base.add(u);
+			base.add(fuid);
 			
 			base.success();
 		} catch (Throwable e) {

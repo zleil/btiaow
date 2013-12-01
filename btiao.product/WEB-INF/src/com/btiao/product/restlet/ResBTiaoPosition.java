@@ -7,6 +7,8 @@ import org.restlet.data.Form;
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.exp.ErrCode;
 import com.btiao.base.model.BTiaoRoot;
+import com.btiao.base.model.BTiaoUser;
+import com.btiao.base.model.FriendUserId;
 import com.btiao.base.oif.restlet.JsonCvtInfo;
 import com.btiao.base.utils.BTiaoLog;
 import com.btiao.infomodel.InfoMObject;
@@ -36,7 +38,6 @@ public class ResBTiaoPosition extends ResBTiaoProduct {
 //			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
 //		}
 
-		pos.ownerUser = this.opUserId;
 		svc.base.begin();
 		try {
 			svc.addObjectRightAndDownRel(RelName.pos_of_root, new BTiaoRoot(), pos, RelName.timeSeq, false);
@@ -68,15 +69,33 @@ public class ResBTiaoPosition extends ResBTiaoProduct {
 	@Override
 	@JsonCvtInfo(objClassName="com.btiao.product.domain.Position")
 	protected Object post(Object arg, Collection<String> attrs) throws BTiaoExp {
-		InfoMObject info = (InfoMObject)arg;
-		info.initId(urlIds);
+		Position pos = (Position)arg;
+		pos.initId(urlIds);
 		
-		if (!((Position)info).pid.equals(new Position().pid)) {
-			String errMsg = "can't modify pid of position!";
-			throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
+		svc.base.begin();
+		try {
+			if (!pos.pid.equals(new Position().pid)) {
+				String errMsg = "can't modify pid of position!";
+				throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
+			}
+			
+			if (attrs.contains(Position.FUID_NAME)) {
+				FriendUserId u = new FriendUserId();
+				u.friendId = pos.fuid;
+				if (!svc.base.get(u)) {
+					throw new BTiaoExp(ErrCode.CNG_POS_OWNER_OWNER_NOT_EXIST, "target="+pos+",newOwner="+pos.ownerUser);
+				}
+				pos.ownerUser = u.deviceId;
+			}
+			
+			svc.updateObject(pos, attrs);
+			svc.base.success();
+		} catch (BTiaoExp e) {
+			svc.base.failed();
+			throw e;
+		} finally {
+			svc.base.finish();
 		}
-		
-		svc.updateObject(info, attrs);
 		return null;
 	}
 

@@ -7,9 +7,11 @@ import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
+import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.model.BTiaoRoot;
 import com.btiao.base.oif.restlet.RestFilterBasicAuth;
 import com.btiao.base.utils.BTiaoLog;
+import com.btiao.common.service.ProductService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.BlockInfo;
 import com.btiao.product.domain.Order;
@@ -19,7 +21,9 @@ import com.btiao.product.restlet.RestBTiaoGetAll.Def;
 
 
 public class App extends Application {
-	public Restlet createInboundRoot() {		
+	public Restlet createInboundRoot() {
+		init();
+		
 		router.attach("/positions/{positionId}", ResBTiaoPosition.class);
 		router.attach("/positions/{positionId}/infos/{infoId}", ResBTiaoBlockInfo.class);
 		router.attach("/positions/{positionId}/orders/{orderId}", ResBTiaoOrder.class);
@@ -62,6 +66,63 @@ public class App extends Application {
 			List<String> pidStrs, List<String> idStrs) {
 		router.attach(url, RestBTiaoGetAll.class);
 		RestBTiaoGetAll.def(new Def(url,parentClass,objClass,rightRelName,downRelName,pidStrs,idStrs));
+	}
+	
+	private void init() {
+		ProductService svc = ProductService.newService();
+		svc.opUserId = "_mgr0";
+		svc.base.begin();
+		try {
+			Position pos = new Position();
+			
+			pos.id = svc.getId(ProductService.IdMutex.posId.toString()).nextValue;
+			pos.name = "中国";
+			pos.ownerUser = "_mgr0";
+			pos.fuid = "_mgr0";
+			addPos(svc, pos);
+			
+			pos.pid = pos.id;
+			pos.id = svc.getId(ProductService.IdMutex.posId.toString()).nextValue;
+			pos.name = "北京";
+			addPos(svc, pos);
+			
+			pos.pid = pos.id;
+			pos.id = svc.getId(ProductService.IdMutex.posId.toString()).nextValue;
+			pos.name = "朝阳区";
+			addPos(svc, pos);
+			
+			pos.pid = pos.id;
+			pos.id = svc.getId(ProductService.IdMutex.posId.toString()).nextValue;
+			pos.name = "北苑家园";
+			addPos(svc, pos);
+			
+			pos.pid = pos.id;
+			pos.id = svc.getId(ProductService.IdMutex.posId.toString()).nextValue;
+			pos.name = "望春园";
+			addPos(svc, pos);
+			
+			pos.pid = pos.id;
+			pos.id = svc.getId(ProductService.IdMutex.posId.toString()).nextValue;
+			pos.name = "06000105小卖部";
+			addPos(svc, pos);
+			
+			svc.base.success();
+		} catch (Throwable e) {
+			svc.base.failed();
+			
+			BTiaoLog.logExp(BTiaoLog.get(), e, "failed to init product app");
+		} finally {
+			svc.base.finish();
+		}
+	}
+	
+	private void addPos(ProductService svc, Position pos) throws BTiaoExp {
+		svc.addObjectRightAndDownRel(RelName.pos_of_root, new BTiaoRoot(), pos, RelName.timeSeq, false);
+		if (!pos.pid.equals("")) {
+			Position parent = new Position();
+			parent.id = pos.pid;
+			svc.addObjectRightAndDownRel(RelName.subPos_of_pos, parent, pos, RelName.neighborPos, true);
+		}
 	}
 	
 	private Router router = new Router(getContext());

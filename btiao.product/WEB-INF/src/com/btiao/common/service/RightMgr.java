@@ -86,9 +86,9 @@ public class RightMgr {
 		}
 		if (inGroup) {
 			return lowestRight == Right.ALLOW;
+		} else {
+			return checkOther(rights, target);
 		}
-		
-		return checkOther(rights, target);
 	}
 	
 	private boolean checkOther(AllObjRight rights, Target target) {

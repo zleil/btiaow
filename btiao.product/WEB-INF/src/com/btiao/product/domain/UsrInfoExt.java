@@ -21,8 +21,8 @@ public class UsrInfoExt extends InfoMObject {
 	
 	public String passwd = "";
 	
-	public String positionId = "";
+	public String positionId = "1000001";
 	
 	public String posToLive = "";
-	public String locationOfPos = "00000000"; //position中的位置
+	public String locationOfPos = ""; //position中的位置
 }

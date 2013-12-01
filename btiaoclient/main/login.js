@@ -44,6 +44,7 @@ Util.prototype.clearListViewData = function(selector) {
 Util.prototype.getObj = function (url, func) {
 	$.ajax({
 		type: "GET",
+		cache: false,
 		url: url,
 		contentType: "application/json; charset=UTF-8",
 		data: {__opUsrInfo: {uId: btiao.loginMgr.user, token: btiao.loginMgr.token}},
@@ -56,6 +57,7 @@ Util.prototype.getObj = function (url, func) {
 Util.prototype.getAllObj = function(url, func, num, lastId) {
 	$.ajax({
 		type: "GET",
+		cache: false,
 		url: url,
 		contentType: "application/json; charset=UTF-8",
 		data: {
@@ -209,17 +211,22 @@ Util.prototype.checkPriceValid = function (price) {
 		return false;
 	}
 }
-Util.prototype.nullFunc = function(){}
+Util.prototype.tipOverAfterFunc = function(){
+	if (!btiao.util.tipOverAfterCallBack) return;
+	
+	btiao.util.tipOverAfterCallBack();
+	btiao.util.tipOverAfterCallBack = undefined;
+}
 Util.prototype.tipOver = function(info, errCode, closeFunc) {
 	var txt = this.decorateTip(info, errCode);
 	$("#btiaoOverTip").text(txt);
 	$("#btiaoOverTip").popup("open");
 	
-	if (!!closeFunc) {
-		$("#btiaoOverTip").on("popupafterclose", closeFunc);
-	} else {
-		$("#btiaoOverTip").on("popupafterclose", this.nullFunc);
-	}	
+	this.tipOverAfterCallBack = closeFunc;
+	if (!!this.tipOverAfterFunc) {
+		$("#btiaoOverTip").on("popupafterclose", this.tipOverAfterFunc);
+		this.tipOverAfterFunc = undefined;
+	}
 }
 Util.prototype.decorateTip = function(info, errCode) {
 	var hasErr = (!!errCode && errCode != 0);
@@ -244,6 +251,9 @@ Util.prototype.tip = function(info, errCode) {
 		this.timerCloseTip = undefined;
 		$("#btiaoTip").popup("close");
 	},2300);
+}
+Util.prototype.changeTitle = function(title) {
+	document.title = title;
 }
 
 function LoginMgr() {
@@ -497,6 +507,14 @@ window.onload = function() {
 	
 	$("#actMoreSubPos").click(function(){
 		btiao.subPosPage.moreSub();
+	});
+	
+	$("#actEnterChgPosOwnerPage").click(function(){
+		btiao.chgPosOwnerPage.prepare();
+	});
+	
+	$("#actChangePosOwner").click(function(){
+		btiao.chgPosOwnerPage.actChangePosOwner();
 	});
 }
 

@@ -8,9 +8,14 @@ import com.btiao.base.exp.ErrCode;
 import com.btiao.infomodel.InfoMBaseService;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.infomodel.RelType;
+import com.btiao.product.domain.BTiaoId;
 import com.btiao.product.domain.AccessRight.Action;
 
 public class ProductService {
+	static public enum IdMutex {
+		orderId,infoId,posId
+	};
+	
 	static public ProductService newService() {
 		if (inst == null) {
 			inst = new ProductService();
@@ -19,6 +24,32 @@ public class ProductService {
 	}
 	
 	static private ProductService inst;
+	
+	public BTiaoId getId(String idName) {
+		IdMutex idEnum = IdMutex.valueOf(idName);
+		
+		synchronized (idEnum) {
+			BTiaoId idObj = new BTiaoId();
+			idObj.idName = idName;
+			
+			base.begin();
+			try {
+				if (!base.get(idObj)) {
+					base.add(idObj);
+				} else {
+					idObj.nextValue();
+					base.mdf(idObj);
+				}
+				base.success();
+			} catch (BTiaoExp e) {
+				base.failed();
+			} finally {
+				base.finish();
+			}
+			
+			return idObj;
+		}
+	}
 	
 	public InfoMObject getObject(
 			Class<?extends InfoMObject>infoClz, List<String> urlIds) throws BTiaoExp {
