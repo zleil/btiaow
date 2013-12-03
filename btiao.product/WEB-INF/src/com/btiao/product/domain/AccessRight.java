@@ -4,7 +4,7 @@ import java.util.List;
 import com.btiao.infomodel.InfoMObject;
 
 public class AccessRight extends InfoMObject {
-	static public class CONST {
+	static public class GroupNameCONST {
 		static public final String gIdOwner = "Owner";
 		static public final String gIdOther = "Other";
 		static public final String gIdPrefix = "gid_";
@@ -23,6 +23,14 @@ public class AccessRight extends InfoMObject {
 		GETALL;
 	}
 	
+	public AccessRight() {}
+	
+	public AccessRight(Action act, String relName, String gId) {
+		this.action = act.toString();
+		this.relName = relName;
+		this.gId = gId;
+	}
+	
 	/**
 	 * action id.
 	 * @see Action
@@ -37,7 +45,7 @@ public class AccessRight extends InfoMObject {
 	
 	/**
 	 * group id.<br>
-	 * @see CONST
+	 * @see GroupNameCONST
 	 */
 	public String gId;
 	

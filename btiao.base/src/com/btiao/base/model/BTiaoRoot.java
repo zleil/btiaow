@@ -10,4 +10,8 @@ public class BTiaoRoot extends InfoMObject {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public BTiaoRoot() {
+		this.ownerUser = "_mgr0";
+	}
 }

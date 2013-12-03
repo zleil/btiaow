@@ -34,7 +34,7 @@ position的owenr给商家，other上增加<add,order_of_postion>
 1. 创建user时，user的owner给user
 2. 创建position时，position的owenr给商家
 3. 在权限管理中，直接针对user和position写死other权限
-	user上，<<add/delete,order_of_postion>, other, allow>
+	user上，<<add/delete,order_of_user>, other, allow>
 	position上，<<add/delete,order_of_postion>, other, allow>
 
 支持position的转让功能

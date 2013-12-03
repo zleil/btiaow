@@ -4,10 +4,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.btiao.base.model.BTiaoRoot;
+import com.btiao.base.model.BTiaoUser;
 import com.btiao.infomodel.InfoMObject;
 import com.btiao.product.domain.AccessRight;
 import com.btiao.product.domain.AccessRight.Action;
 import com.btiao.product.domain.AccessRight.Right;
+import com.btiao.product.domain.Position;
+import com.btiao.product.restlet.RelName;
 
 public class RightMgr {
 	static public class AllObjRight {
@@ -59,8 +64,6 @@ public class RightMgr {
 	static private RightMgr inst;
 	
 	public boolean canDo(InfoMObject obj, Action act, String relName, String uId) {
-		if (obj != null) return true;
-		
 		AllObjRight rights = getAllRight(obj);
 		Target target = new Target(act, relName);
 		if (isOwner(obj, uId)) {
@@ -118,6 +121,27 @@ public class RightMgr {
 	private AllObjRight getAllRight(InfoMObject obj) {
 		//TODO
 		AllObjRight r = new AllObjRight();
+		if (obj.getClass() == BTiaoUser.class) {
+			Target add = new Target(Action.PUT, RelName.order_of_user);
+			Target del = new Target(Action.DELETE, RelName.order_of_user);
+			
+			AccessRight rightAdd = new AccessRight(add.act, add.relName,AccessRight.GroupNameCONST.gIdOther);
+			AccessRight rightDel = new AccessRight(del.act, del.relName,AccessRight.GroupNameCONST.gIdOther);
+					
+			r.otherRight.put(add, rightAdd);
+			r.otherRight.put(del, rightDel);
+		} else if (obj.getClass() == Position.class){
+			Target add = new Target(Action.PUT, RelName.order_of_position);
+			Target del = new Target(Action.DELETE, RelName.order_of_position);
+			
+			AccessRight rightAdd = new AccessRight(add.act, add.relName,AccessRight.GroupNameCONST.gIdOther);
+			AccessRight rightDel = new AccessRight(del.act, del.relName,AccessRight.GroupNameCONST.gIdOther);
+					
+			r.otherRight.put(add, rightAdd);
+			r.otherRight.put(del, rightDel);
+		} else if (obj.getClass() == BTiaoRoot.class) {
+			
+		}
 		return r;
 	}
 	
