@@ -9,6 +9,7 @@ import org.restlet.routing.Router;
 
 import com.btiao.base.exp.BTiaoExp;
 import com.btiao.base.model.BTiaoRoot;
+import com.btiao.base.model.BTiaoUser;
 import com.btiao.base.oif.restlet.RestFilterBasicAuth;
 import com.btiao.base.utils.BTiaoLog;
 import com.btiao.common.service.ProductService;
@@ -39,6 +40,9 @@ public class App extends Application {
 		
 		def("/positions/{posId}/orders",Position.class,Order.class,RelName.order_of_position,RelName.timeSeq,ids("posId"),ids("lastId"));
 		def("/positions/{posId}/historyOrders",Position.class,Order.class,RelName.historyOrder_of_position,RelName.timeSeqHistory,ids("posId"),ids("lastId"));
+		
+		def("/users/{userId}/usrOrders",BTiaoUser.class,Order.class,RelName.order_of_user,RelName.ofUser_order,ids("userId"),ids("lastId"));
+		def("/users/{userId}/usrHistoryOrders",BTiaoUser.class,Order.class,RelName.historyOrder_of_user,RelName.historyOfUser_order,ids("userId"),ids("lastId"));
 		
 		def("/positions/{posId}/infos",Position.class,BlockInfo.class,RelName.blockInfo_of_position,RelName.timeSeq,ids("posId"),ids("lastId"));
 		def("/positions/{posId}/historyInfos",Position.class,BlockInfo.class,RelName.historyBlockInfo_of_position,RelName.timeSeqHistory,ids("posId"),ids("lastId"));
@@ -78,7 +82,6 @@ public class App extends Application {
 			pos.id = svc.getId(ProductService.IdMutex.posId.toString()).nextValue;
 			pos.name = "ÖÐ¹ú";
 			pos.ownerUser = "_mgr0";
-			pos.fuid = "_mgr0";
 			addPos(svc, pos);
 			
 			pos.pid = pos.id;

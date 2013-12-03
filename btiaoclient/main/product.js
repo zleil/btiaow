@@ -55,7 +55,13 @@ FirstPage.prototype.enterPosition = function(curPosId, defaultToPos){
 		h3.empty();
 		h3.append(btiao.firstPage.curPosInfo.name);
 		
-		$("#posOwner").text(btiao.firstPage.curPosInfo.ownerUser);
+		var posOwnerId = btiao.firstPage.curPosInfo.ownerUser;
+		var usrInfoExturl = productRoot + "/usrInfoExt/" + posOwnerId;
+		btiao.util.getObj(usrInfoExturl, function(d){
+			if (d.errCode == 0) {
+				$("#posOwner").text(d.content.friendUid);
+			}
+		});
 		
 		btiao.firstPage.fillBlockInfo("", numPer);
 	});
@@ -306,7 +312,12 @@ OrderListPage.prototype.moreOrders = function() {
 	this.fillAllOrder(this.lastOrderId, numPer);
 }
 OrderListPage.prototype.fillAllOrder = function (lastOrderId, num) {
-	var url = productRoot+"/positions/"+this.posId+(this.displayStyle==this.dispStyleTodo ? "/orders" : "/historyOrders");
+	var url = "";
+	if (btiao.loginMgr.user == btiao.firstPage.curPosInfo.ownerUser) {
+		url = productRoot+"/positions/"+this.posId+(this.displayStyle==this.dispStyleTodo ? "/orders" : "/historyOrders");
+	} else {
+		url = productRoot+"/users/"+btiao.loginMgr.user+(this.displayStyle==this.dispStyleTodo ? "/usrOrders" : "/usrHistoryOrders");
+	}
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
 			if (lastOrderId == "") {
@@ -380,7 +391,14 @@ OrderListPage.prototype.finishOrder = function(elm) {
 			state:"2"
 	};
 	
-	var callback = function(d) {
+	callback.elm = elm;
+	callback.orderId = orderId;
+	btiao.util.postObj(url, obj, function(d) {
+		if (d.errCode != 0) {
+			btiao.tip("处理失败");
+			return;
+		}
+		
 		var stateE = $(".state",callback.elm.parentNode);
 		stateE.removeClass(btiao.orderListPage.getOrderStateClass(0));
 		stateE.addClass(btiao.orderListPage.getOrderStateClass(2));
@@ -390,10 +408,7 @@ OrderListPage.prototype.finishOrder = function(elm) {
 		
 		$("#lstOrderInfo").listview("refresh");
 		btiao.orderListPage.orders[callback.orderId].state = 2;
-	};
-	callback.elm = elm;
-	callback.orderId = orderId;
-	btiao.util.postObj(url, obj, callback);
+	});
 }
 OrderListPage.prototype.getStateDesc = function(state) {
 	if (state == 0) {
@@ -688,6 +703,8 @@ ChgPosOwnerPage.prototype.actChangePosOwner = function () {
 			if (d.errCode != 0) {
 				btiao.util.tip("设置失败，可能是无效帐号", d.errCode);
 			} else {
+				btiao.firstPage.curPosInfo.ownerUser = newOwnerId;
+				$("#posOwner").text(btiao.firstPage.curPosInfo.ownerUser);
 				$.mobile.changePage("#pgFirst");
 			}
 		}

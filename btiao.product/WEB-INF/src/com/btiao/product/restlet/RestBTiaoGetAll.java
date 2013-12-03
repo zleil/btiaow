@@ -72,6 +72,7 @@ public class RestBTiaoGetAll extends ResBTiaoProduct {
 			InfoMObject parentObj = getParentObj();
 			InfoMObject lastObj = getLastObj(form);
 			
+			svc.getObject(parentObj);
 			return svc.getAllObjRightAndDownRel(parentObj, 
 					def.objClass, def.rightRelName,
 					lastObj, def.downRelName, num);

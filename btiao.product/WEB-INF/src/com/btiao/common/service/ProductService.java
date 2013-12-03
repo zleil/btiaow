@@ -51,6 +51,19 @@ public class ProductService {
 		}
 	}
 	
+	public InfoMObject getObject(InfoMObject info) throws BTiaoExp {
+		if (base.get(info)) {
+			if (!RightMgr.instance().canDo(info, Action.GET, "", this.opUserId)) {
+				throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "getObject no right,user="+this.opUserId);
+			}
+			
+			return info;
+		} else {
+			String errMsg = "fetch from db error,object="+info;
+			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(errMsg));
+		}	
+	}
+	
 	public InfoMObject getObject(
 			Class<?extends InfoMObject>infoClz, List<String> urlIds) throws BTiaoExp {
 		InfoMObject info = null;
@@ -63,35 +76,28 @@ public class ProductService {
 		
 		info.initId(urlIds);
 		
-		if (!RightMgr.instance().canDo(info, Action.GET, "", this.opUserId)) {
-			throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "getObject no right,user="+this.opUserId);
-		}
-		
-		if (base.get(info)) {
-			return info;
-		} else {
-			String errMsg = "fetch from db error,class="+infoClz.getName()+",id="+getUrlIdsStr(urlIds);
-			throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(errMsg));
-		}
+		return getObject(info);
 	}
 	
 
 	public void updateObject(
 			InfoMObject info, Collection<String> attrs) throws BTiaoExp {
-		if (!RightMgr.instance().canDo(info, Action.POST, "", this.opUserId)) {
-			throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "updateObject no right,user="+this.opUserId);
-		}
-		
 		base.begin();
 		try {
 			
-			InfoMObject newObj = info.clone();
-			if (!base.get(newObj)) {
-				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(newObj.toString()));
+			InfoMObject oldObj = info.clone();
+			if (!base.get(oldObj)) {
+				throw new BTiaoExp(ErrCode.OBJ_NOT_IN_INFO_MODEL, new Throwable(oldObj.toString()));
 			}
 			
-			newObj.update(info, attrs);
-			base.mdf(newObj);
+			//use old object to check the right
+			if (!RightMgr.instance().canDo(oldObj, Action.POST, "", this.opUserId)) {
+				throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "updateObject no right,user="+this.opUserId);
+			}
+			
+			//update old obj with new attrs
+			oldObj.update(info, attrs);
+			base.mdf(oldObj);
 			
 			base.success();
 		} catch (BTiaoExp e) {
@@ -117,6 +123,7 @@ public class ProductService {
 				throw new BTiaoExp(ErrCode.TIME_OUT, "addObjectRightAndDownRel time,m="+m);
 			}
 			
+			this.base.get(from);
 			if (!RightMgr.instance().canDo(from, Action.PUT, rightRelName, this.opUserId)) {
 				throw new BTiaoExp(ErrCode.USER_HAVE_NO_RIGHT, "addObjectRightAndDownRel no right,user="+this.opUserId);
 			}

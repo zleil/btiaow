@@ -79,9 +79,9 @@ public class ResBTiaoPosition extends ResBTiaoProduct {
 				throw new BTiaoExp(ErrCode.WRONG_PARAM, null, errMsg);
 			}
 			
-			if (attrs.contains(Position.FUID_NAME)) {
+			if (attrs.contains(Position.OWNER_USER_ATTR)) {
 				FriendUserId u = new FriendUserId();
-				u.friendId = pos.fuid;
+				u.friendId = pos.ownerUser;
 				if (!svc.base.get(u)) {
 					throw new BTiaoExp(ErrCode.CNG_POS_OWNER_OWNER_NOT_EXIST, "target="+pos+",newOwner="+pos.ownerUser);
 				}

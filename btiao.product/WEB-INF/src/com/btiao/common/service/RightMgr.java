@@ -140,7 +140,9 @@ public class RightMgr {
 			r.otherRight.put(add, rightAdd);
 			r.otherRight.put(del, rightDel);
 		} else if (obj.getClass() == BTiaoRoot.class) {
-			
+			Target add = new Target(Action.PUT, RelName.usrExtInfo_of_root);
+			AccessRight rightAdd = new AccessRight(add.act, add.relName,AccessRight.GroupNameCONST.gIdOther);
+			r.otherRight.put(add, rightAdd);
 		}
 		return r;
 	}

@@ -5,9 +5,7 @@ import java.util.List;
 import com.btiao.infomodel.InfoMObjAttrDesc;
 import com.btiao.infomodel.InfoMObject;
 
-public class Position extends InfoMObject {
-	static public String FUID_NAME = "fuid";
-	
+public class Position extends InfoMObject {	
 	@Override
 	public boolean initId(List<String> urlIds) {
 		if (urlIds.size() != 1) {
@@ -25,6 +23,4 @@ public class Position extends InfoMObject {
 	public String name = "";
 	public String desc = "";
 	public String imgUrl = "";
-	
-	public String fuid = "";
 }
