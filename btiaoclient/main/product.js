@@ -638,15 +638,42 @@ UsrExtInfoPage.prototype.actSetUsrInfo = function () {
 
 function SubPosPage() {
 	this.lastId = "";
+	this.posId = undefined;
+	this.parentId = undefined;
 }
-SubPosPage.prototype.prepare = function() {
+SubPosPage.prototype.prepare = function(posId) {
+	if (posId == "1000001") {
+		$("#actListUpperPos").addClass("ui-disabled");
+	} else {
+		$("#actListUpperPos").removeClass("ui-disabled");
+	}
+	
+	this.posId = posId;
 	this.fillAllSubPos("", numPer);
+	
+	var posUrl = productRoot+"/positions/"+this.posId;
+	btiao.util.getObj(posUrl, function(d){
+		if (d.errCode != 0) {
+			btiao.tip("返回查询上级位置失败", d.errCode);
+			return;
+		}
+		
+		$("#labCurPosNameInSubList").text(d.content.name);
+		btiao.subPosPage.parentId = d.content.pid;
+	});
+}
+SubPosPage.prototype.prepareParent = function(posId) {
+	if (!(this.parentId) || this.parentId == "1000001") {
+		return;
+	}
+	
+	btiao.subPosPage.prepare(this.parentId);
 }
 SubPosPage.prototype.moreSub = function() {
-	moreSub(this.lastId, numPer*2);
+	fillAllSubPos(this.lastId, numPer*2);
 }
 SubPosPage.prototype.fillAllSubPos = function(lastId, num) {
-	var url = productRoot+"/positions/"+btiao.firstPage.curPosInfo.id+"/subPositions";
+	var url = productRoot+"/positions/"+this.posId+"/subPositions";
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
 			if (d.content.length == 0) {
@@ -663,6 +690,7 @@ SubPosPage.prototype.fillAllSubPos = function(lastId, num) {
 				$("#subPositions").append(
 						'<li data-theme="e" data-posid="'+pos+'">' +
 						'<a onclick="btiao.firstPage.enterPosition('+pos.id+');" data-transition="slide">'+pos.name+'</a>' +
+						'<a onclick="btiao.subPosPage.prepare('+pos.id+');">down</a>' +
 						'</li>'
 				);
 				this.lastId = pos.id;

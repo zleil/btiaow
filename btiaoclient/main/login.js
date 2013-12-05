@@ -502,11 +502,15 @@ window.onload = function() {
 	});
 	
 	$("#actListDownArea").click(function(){
-		btiao.subPosPage.prepare();
+		btiao.subPosPage.prepare(btiao.firstPage.curPosInfo.id);
 	});
 	
 	$("#actMoreSubPos").click(function(){
 		btiao.subPosPage.moreSub();
+	});
+	
+	$("#actListUpperPos").click(function(){
+		btiao.subPosPage.prepare(btiao.subPosPage.parentId);
 	});
 	
 	$("#actEnterChgPosOwnerPage").click(function(){
