@@ -79,7 +79,6 @@
         </h3>
     </div>
     <div data-role="content">
-    	<h4>本区所有者：<span id="posOwner"></span>（<a class="button" id="actSendMsg2PosOwner">@他/她</a>）</h4>
         <div id="checkboxes1" data-role="fieldcontain">
             <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
                 <input checked="checked" id="actDisplayValidInfo" name="" type="checkbox">
@@ -94,6 +93,7 @@
         </div>
         <ul id="lstBlockInfo" data-split-icon="delete" data-role="listview" data-divider-theme="b" data-inset="true"></ul>
         <a id="actMoreBlockInfos" data-role="button" data-theme="a">更多</a>
+        <a data-role="button" id="actSendMsg2PosOwner" data-theme="a">@(本区所有者：<span id="posOwner"></span>)</a>
     </div>
     <div data-theme="a" data-role="footer" data-position="fixed">
         <div data-role="navbar" data-iconpos="top">
@@ -318,13 +318,13 @@
         </div>
         <div data-role="fieldcontain">
         	<label for="inUserPasswdInfo" id="for_inUserPasswdInfo">
-                        密码(两密码必须相同，必须填写)
+                        密码(若不填则，用户名和密码相同)
             </label>
             <input name="" id="inUserPasswdInfo" placeholder="" value="" type="password">
         </div>
         <div data-role="fieldcontain">
             <label for="inUserPasswdInfo2" id="for_inUserPasswdInfo2">
-                       再次输入密码(必须填写)
+                       再次输入密码(两密码必须相同)
             </label>
             <input name="" id="inUserPasswdInfo2" placeholder="" value="" type="password">
         </div>
@@ -366,6 +366,9 @@
         </a>
         <a data-role="button" id="actEnterChgPosOwnerPage" data-theme="a" data-iconpos="left">
             转让当前位置
+        </a>
+        <a data-role="button" id="actSetHomePage" data-theme="a" data-iconpos="left">
+            登录后默认访问此位置
         </a>
     </div>
     <div data-role="content">
@@ -421,10 +424,10 @@
 </div>
 
 <div data-role="popup" id="btiaoTip" data-theme="a">
-    <p>???</p>
+    <p></p>
 </div>
 <div data-role="popup" id="btiaoOverTip" data-theme="a">
-    <p>???</p>
+    <p></p>
 </div>
 
 </body>

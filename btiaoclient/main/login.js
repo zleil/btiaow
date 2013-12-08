@@ -351,6 +351,9 @@ LoginMgr.prototype.devLogin = function () {
 			} else {
 				btiao.util.tip("密码错误");
 			}
+		},
+		error: function() {
+			btiao.util.tip("网络错误.");
 		}
 	});
 }
@@ -519,6 +522,10 @@ window.onload = function() {
 	
 	$("#actChangePosOwner").click(function(){
 		btiao.chgPosOwnerPage.actChangePosOwner();
+	});
+	
+	$("#actSetHomePage").click(function(){
+		btiao.moreActionPage.actSetHomePage();
 	});
 }
 

@@ -530,6 +530,8 @@ UsrExtInfoPage.prototype.prepare = function() {
 				//OBJ_NOT_IN_INFO_MODEL = 101
 				if (d.errCode != 101) {
 					btiao.util.tip("获取个人信息失败", d.errCode);
+				} else {
+					$("#inUsrExtInfoPos").val(btiao.firstPage.curPosInfo.id);
 				}
 			}
 			
@@ -586,9 +588,7 @@ UsrExtInfoPage.prototype.getUsrInfoFromUi = function () {
 			$("#for_inUserPasswdInfo2").removeClass("alertArea");
 		}
 	} else {
-		valid =false;
-		$("#for_inUserPasswdInfo").addClass("alertArea");
-		$("#for_inUserPasswdInfo2").addClass("alertArea");
+		obj.passwd = obj.friendUid;
 	}
 	
 	var positionId = $("#inUsrExtInfoPos").val();
@@ -678,6 +678,7 @@ SubPosPage.prototype.fillAllSubPos = function(lastId, num) {
 		if (d.errCode == 0) {
 			if (d.content.length == 0) {
 				btiao.util.tip("没有子位置");
+				
 				return;
 			}
 			
@@ -704,7 +705,7 @@ SubPosPage.prototype.fillAllSubPos = function(lastId, num) {
 			$.mobile.changePage($("#pgSubPos"));
 			$("#subPositions").listview("refresh");
 		} else {
-			btiao.util.tip("获取子位置失败");
+			btiao.util.tip("获取子位置失败", d.errCode);
 		}
 	}, num, lastId);
 }
@@ -739,6 +740,29 @@ ChgPosOwnerPage.prototype.actChangePosOwner = function () {
 	);
 }
 
+function MoreActionPage () {}
+MoreActionPage.prototype.prepare = function() {
+	
+}
+MoreActionPage.prototype.actSetHomePage = function() {
+	var obj = {};
+	obj.positionId = btiao.firstPage.curPosInfo.id;
+	var url = productRoot + "/usrInfoExt/" + btiao.loginMgr.user;
+	btiao.util.postObj(url, obj, function(d){
+		if (d.errCode == 101) {
+			btiao.util.tipOver('还未设置个人信息', 0, function(){
+				btiao.usrExtInfoPage.prepare();
+			});
+		} else if (d.errCode != 0) {
+			btiao.util.tipOver('设置“家”位置失败', d.errCode, function(){
+				$.mobile.changePage("#pgFirst");
+			});
+		} else {
+			$.mobile.changePage("#pgFirst");
+		}
+	});
+}
+
 btiao.reg("firstPage", new FirstPage());
 btiao.reg("detailPage", new DetailPage());
 btiao.reg("purchasePage", new PurchasePage());
@@ -748,6 +772,7 @@ btiao.reg("updateInfoPage", new UpdateInfoPage());
 btiao.reg("usrExtInfoPage", new UsrExtInfoPage());
 btiao.reg("subPosPage", new SubPosPage());
 btiao.reg("chgPosOwnerPage", new ChgPosOwnerPage());
+btiao.reg("moreActionPage", new MoreActionPage());
 
 })();
 
