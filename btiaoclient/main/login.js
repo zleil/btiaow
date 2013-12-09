@@ -427,6 +427,10 @@ window.onload = function() {
 		btiao.loginMgr.usrLogin();
 	});
 	
+	$("#actEnterMoreActionPage").click(function(){
+		btiao.moreActionPage.prepare();
+	})
+	
 	$("#actNewInfo").click(function(){
 		btiao.updateInfoPage.prepare(true);
 		return false;

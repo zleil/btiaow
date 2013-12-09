@@ -81,6 +81,13 @@ FirstPage.prototype.actDisplayHistoryInfo = function(){
 	this.fillBlockInfo("", numPer);
 }
 FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
+	if (this.curPosInfo.ownerUser != btiao.loginMgr.user) {
+		this.displayValid = true;
+		$("#cbBlockInfoQueryType").css("display", "none");
+	} else {
+		$("#cbBlockInfoQueryType").css("display", "block");
+	}
+	
 	var url = productRoot+"/positions/"+this.curPosInfo.id+(this.displayValid?"/infos":"/historyInfos");
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
@@ -314,8 +321,10 @@ OrderListPage.prototype.moreOrders = function() {
 OrderListPage.prototype.fillAllOrder = function (lastOrderId, num) {
 	var url = "";
 	if (btiao.loginMgr.user == btiao.firstPage.curPosInfo.ownerUser) {
+		$("#cbOrderFilter").css("display", "block");
 		url = productRoot+"/positions/"+this.posId+(this.displayStyle==this.dispStyleTodo ? "/orders" : "/historyOrders");
 	} else {
+		$("#cbOrderFilter").css("display", "none");
 		url = productRoot+"/users/"+btiao.loginMgr.user+(this.displayStyle==this.dispStyleTodo ? "/usrOrders" : "/usrHistoryOrders");
 	}
 	btiao.util.getAllObj(url, function(d){
@@ -748,7 +757,11 @@ ChgPosOwnerPage.prototype.actChangePosOwner = function () {
 
 function MoreActionPage () {}
 MoreActionPage.prototype.prepare = function() {
-	
+	if (this.curPosInfo.ownerUser != btiao.loginMgr.user) {
+		$("#actEnterChgPosOwnerPage").css("display", "none");
+	} else {
+		$("#actEnterChgPosOwnerPage").css("display", "block");
+	}
 }
 MoreActionPage.prototype.actSetHomePage = function() {
 	var obj = {};
