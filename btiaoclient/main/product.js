@@ -531,15 +531,20 @@ UsrExtInfoPage.prototype.prepare = function() {
 				if (d.errCode != 101) {
 					btiao.util.tip("获取个人信息失败", d.errCode);
 				} else {
-					$("#inUsrExtInfoPos").val(btiao.firstPage.curPosInfo.id);
+					$("#inSetCurPosDefault").prop("checked", true);
+					$("#checkbox_inSetCurPosDefault").checkboxradio("refresh");
 				}
 			}
+			
+			$("#for_inSetCurPosDefault").text(btiao.firstPage.curPosInfo.name);
 			
 			$.mobile.changePage("#pgUsrExtInfo");
 			btiao.usrExtInfoPage.setUsrInfoToUi(ext);
 		});
 	} else {
 		$.mobile.changePage("#pgUsrExtInfo");
+		$("#inSetCurPosDefault").prop("checked", false);
+		$("#for_inSetCurPosDefault").text(btiao.firstPage.curPosInfo.name);
 		btiao.usrExtInfoPage.setUsrInfoToUi(btiao.usrExtInfoPage.usrExtInfo);
 	}
 }
@@ -564,7 +569,6 @@ UsrExtInfoPage.prototype.setUsrInfoToUi = function (ext) {
 UsrExtInfoPage.prototype.getUsrInfoFromUi = function () {
 	var valid = true;
 	var obj = {};
-	
 	var friendUid = $("#inUsrExtInfoFuid").val();
 	if (friendUid == "" || friendUid.length > 20 ||
 		!!friendUid.match(/^[0-9|_]/)) {
@@ -627,7 +631,9 @@ UsrExtInfoPage.prototype.actSetUsrInfo = function () {
 	btiao.util.putOrPosObj(isPut, usrInfoExturl, obj, function(d){
 		if (d.errCode == 0) {
 			btiao.usrExtInfoPage.usrExtInfo = obj;
-			btiao.clientPersist.set("btiao.devPasswd", obj.passwd);
+			if (!!obj.passwd && obj.passwd != "") {
+				btiao.clientPersist.set("btiao.devPasswd", obj.passwd);
+			}
 			
 			$.mobile.changePage("#pgFirst");
 		} else {
@@ -758,6 +764,7 @@ MoreActionPage.prototype.actSetHomePage = function() {
 				$.mobile.changePage("#pgFirst");
 			});
 		} else {
+			btiao.usrExtInfoPage.usrExtInfo.positionId = obj.positionId;
 			$.mobile.changePage("#pgFirst");
 		}
 	});

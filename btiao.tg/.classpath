@@ -5,6 +5,6 @@
 	<classpathentry kind="src" path="WEB-INF/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/third"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache library"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-tomcat"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>
