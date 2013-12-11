@@ -80,14 +80,16 @@ FirstPage.prototype.actDisplayHistoryInfo = function(){
 	
 	this.fillBlockInfo("", numPer);
 }
+FirstPage.prototype.preDecorateUI = function() {
+//	if (this.curPosInfo.ownerUser != btiao.loginMgr.user) {
+//		this.displayValid = true;
+//		$("#cbBlockInfoQueryType").css("display", "none");
+//		$("#actNewInfo:parent").css("display", "none");
+//	} else {
+//		$("#cbBlockInfoQueryType").css("display", "block");
+//	}
+}
 FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
-	if (this.curPosInfo.ownerUser != btiao.loginMgr.user) {
-		this.displayValid = true;
-		$("#cbBlockInfoQueryType").css("display", "none");
-	} else {
-		$("#cbBlockInfoQueryType").css("display", "block");
-	}
-	
 	var url = productRoot+"/positions/"+this.curPosInfo.id+(this.displayValid?"/infos":"/historyInfos");
 	btiao.util.getAllObj(url, function(d){
 		if (d.errCode == 0) {
@@ -107,6 +109,7 @@ FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
 			}
 			
 			$.mobile.changePage($("#pgFirst"));
+			btiao.firstPage.preDecorateUI();
 			$("#lstBlockInfo").listview("refresh");
 		} else {
 			btiao.util.tip("获取信息失败", d.errCode);
@@ -541,7 +544,7 @@ UsrExtInfoPage.prototype.prepare = function() {
 					btiao.util.tip("获取个人信息失败", d.errCode);
 				} else {
 					$("#inSetCurPosDefault").prop("checked", true);
-					$("#checkbox_inSetCurPosDefault").checkboxradio("refresh");
+					//$("#checkbox_inSetCurPosDefault").checkboxradio("refresh");
 				}
 			}
 			
@@ -757,7 +760,7 @@ ChgPosOwnerPage.prototype.actChangePosOwner = function () {
 
 function MoreActionPage () {}
 MoreActionPage.prototype.prepare = function() {
-	if (this.curPosInfo.ownerUser != btiao.loginMgr.user) {
+	if (btiao.firstPage.curPosInfo.ownerUser != btiao.loginMgr.user) {
 		$("#actEnterChgPosOwnerPage").css("display", "none");
 	} else {
 		$("#actEnterChgPosOwnerPage").css("display", "block");
