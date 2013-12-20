@@ -81,13 +81,14 @@ FirstPage.prototype.actDisplayHistoryInfo = function(){
 	this.fillBlockInfo("", numPer);
 }
 FirstPage.prototype.preDecorateUI = function() {
-//	if (this.curPosInfo.ownerUser != btiao.loginMgr.user) {
-//		this.displayValid = true;
-//		$("#cbBlockInfoQueryType").css("display", "none");
-//		$("#actNewInfo:parent").css("display", "none");
-//	} else {
-//		$("#cbBlockInfoQueryType").css("display", "block");
-//	}
+	if (this.curPosInfo.ownerUser != btiao.loginMgr.user) {
+		this.displayValid = true;
+		$("#cbBlockInfoQueryType").css("display", "none");
+		$("#actNewInfo").text("新信息");
+	} else {
+		$("#cbBlockInfoQueryType").css("display", "block");
+		$("#actNewInfo").text("新产品");
+	}
 }
 FirstPage.prototype.fillBlockInfo = function (lastInfoId, num) {
 	var url = productRoot+"/positions/"+this.curPosInfo.id+(this.displayValid?"/infos":"/historyInfos");
@@ -192,7 +193,15 @@ DetailPage.prototype.prepare = function (infoId) {
 		$("#actEnterPurchase").removeClass("ui-disabled");
 	}
 	
+	this.prepareUI();
 	$.mobile.changePage($("#pgDetail"));
+}
+DetailPage.prototype.prepareUI = function() {
+	if (this.info.type == "product") {
+		$("#idCreateTime").prev().text("上架时间：");
+	} else {
+		$("#idCreateTime").prev().text("新建时间：");
+	}
 }
 
 function PurchasePage () {
@@ -762,6 +771,7 @@ function MoreActionPage () {}
 MoreActionPage.prototype.prepare = function() {
 	if (btiao.firstPage.curPosInfo.ownerUser != btiao.loginMgr.user) {
 		$("#actEnterChgPosOwnerPage").css("display", "none");
+		$("#actListOrders").css("display", "none");
 	} else {
 		$("#actEnterChgPosOwnerPage").css("display", "block");
 	}

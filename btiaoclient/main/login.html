@@ -70,6 +70,10 @@
 <!-- Home -->
 <div data-role="page" id="pgFirst">
     <div data-theme="a" data-role="header" data-position="fixed">
+    	<a data-role="button" id="actEnterOpPage" href="#pgMoreAction" data-theme="a" data-iconpos="center" data-icon="gouwuche"
+	        class="ui-btn-center" style="height:16px">
+            购物车
+        </a>
     	<a data-role="button" id="actEnterMoreActionPage" href="#pgMoreAction" data-theme="a" data-iconpos="left"
 	        class="ui-btn-right">
             ...
@@ -200,7 +204,7 @@
 	    	<h5>商品标识：<span id="idInfoId">3</span></h5>
 	        <h5>状态：<span id="idInfoState">state</span></h5>
 	        <h5>现价：<span id="idInfoPrice">3</span>元，原价：<span id="idInfoOldPrice">3</span>元</h5>
-	    	<h5>创建时间：<span id="idCreateTime">time</span></h5>
+	    	<h5><span>创建时间：</span><span id="idCreateTime">time</span></h5>
 	    </div>
         <div data-role="fieldcontain">
 	        <div data-role="collapsible-set">
@@ -282,7 +286,7 @@
             <label for="inUpdateInfoPrice" id="for_inUpdateInfoPrice">
                 现价（单位：元，最小精确到分，如：4.50）
             </label>
-            <input name="" id="inUpdateInfoPrice" placeholder="请输入现价" value="" min="0" type="number">
+            <input name="" id="inUpdateInfoPrice" placeholder="请输入现价" value="" min="0" type="text">
         </div>
         <div data-role="fieldcontain">
             <label for="inUpdateInfoOldPrice" id="for_inUpdateInfoOldPrice">
