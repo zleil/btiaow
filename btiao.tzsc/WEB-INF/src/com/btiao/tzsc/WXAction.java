@@ -1,12 +1,9 @@
 package com.btiao.tzsc;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +14,67 @@ public class WXAction extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = -3142857989535992028L;
-
+	
+	@Override
+	public void doPost(HttpServletRequest request,
+			HttpServletResponse response) {	
+		try {
+			_doPost(request, response);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			
+			PrintWriter out;
+			try {
+				out = response.getWriter();
+				out.print("unknow error in WXAction doPost!");
+			} catch (IOException ee) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void _doPost(HttpServletRequest request,
+			HttpServletResponse response) {	
+		try {
+			BufferedReader reader = request.getReader();
+			
+			StringBuilder sb = new StringBuilder();
+			do {
+				String tmp = reader.readLine();
+				if (tmp == null) {
+					break;
+				}
+				
+				sb.append(tmp);
+			} while (true);
+			
+			WXMsg msg = WXMsgFactory.gen(sb.toString());
+			
+			new WXMsgProcessor().proc(msg, response);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
 	public void doGet(HttpServletRequest request,
+			HttpServletResponse response) {	
+		try {
+			_doGet(request, response);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			
+			PrintWriter out;
+			try {
+				out = response.getWriter();
+				out.print("unknow error in WXAction doGet!");
+			} catch (IOException ee) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void _doGet(HttpServletRequest request,
 			HttpServletResponse response) {		
 		String sig = request.getParameter("signature");
 		String tm = request.getParameter("timestamp");
@@ -54,7 +110,6 @@ public class WXAction extends HttpServlet {
 				return;
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
