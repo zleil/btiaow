@@ -51,7 +51,7 @@ public class WXAction extends HttpServlet {
 			WXMsg msg = WXMsgFactory.gen(sb.toString());
 			
 			new WXMsgProcessor().proc(msg, response);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
