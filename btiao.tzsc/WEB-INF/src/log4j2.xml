@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appenders>  
+    <File name="tzsc_appender" filename="logs/tzsc.log">  
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
+    </File>  
+  </appenders>  
+  <loggers>  
+    <logger name="tzsc" level="debug">  
+      <appender-ref ref="tzsc_appender"/>  
+    </logger>
+  </loggers>
+</configuration>
