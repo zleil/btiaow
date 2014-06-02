@@ -20,6 +20,17 @@ public class WXMsgFactory {
 		System.out.println(msg.content);
 	}
 	
+	static public String genXML(WXMsg.Text msg) {
+		return "<xml>" +
+				"<ToUserName><![CDATA["+msg.toUserName+"]]></ToUserName>" +
+				"<FromUserName><![CDATA["+msg.fromUserName+"]]></FromUserName>" +
+				"<CreateTime>"+msg.createTime+"</CreateTime>" +
+				"<MsgType><![CDATA[text]]></MsgType>" +
+				"<Content><![CDATA["+msg.content+"]]></Content>" +
+				"<MsgId>"+msg.msgId+"</MsgId>" +
+				"</xml>";
+	}
+	
 	static public WXMsg gen(String xml) {
 		SAXBuilder jdomBuilder = new SAXBuilder();
 		try {
@@ -33,13 +44,14 @@ public class WXMsgFactory {
 			if (type.equals("text")) {
 				msg = new WXMsg.Text();
 				((WXMsg.Text)msg).content = root.getChildText("Content");
-				return msg;
 			}
 			
 			msg.createTime = Long.parseLong(root.getChildText("CreateTime"));
 			msg.fromUserName = root.getChildText("FromUserName");
 			msg.msgId = root.getChildText("MsgId");
 			msg.toUserName = root.getChildText("ToUserName");
+			
+			return msg;
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

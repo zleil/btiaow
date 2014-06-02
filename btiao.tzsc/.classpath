@@ -2,6 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="WEB-INF/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/tomacat"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-tomcat"/>
+	<classpathentry kind="lib" path="/third/lib/jdom-2.0.5.jar"/>
+	<classpathentry kind="lib" path="/third/lib/log4j-api-2.0-beta8.jar"/>
+	<classpathentry kind="lib" path="/third/lib/log4j-core-2.0-beta8.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>

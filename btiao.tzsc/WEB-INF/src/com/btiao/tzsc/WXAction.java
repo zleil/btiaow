@@ -2,9 +2,11 @@ package com.btiao.tzsc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,42 +19,42 @@ public class WXAction extends HttpServlet {
 	
 	@Override
 	public void doPost(HttpServletRequest request,
-			HttpServletResponse response) {	
+			HttpServletResponse response) {
 		try {
 			_doPost(request, response);
 		} catch (Throwable e) {
-			e.printStackTrace();
-			
-			PrintWriter out;
-			try {
-				out = response.getWriter();
-				out.print("unknow error in WXAction doPost!");
-			} catch (IOException ee) {
-				e.printStackTrace();
-			}
+			MyLogger.get().error("process wx post error!", e);
 		}
 	}
 	
 	public void _doPost(HttpServletRequest request,
 			HttpServletResponse response) {	
+		String xmlStr = null;
+		
 		try {
-			BufferedReader reader = request.getReader();
+			int size = request.getContentLength();
+			ServletInputStream input = request.getInputStream();
 			
-			StringBuilder sb = new StringBuilder();
-			do {
-				String tmp = reader.readLine();
-				if (tmp == null) {
-					break;
-				}
-				
-				sb.append(tmp);
-			} while (true);
+			MyLogger.get().debug("size="+size);
 			
-			WXMsg msg = WXMsgFactory.gen(sb.toString());
+			MyLogger.get().debug("str="+request.getContentType());
 			
-			new WXMsgProcessor().proc(msg, response);
+			
+			byte[] buffer = new byte[size];
+			input.read(buffer,0,1);
+			
+			xmlStr = new String(buffer, "UTF-8");
+			
+			MyLogger.get().debug("receive wxmsg:\n" + xmlStr);
+			
+			WXMsg msg = WXMsgFactory.gen(xmlStr);
+			if (msg != null) {		
+				new WXMsgProcessor().proc(msg, response);
+			} else {
+				MyLogger.get().warn("can't parse wxmsg");
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			MyLogger.get().error("process wx post error!\n"+xmlStr, e);
 		}
 	}
 	
@@ -62,15 +64,7 @@ public class WXAction extends HttpServlet {
 		try {
 			_doGet(request, response);
 		} catch (Throwable e) {
-			e.printStackTrace();
-			
-			PrintWriter out;
-			try {
-				out = response.getWriter();
-				out.print("unknow error in WXAction doGet!");
-			} catch (IOException ee) {
-				e.printStackTrace();
-			}
+			MyLogger.get().error("process wx get error!", e);
 		}
 	}
 
@@ -90,16 +84,16 @@ public class WXAction extends HttpServlet {
 		sb.append(beSort[1]);
 		sb.append(beSort[2]);
 		
-		System.out.println("signature="+sig);
-		System.out.println("timestamp="+tm);
-		System.out.println("nonce="+nonce);
-		System.out.println("echostr="+echostr);
-		
-		System.out.println("tosha1="+sb.toString());
-		
 		String sha1str = Sha1.doit(sb.toString());
 		
-		System.out.println("sha1="+sha1str);
+		String record = "\n\tsignature="+sig +
+				"\n\ttimestamp="+tm +
+				"\n\tnonce="+nonce +
+				"\n\techostr="+echostr +
+				"\n\n\ttosha1="+sb.toString() +
+				"\n\tresult sha1="+sha1str;
+		
+		MyLogger.get().info(record);
 		
 		PrintWriter out;
 		try {
