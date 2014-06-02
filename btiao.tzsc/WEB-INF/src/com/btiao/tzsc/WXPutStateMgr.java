@@ -55,7 +55,8 @@ public class WXPutStateMgr {
 		Info info = new Info(MsgType.text, text);
 		state.content.add(info);
 		
-		return "·¢ËÍÊı×Ö 1 £¬½áÊøÌá½»´ı½»»»ÎïÆ·\n·¢ËÍÊı×Ö 0 £¬È¡Ïû±¾´Î±¾´ÎÌá½»";
+		return "å‘é€æ–‡å­—ã€å›¾ç‰‡ï¼Œç»§ç»­æè¿°å¾…äº¤æ¢ç‰©å“\n\n" + "å‘é€æ•°å­— 0 ï¼Œå–æ¶ˆæè¿°\n" +
+		"å‘é€æ•°å­— 1 ï¼Œæäº¤å¾…æè¿°ç‰©å“";
 	}
 	
 	public String putUrlMsg(String name, String url) {
@@ -69,7 +70,8 @@ public class WXPutStateMgr {
 		Info info = new Info(MsgType.pic, url);
 		state.content.add(info);
 		
-		return "·¢ËÍÊı×Ö 1 £¬½áÊøÌá½»´ı½»»»ÎïÆ·\n·¢ËÍÊı×Ö 0 £¬È¡Ïû±¾´Î±¾´ÎÌá½»"; 
+		return "å‘é€æ–‡å­—ã€å›¾ç‰‡ï¼Œç»§ç»­æè¿°å¾…äº¤æ¢ç‰©å“\n\n" + "å‘é€æ•°å­— 0 ï¼Œå–æ¶ˆæè¿°\n" +
+		"å‘é€æ•°å­— 1 ï¼Œæäº¤å¾…æè¿°ç‰©å“";
 	}
 	
 	public String endPut(String name) {
@@ -86,12 +88,14 @@ public class WXPutStateMgr {
 		}
 		states.add(state);
 		
-		return "Ìá½»³É¹¦£¬ÕâÊÇÄúµÄµÚx¸ö´ı½»»»ÎïÆ·";
+		return "åˆå¤šäº†ä»¶å¾…äº¤æ¢ç‰©å“ï¼Œè€å¿ƒç­‰å€™å§";
 	}
 	
 	public String search(String name, String text) {
 		if (this.curPuts.containsKey(name)) {
-			return "Äú»¹ÓĞÎ´Ìá½»µÄ´ı½»»»ÎïÆ·ĞÅÏ¢\n\n·¢ËÍÊı×Ö 0 £¬È¡Ïû±¾´Î±¾´ÎÌá½»£¬ÔÙËÑË÷";
+			return "æ‚¨æ­£åœ¨æäº¤å¾…äº¤æ¢ç‰©å“ï¼Œè¯·å…ˆå–æ¶ˆæˆ–æäº¤ï¼Œå†è¿›è¡Œæœç´¢\n\n"+
+					"å‘é€æ•°å­— 0 å…ˆå–æ¶ˆå¾…æäº¤ç‰©å“\n" + 
+					"å‘é€æ•°å­— 1 ï¼Œæäº¤å¾…æè¿°ç‰©å“";
 		}
 		
 		return "search return text, list of all to switch";

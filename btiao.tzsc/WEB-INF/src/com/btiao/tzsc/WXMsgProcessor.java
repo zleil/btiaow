@@ -7,15 +7,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.btiao.tzsc.WXMsg.Text;
 
 public class WXMsgProcessor {
-	static String helpStr = "·¢ËÍÏûÏ¢¡¢Í¼Æ¬£¬ÃèÊöÄúÒª½»»»µÄÎïÆ·\n" +
-							"·¢ËÍÊı×Ö 0 È¡ÏûÃèÊö\n" +
-							"·¢ËÍÊı×Ö 1 Ìá½»\n\n" +
+	static String helpStr = "å‘é€æ–‡å­—ã€å›¾ç‰‡ï¼Œæè¿°å¾…äº¤æ¢ç‰©å“\n" +
+							"å‘é€æ•°å­— 0 ï¼Œå–æ¶ˆæè¿°\n" +
+							"å‘é€æ•°å­— 1 ï¼Œæäº¤å¾…æè¿°ç‰©å“\n\n" +
 							
-							"·¢ËÍÊı×Ö 5 ²é¿´×Ô¼º·¢²¼µÄ´ı½»»»ÉÌÆ·\n\n" +
+							"å‘é€æ•°å­— 5 ï¼ŒæŸ¥çœ‹æ‚¨çš„å¾…äº¤æ¢ç‰©å“\n\n" +
 							
-							"·¢ËÍ\"ËÑ xxx\"£¬¿ªÊ¼ÌÔÌÔÄúÏëÒªµÄ°É";
+							"å‘é€\"æœç´¢ xxx\"ï¼Œæœç´¢xxxç›¸å…³çš„ç‰©å“";
 	
 	public void proc(WXMsg msg, HttpServletResponse rsp) throws Exception {
+		rsp.setCharacterEncoding("UTF-8");
+		
 		if (msg instanceof WXMsg.Text) {
 			processTextMsg((Text) msg, rsp.getOutputStream());
 		} else {
@@ -26,6 +28,7 @@ public class WXMsgProcessor {
 			ret.msgId = msg.msgId;
 			ret.toUserName = msg.msgId;
 			
+			System.out.println(helpStr);
 			rsp.getOutputStream().write(WXMsgFactory.genXML(ret).getBytes());
 		}
 	}

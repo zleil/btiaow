@@ -1,12 +1,9 @@
 package com.btiao.tzsc;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
-
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,23 +29,38 @@ public class WXAction extends HttpServlet {
 		String xmlStr = null;
 		
 		try {
+			InputStream bf = request.getInputStream();
 			int size = request.getContentLength();
-			ServletInputStream input = request.getInputStream();
-			
+			MyLogger.get().debug("char-encode="+request.getCharacterEncoding());
 			MyLogger.get().debug("size="+size);
-			
 			MyLogger.get().debug("str="+request.getContentType());
 			
-			
 			byte[] buffer = new byte[size];
-			input.read(buffer,0,1);
+			int readed = 0;
+			int times = 0;
+			do {
+				int avail = bf.available();
+				MyLogger.get().debug("avail="+avail);
+				
+				int count = bf.read(buffer, 0, size-readed);
+				
+				if (count == -1) break;
+				readed += count;
+				if (readed >= size) break;
+				
+				try {
+					Thread.sleep(500);
+				} catch (Exception e) {}
+			} while (times++ < 6);
+			
+			MyLogger.get().debug("readed="+readed + ",times="+times);
 			
 			xmlStr = new String(buffer, "UTF-8");
 			
 			MyLogger.get().debug("receive wxmsg:\n" + xmlStr);
 			
 			WXMsg msg = WXMsgFactory.gen(xmlStr);
-			if (msg != null) {		
+			if (msg != null) {
 				new WXMsgProcessor().proc(msg, response);
 			} else {
 				MyLogger.get().warn("can't parse wxmsg");
