@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.btiao.tzsc.WXMsg.Text;
 
 public class WXMsgProcessor {
-	static String helpStr = "发送文字、图片，描述待交换物品\n" +
+	static public String helpStr = "发送文字、图片，描述待交换物品\n" +
 							"发送数字 0 ，取消描述\n" +
 							"发送数字 1 ，提交待描述物品\n\n" +
 							
@@ -35,9 +35,24 @@ public class WXMsgProcessor {
 	
 	private void processTextMsg(WXMsg.Text msg, OutputStream out) throws Exception  {
 		String userName = msg.fromUserName;
-		String content = msg.content;
 		
-		String ret = WXPutStateMgr.instance().putTextMsg(userName, content);
+		String ret = null;
+		if (msg.content.startsWith("1")) {
+			ret = WXPutStateMgr.instance().endPut(userName);
+		} else if (msg.content.startsWith("0")) {
+			ret = WXPutStateMgr.instance().cancelPut(userName);
+		} else if (msg.content.startsWith("搜索")) {
+			String toSearch = msg.content.substring(2).trim();
+			ret = WXPutStateMgr.instance().search(userName, toSearch);
+		} else if (msg.content.startsWith("5")) {
+			ret = WXPutStateMgr.instance().returnSelfAll(userName);
+		} else if (msg.content.startsWith("3")) {
+			int idx = Integer.parseInt(msg.content.substring(2));
+			ret = WXPutStateMgr.instance().delOne(userName, idx);
+		} else {
+			ret = WXPutStateMgr.instance().putTextMsg(userName, msg.content);
+		}
+		
 		msg.content = ret;
 		msg.fromUserName = msg.toUserName;
 		msg.toUserName = userName;
