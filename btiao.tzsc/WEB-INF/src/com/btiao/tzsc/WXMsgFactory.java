@@ -34,7 +34,7 @@ public class WXMsgFactory {
 			StringBuilder sb = new StringBuilder();
 			sb.append("<xml><ToUserName><![CDATA["+msg.toUserName+"]]></ToUserName>");
 			sb.append("<FromUserName><![CDATA["+msg.fromUserName+"]]></FromUserName>");
-			sb.append("<CreateTime>"+msg.createTime+"</CreateTime><xml>");
+			sb.append("<CreateTime>"+msg.createTime+"</CreateTime>");
 			sb.append("<MsgType><![CDATA[news]]></MsgType>");
 			sb.append("<ArticleCount>"+((WXMsg.PicText)msg).items.size()+"</ArticleCount>");
 			sb.append("<Articles>");
