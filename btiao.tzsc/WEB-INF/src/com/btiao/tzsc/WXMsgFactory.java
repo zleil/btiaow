@@ -44,6 +44,8 @@ public class WXMsgFactory {
 			if (type.equals("text")) {
 				msg = new WXMsg.Text();
 				((WXMsg.Text)msg).content = root.getChildText("Content");
+			} else if (type.equals("pic")) {
+				
 			}
 			
 			msg.createTime = Long.parseLong(root.getChildText("CreateTime"));

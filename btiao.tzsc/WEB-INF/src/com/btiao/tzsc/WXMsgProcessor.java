@@ -13,6 +13,8 @@ public class WXMsgProcessor {
 							
 							"发送数字 5 ，查看您的待交换物品\n\n" +
 							
+							"发送数字 3 x ，删除您的第x个物品\n\n" +
+							
 							"发送\"搜索 xxx\"，搜索xxx相关的物品";
 	
 	public void proc(WXMsg msg, HttpServletResponse rsp) throws Exception {
@@ -47,8 +49,14 @@ public class WXMsgProcessor {
 		} else if (msg.content.startsWith("5")) {
 			ret = WXPutStateMgr.instance().returnSelfAll(userName);
 		} else if (msg.content.startsWith("3")) {
-			int idx = Integer.parseInt(msg.content.substring(2));
-			ret = WXPutStateMgr.instance().delOne(userName, idx);
+			int idx = -1;
+			try {
+				idx = Integer.parseInt(msg.content.substring(2).trim());
+				ret = WXPutStateMgr.instance().delOne(userName, idx);
+			} catch (NumberFormatException e) {
+				ret = "发送数字 3 x ，删除您的第x个物品";
+			}
+			
 		} else {
 			ret = WXPutStateMgr.instance().putTextMsg(userName, msg.content);
 		}

@@ -125,12 +125,12 @@ public class WXPutStateMgr {
 	
 	public String delOne(String name, int idx) {
 		List<State> allSelf = all.get(name);
-		if (idx < 1 || idx > allSelf.size()) {
-			allSelf.remove(idx);
+		if (idx >= 1 && idx <= allSelf.size()) {
+			allSelf.remove(idx-1);
 			
 			return "删除成功";
 		} else {
-			return "您要删除的物品不存在\n您当前有"+((allSelf != null) ? allSelf.size() : 0)+"件待交换物品";
+			return "您要删除的物品"+idx+"不存在\n您当前有"+((allSelf != null) ? allSelf.size() : 0)+"件待交换物品";
 		}
 	}
 	
