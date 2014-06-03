@@ -20,15 +20,37 @@ public class WXMsgFactory {
 		System.out.println(msg.content);
 	}
 	
-	static public String genXML(WXMsg.Text msg) {
-		return "<xml>" +
-				"<ToUserName><![CDATA["+msg.toUserName+"]]></ToUserName>" +
-				"<FromUserName><![CDATA["+msg.fromUserName+"]]></FromUserName>" +
-				"<CreateTime>"+msg.createTime+"</CreateTime>" +
-				"<MsgType><![CDATA[text]]></MsgType>" +
-				"<Content><![CDATA["+msg.content+"]]></Content>" +
-				"<MsgId>"+msg.msgId+"</MsgId>" +
-				"</xml>";
+	static public String genXML(WXMsg msg) {
+		if (msg instanceof WXMsg.Text) {
+			return "<xml>" +
+					"<ToUserName><![CDATA["+msg.toUserName+"]]></ToUserName>" +
+					"<FromUserName><![CDATA["+msg.fromUserName+"]]></FromUserName>" +
+					"<CreateTime>"+msg.createTime+"</CreateTime>" +
+					"<MsgType><![CDATA[text]]></MsgType>" +
+					"<Content><![CDATA["+((WXMsg.Text)msg).content+"]]></Content>" +
+					"<MsgId>"+msg.msgId+"</MsgId>" +
+					"</xml>";
+		} else if (msg instanceof WXMsg.PicText) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("<xml><ToUserName><![CDATA["+msg.toUserName+"]]></ToUserName>");
+			sb.append("<FromUserName><![CDATA["+msg.fromUserName+"]]></FromUserName>");
+			sb.append("<CreateTime>"+msg.createTime+"</CreateTime><xml>");
+			sb.append("<MsgType><![CDATA[news]]></MsgType>");
+			sb.append("<ArticleCount>"+((WXMsg.PicText)msg).items.size()+"</ArticleCount>");
+			sb.append("<Articles>");
+			for (WXMsg.PicText.Item item : ((WXMsg.PicText) msg).items) {
+				sb.append("<item><Title><![CDATA["+item.title+"]]></Title>");
+				sb.append("<Description><![CDATA["+item.desc+"]]></Description>");
+				if (item.picUrl != null) sb.append("<PicUrl><![CDATA["+item.picUrl+"]]></PicUrl>");
+				if (item.url != null) sb.append("<Url><![CDATA["+item.url+"]]></Url></item>");
+			}
+			sb.append("</Articles></xml>");
+			
+			return sb.toString();
+		} else {
+			MyLogger.get().error("genXML: there 's maybe a error!"+msg.toString());
+			return "";
+		}
 	}
 	
 	static public WXMsg gen(String xml) {
@@ -44,8 +66,10 @@ public class WXMsgFactory {
 			if (type.equals("text")) {
 				msg = new WXMsg.Text();
 				((WXMsg.Text)msg).content = root.getChildText("Content");
-			} else if (type.equals("pic")) {
-				
+			} else if (type.equals("image")) {
+				msg = new WXMsg.Picture();
+				((WXMsg.Picture)msg).picUrl = root.getChildText("PicUrl");
+				((WXMsg.Picture)msg).mediaId = root.getChildText("MediaId");
 			}
 			
 			msg.createTime = Long.parseLong(root.getChildText("CreateTime"));
