@@ -18,6 +18,14 @@ public class WXAction extends HttpServlet {
 	public void doPost(HttpServletRequest request,
 			HttpServletResponse response) {
 		try {
+			String areaId = getAreaId(request.getRequestURI());
+			MyLogger.getAccess().info("areaId=" + areaId + ",src-ip=" + request.getRemoteAddr());
+			
+			if (!isValidReq(request)) {
+				MyLogger.getAttackLog().warn("found a invalid request!!!");
+				return;
+			}
+			
 			_doPost(request, response);
 		} catch (Throwable e) {
 			MyLogger.get().error("process wx post error!", e);
@@ -82,6 +90,21 @@ public class WXAction extends HttpServlet {
 
 	public void _doGet(HttpServletRequest request,
 			HttpServletResponse response) {		
+		String echostr = request.getParameter("echostr");
+		PrintWriter out;
+		try {
+			out = response.getWriter();
+			
+			if (isValidReq(request)) {
+				out.print(echostr);
+				return;
+			}
+		} catch (IOException e) {
+			MyLogger.get().warn("_doGet failed!", e);
+		}
+	}
+	
+	private boolean isValidReq(HttpServletRequest request) {
 		String sig = request.getParameter("signature");
 		String tm = request.getParameter("timestamp");
 		String nonce = request.getParameter("nonce");
@@ -98,27 +121,25 @@ public class WXAction extends HttpServlet {
 		
 		String sha1str = Sha1.doit(sb.toString());
 		
-		String record = "\n\tsignature="+sig +
-				"\n\ttimestamp="+tm +
-				"\n\tnonce="+nonce +
-				"\n\techostr="+echostr +
-				"\n\n\ttosha1="+sb.toString() +
-				"\n\tresult sha1="+sha1str;
+		String areaId = getAreaId(request.getRequestURI());
+		MyLogger.getAccess().info("areaId=" + areaId + ",src-ip=" + request.getRemoteAddr());
 		
-		MyLogger.get().info(record);
-		
-		PrintWriter out;
-		try {
-			out = response.getWriter();
+		if (sig.equals(sha1str)) {
+			return true;
+		} else {
+			String record = "\n\tsignature="+sig +
+					"\n\ttimestamp="+tm +
+					"\n\tnonce="+nonce +
+					"\n\techostr="+echostr +
+					"\n\n\ttosha1="+sb.toString() +
+					"\n\tresult sha1="+sha1str;
 			
-			if (sig.equals(sha1str)) {
-				out.print(echostr);
-				return;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			MyLogger.get().info(record);
+			return false;
 		}
 	}
 	
-	
+	private String getAreaId(String uri) {
+		return uri.substring(uri.indexOf('/') + 1);
+	}
 }

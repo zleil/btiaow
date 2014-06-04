@@ -17,6 +17,6 @@
    <!-- Catch all requests -->
    <servlet-mapping>
       <servlet-name>wx_act</servlet-name>
-      <url-pattern>/wx_act</url-pattern>
+      <url-pattern>/wx_act/*</url-pattern>
    </servlet-mapping>
 </web-app>

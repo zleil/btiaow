@@ -12,11 +12,13 @@ public class WXMsgProcessor {
 							"发送数字 0 ，取消描述\n" +
 							"发送数字 1 ，提交物品信息\n\n" +
 							
+							"发送数字 3 x ，删除您的第x个物品\n" +
+							
 							"发送数字 5 ，查看您的物品\n\n" +
 							
-							"发送数字 3 x ，删除您的第x个物品\n\n" +
-							
-							"发送\"搜索 xxx\"，搜索xxx物品";
+							"发送\"搜索 xxx\"，搜索xxx物品\n" + 
+							"发送数字 8 ，显示更多物品";
+	
 	
 	public void proc(WXMsg msg, HttpServletResponse rsp) throws Exception {
 		rsp.setCharacterEncoding("UTF-8");
@@ -94,6 +96,25 @@ public class WXMsgProcessor {
 				ret = "发送数字 3 x ，删除您的第x个物品";
 			}
 			
+		} else if (msg.content.startsWith("8")) {
+			List<WXMsg> rets = WXPutStateMgr.instance().more(userName);
+			
+			for (WXMsg retMsg : rets) {
+				retMsg.createTime = System.currentTimeMillis();
+				retMsg.fromUserName = msg.toUserName;
+				retMsg.toUserName = msg.fromUserName;
+			}
+			if (rets.size() != 0) {
+				//TODO only support display one msg per time.
+				String retXML = WXMsgFactory.genXML(rets.get(0));
+								
+				MyLogger.get().debug("processTextMsg response msg:\n"+retXML);
+				out.write(retXML.getBytes());
+				
+				return;
+			} else {
+				ret = "所有物品均已呈现";
+			}
 		} else {
 			ret = WXPutStateMgr.instance().putTextMsg(userName, msg.content);
 		}

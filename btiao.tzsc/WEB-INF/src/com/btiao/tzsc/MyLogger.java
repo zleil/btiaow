@@ -11,4 +11,12 @@ public class MyLogger {
 	static public Logger get() {
 		return LogManager.getLogger("tzsc");
 	}
+	
+	static public Logger getAttackLog() {
+		return LogManager.getLogger("attack");
+	}
+	
+	static public Logger getAccess() {
+		return LogManager.getLogger("access");
+	}
 }

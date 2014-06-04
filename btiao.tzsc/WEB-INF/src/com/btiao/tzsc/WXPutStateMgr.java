@@ -78,7 +78,7 @@ public class WXPutStateMgr {
 						continue;
 					}
 				} else {
-					item.title = state.infos.get(i).content;
+					item.title = "啥也别说了，看照片:-)";//state.infos.get(i).content;
 					item.picUrl = item.title;
 					item.url = item.title;
 					item.desc = item.title;
@@ -126,7 +126,7 @@ public class WXPutStateMgr {
 		State.Info info = new State.Info(MsgType.text, text);
 		state.infos.add(info);
 		
-		return "发送文字、图片，继续描述物品\n\n" + "发送数字 0 ，取消描述\n" +
+		return "发送文字、图片，继续描述\n\n" + "发送数字 0 ，取消描述\n" +
 		"发送数字 1 ，提交物品信息";
 	}
 	
@@ -141,7 +141,7 @@ public class WXPutStateMgr {
 		State.Info info = new State.Info(MsgType.pic, url);
 		state.infos.add(info);
 		
-		return "发送文字、图片，继续描述物品\n\n" + "发送数字 0 ，取消描述\n" +
+		return "发送文字、图片，继续描述\n\n" + "发送数字 0 ，取消描述\n" +
 		"发送数字 1 ，提交物品";
 	}
 	
@@ -188,7 +188,7 @@ public class WXPutStateMgr {
 			String desc = allSelf.get(i-1).infos.get(0).content;
 			for (State.Info info : allSelf.get(i-1).infos) {
 				if (info.t == MsgType.text) {
-					desc = info.content;
+					desc += info.content + "；";
 				}
 			}
 			
@@ -243,9 +243,7 @@ public class WXPutStateMgr {
 			PageView pv = pvs.get(name);
 			if (pv == null) {
 				WXMsg.Text msg = new WXMsg.Text();
-				msg.content = "您正在描述物品，请先取消或提交，再进行搜索\n\n"+
-						"发送数字 0 ，取消描述\n" + 
-						"发送数字 1 ，提交物品信息";
+				msg.content = "没有更多的信息";
 				
 				List<WXMsg> ret = new ArrayList<WXMsg>();
 				ret.add(msg);

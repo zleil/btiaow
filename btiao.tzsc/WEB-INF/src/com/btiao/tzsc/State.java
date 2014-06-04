@@ -17,10 +17,19 @@ public class State {
 		}
 	}
 	
+	static volatile long nextId = 100000000;
+	static synchronized long genNextId() {
+		//TODO persist it after modify.
+		return nextId ++;
+	}
+	
+	public final long id;
+	public String areaId;
 	public String name;
 	public List<Info> infos = new ArrayList<Info>();
 	
 	public State(String name) {
+		id = genNextId();
 		this.name = name;
 	}
 }
