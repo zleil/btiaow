@@ -6,6 +6,9 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 
+import com.btiao.tzsc.WXMsg.PicText;
+import com.btiao.tzsc.WXMsg.Text;
+
 public class WXMsgFactory {
 	static public void main(String[] args) {
 		String xml = "<xml>" +
@@ -18,6 +21,81 @@ public class WXMsgFactory {
 			"</xml>";
 		WXMsg.Text msg = (WXMsg.Text)WXMsgFactory.gen(xml);
 		System.out.println(msg.content);
+	}
+	
+	static public String genJsonStr(WXMsg msg) {
+		if (msg instanceof WXMsg.PicText) {
+			return genWXPicTextMsgJsonStr((PicText) msg);
+		} else if (msg instanceof WXMsg.Text){
+			return genWXTextMsgJsonStr((Text) msg);
+		} else {
+			MyLogger.get().error("genJsonStr: do not implement it, "+msg.getClass().getName());
+			return "";
+		}
+	}
+	
+	static private String genWXTextMsgJsonStr(WXMsg.Text msg) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{\"touser\":\""+msg.toUserName+
+				"\",\"msgtype\":\"text\"," +
+				"\"text\":{\"content\":\""+msg.content+"\"}}");
+		return sb.toString();
+	}
+	
+	static private String genWXPicTextMsgJsonStr(WXMsg.PicText msg) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{{\"touser\":\""+msg.toUserName+"\",");
+		sb.append("\"msgtype\":\"news\",\"news\":{\"articles\":[");
+		
+		boolean first = true;
+		for (WXMsg.PicText.Item item : ((WXMsg.PicText)msg).items) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(",");
+			}
+			
+			sb.append("{");
+			
+			boolean f = false;
+			if (item.title != null) {
+				if (!f) {
+					f = true;
+				} else {
+					sb.append(",");
+				}
+				sb.append("\"title\":\""+item.title+"\"");
+			}
+			if (item.desc != null) {
+				if (!f) {
+					f = true;
+				} else {
+					sb.append(",");
+				}
+				sb.append("\"description\":\"").append(item.desc).append("\"");
+			}
+			if (item.url != null) {
+				if (!f) {
+					f = true;
+				} else {
+					sb.append(",");
+				}
+				sb.append("\"url\":\"").append(item.url).append("\"");
+			}
+			if (item.picUrl != null) {
+				if (!f) {
+					f = true;
+				} else {
+					sb.append(",");
+				}
+				sb.append("\"picurl\":\"").append(item.picUrl).append("\"");
+			}
+			
+			sb.append("}");
+		}
+		sb.append("]}}");
+		
+		return sb.toString();
 	}
 	
 	static public String genXML(WXMsg msg) {
@@ -39,8 +117,8 @@ public class WXMsgFactory {
 			sb.append("<ArticleCount>"+((WXMsg.PicText)msg).items.size()+"</ArticleCount>");
 			sb.append("<Articles>");
 			for (WXMsg.PicText.Item item : ((WXMsg.PicText) msg).items) {
-				sb.append("<item><Title><![CDATA["+item.title+"]]></Title>");
-				sb.append("<Description><![CDATA["+item.desc+"]]></Description>");
+				if (item.title != null) sb.append("<item><Title><![CDATA["+item.title+"]]></Title>");
+				if (item.desc != null) sb.append("<Description><![CDATA["+item.desc+"]]></Description>");
 				if (item.picUrl != null) sb.append("<PicUrl><![CDATA["+item.picUrl+"]]></PicUrl>");
 				if (item.url != null) sb.append("<Url><![CDATA["+item.url+"]]></Url></item>");
 			}

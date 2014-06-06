@@ -36,7 +36,6 @@ public class WXPutStateMgr {
 					item.title = state.infos.get(i).content;
 					
 					if ((i+1) >= state.infos.size()) {
-						item.desc = item.title;
 						msg.items.add(item);
 						break;
 					}
@@ -46,7 +45,7 @@ public class WXPutStateMgr {
 					if (state.infos.get(i).t == State.Info.MsgType.pic) {
 						item.picUrl = state.infos.get(i).content;
 						item.url = item.picUrl;
-						item.desc = item.title;
+						//item.desc = item.title;
 						msg.items.add(item);
 						
 						item = new WXMsg.PicText.Item();
@@ -55,6 +54,10 @@ public class WXPutStateMgr {
 						continue;
 					} else {
 						do {
+							if (item.desc == null) {
+								item.desc = "";
+							}
+							
 							item.desc += state.infos.get(i).content + "；";
 							
 							if ((i+1) >= state.infos.size()) {
@@ -66,7 +69,7 @@ public class WXPutStateMgr {
 							
 							if (state.infos.get(i).t == State.Info.MsgType.pic) {
 								item.picUrl = state.infos.get(i).content;
-								item.url = item.picUrl;
+								//item.url = item.picUrl;
 								msg.items.add(item);
 								
 								item = new WXMsg.PicText.Item();
@@ -79,9 +82,9 @@ public class WXPutStateMgr {
 					}
 				} else {
 					item.title = "啥也别说了，看照片:-)";//state.infos.get(i).content;
-					item.picUrl = item.title;
-					item.url = item.title;
-					item.desc = item.title;
+					item.picUrl = state.infos.get(i).content;
+					//item.url = item.title;
+					//item.desc = item.title;
 					
 					msg.items.add(item);
 					
@@ -93,7 +96,7 @@ public class WXPutStateMgr {
 			return msg;
 		}
 		
-		public int page_size = 1;
+		public int page_size = 10;
 		
 		private int idx;
 		private List<State> all;
@@ -134,15 +137,14 @@ public class WXPutStateMgr {
 		State state = this.curPuts.get(name);
 		
 		if (state == null) {
-			state = new State(name);
-			curPuts.put(name, state);
+			return "亲，得先用文字描述下物品呦";
 		}
 		
 		State.Info info = new State.Info(MsgType.pic, url);
 		state.infos.add(info);
 		
-		return "发送文字、图片，继续描述\n\n" + "发送数字 0 ，取消描述\n" +
-		"发送数字 1 ，提交物品";
+		return "发送文字、图片，继续描述物品\n\n" + "发送数字 0 ，取消描述\n" +
+		"发送数字 1 ，提交物品描述";
 	}
 	
 	public String cancelPut(String name) {
@@ -178,24 +180,13 @@ public class WXPutStateMgr {
 		for (int i=1; i<=allSelf.size(); ++i) {
 			sb.append(i);
 			sb.append(" ");
-			
-//			for (int j=0; j<allSelf.get(i-1).infos.size(); ++j) {
-//				sb.append(allSelf.get(i-1).infos.get(j).content);
-//				if (j+1 == allSelf.get(i-1).infos.size()) sb.append("；");
-//			}
-			
-			//at least have a info description.
-			String desc = allSelf.get(i-1).infos.get(0).content;
-			for (State.Info info : allSelf.get(i-1).infos) {
-				if (info.t == MsgType.text) {
-					desc += info.content + "；";
-				}
-			}
-			
+			String desc = allSelf.get(i-1).infos.get(0).content;			
 			sb.append(desc);
 			
-			if (i!=allSelf.size()) sb.append("\n");
+			sb.append("\n");
 		}
+		
+		sb.append("\n发送数字5 x，可细看您的第x个物品");
 		
 		return sb.toString();
 	}

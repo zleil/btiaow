@@ -56,8 +56,9 @@ public class WXMsgProcessor {
 		out.write(retXML.getBytes());
 	}
 	
-	private void processTextMsg(WXMsg.Text msg, OutputStream out) throws Exception  {
-		String userName = msg.fromUserName;
+	private void processTextMsg(final WXMsg.Text msg, OutputStream out) throws Exception  {
+		final String userName = msg.fromUserName;
+		final String appId = msg.toUserName;
 		
 		String ret = null;
 		if (msg.content.startsWith("1")) {
@@ -66,22 +67,29 @@ public class WXMsgProcessor {
 			ret = WXPutStateMgr.instance().cancelPut(userName);
 		} else if (msg.content.startsWith("搜索")) {
 			String toSearch = msg.content.substring(2).trim();
-			List<WXMsg> msgs = WXPutStateMgr.instance().search(userName, toSearch);
+			final List<WXMsg> msgs = WXPutStateMgr.instance().search(userName, toSearch);
 
-			for (WXMsg one : msgs) {
-				one.fromUserName = msg.toUserName;
-				one.toUserName = userName;
-				one.createTime = System.currentTimeMillis();
-			}
-			
 			if (msgs.size() != 0) {
-				//TODO only support display one msg per time.
-				String retXML = WXMsgFactory.genXML(msgs.get(0));
-				
-				MyLogger.get().debug("processTextMsg response msg:\n"+retXML);
-				out.write(retXML.getBytes());
-				
-				return;
+				ret = "";
+				//TODO use thread pool to do the following sending action asyncly.
+				Thread tmp = new Thread() {
+					public void run() {
+						try {
+							WXApi wxapi = new WXApi();
+							for (WXMsg retMsg : msgs) {
+								retMsg.createTime = System.currentTimeMillis();
+								retMsg.fromUserName = appId;
+								retMsg.toUserName = userName;
+								
+								wxapi.sendWXMsg(retMsg);
+							}
+						} catch (Exception e) {
+							MyLogger.get().warn("failed while get more.", e);
+						}
+					}
+				};
+				tmp.setName("tzsc_search_output");
+				tmp.start();
 			} else {
 				ret = "抱歉，没找到关于 "+toSearch+" 的物品";
 			}
@@ -97,33 +105,43 @@ public class WXMsgProcessor {
 			}
 			
 		} else if (msg.content.startsWith("8")) {
-			List<WXMsg> rets = WXPutStateMgr.instance().more(userName);
-			
-			for (WXMsg retMsg : rets) {
-				retMsg.createTime = System.currentTimeMillis();
-				retMsg.fromUserName = msg.toUserName;
-				retMsg.toUserName = msg.fromUserName;
-			}
-			if (rets.size() != 0) {
-				//TODO only support display one msg per time.
-				String retXML = WXMsgFactory.genXML(rets.get(0));
-								
-				MyLogger.get().debug("processTextMsg response msg:\n"+retXML);
-				out.write(retXML.getBytes());
-				
-				return;
-			} else {
+			final List<WXMsg> rets = WXPutStateMgr.instance().more(userName);
+			if (rets.size() == 0) {
 				ret = "所有物品均已呈现";
-			}
+			} else {
+				ret = "";
+				//TODO use thread pool to do the following sending action asyncly.
+				Thread tmp = new Thread() {
+					public void run() {
+						try {
+							WXApi wxapi = new WXApi();
+							for (WXMsg retMsg : rets) {
+								retMsg.createTime = System.currentTimeMillis();
+								retMsg.fromUserName = appId;
+								retMsg.toUserName = userName;
+								
+								wxapi.sendWXMsg(retMsg);
+							}
+						} catch (Exception e) {
+							MyLogger.get().warn("failed while get more.", e);
+						}
+					}
+				};
+				tmp.setName("tzsc_more_output");
+				tmp.start();
+			}	
 		} else {
 			ret = WXPutStateMgr.instance().putTextMsg(userName, msg.content);
 		}
 		
-		msg.content = ret;
-		msg.fromUserName = msg.toUserName;
-		msg.toUserName = userName;
+		WXMsg.Text retMsg = new WXMsg.Text();
+		retMsg.content = ret;
+		retMsg.fromUserName = appId;
+		retMsg.toUserName = userName;
+		retMsg.createTime = System.currentTimeMillis();
+		retMsg.msgId = msg.msgId;
 		
-		String retXML = WXMsgFactory.genXML(msg);
+		String retXML = WXMsgFactory.genXML(retMsg);
 		
 		MyLogger.get().debug("processTextMsg response msg:\n"+retXML);
 		out.write(retXML.getBytes());
