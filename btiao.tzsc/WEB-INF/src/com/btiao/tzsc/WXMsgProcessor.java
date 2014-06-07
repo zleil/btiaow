@@ -12,12 +12,13 @@ public class WXMsgProcessor {
 							"发送数字 0 ，取消描述\n" +
 							"发送数字 1 ，提交物品信息\n\n" +
 							
-							"发送数字 3 x ，删除您的第x个物品\n" +
-							
-							"发送数字 5 ，查看您的物品\n\n" +
+							"发送数字 5 ，查看您的物品\n" +
+							"发送数字 5 x ，细看第x件物品\n\n" +
+							"发送数字 3 x ，删除第x件物品\n" +
 							
 							"发送\"搜索 xxx\"，搜索xxx物品\n" + 
-							"发送数字 8 ，显示更多物品";
+							"发送数字 8 ，显示更多物品\n" +
+							"发送数字 8 x ，细看第x件物品";
 	
 	
 	public void proc(WXMsg msg, HttpServletResponse rsp) throws Exception {
@@ -70,26 +71,36 @@ public class WXMsgProcessor {
 			final List<WXMsg> msgs = WXPutStateMgr.instance().search(userName, toSearch);
 
 			if (msgs.size() != 0) {
-				ret = "";
-				//TODO use thread pool to do the following sending action asyncly.
-				Thread tmp = new Thread() {
-					public void run() {
-						try {
-							WXApi wxapi = new WXApi();
-							for (WXMsg retMsg : msgs) {
-								retMsg.createTime = System.currentTimeMillis();
-								retMsg.fromUserName = appId;
-								retMsg.toUserName = userName;
-								
-								wxapi.sendWXMsg(retMsg);
-							}
-						} catch (Exception e) {
-							MyLogger.get().warn("failed while get more.", e);
-						}
-					}
-				};
-				tmp.setName("tzsc_search_output");
-				tmp.start();
+				WXMsg retMsg = msgs.get(0);
+				retMsg.createTime = System.currentTimeMillis();
+				retMsg.fromUserName = appId;
+				retMsg.toUserName = userName;
+				retMsg.msgId = msg.msgId;
+				
+				String retStr = WXMsgFactory.genXML(retMsg);
+				out.write(retStr.getBytes());
+				return;
+				
+//				ret = "";
+//				//TODO use thread pool to do the following sending action asyncly.
+//				Thread tmp = new Thread() {
+//					public void run() {
+//						try {
+//							WXApi wxapi = new WXApi();
+//							for (WXMsg retMsg : msgs) {
+//								retMsg.createTime = System.currentTimeMillis();
+//								retMsg.fromUserName = appId;
+//								retMsg.toUserName = userName;
+//								
+//								wxapi.sendWXMsg(retMsg);
+//							}
+//						} catch (Exception e) {
+//							MyLogger.get().warn("failed while get more.", e);
+//						}
+//					}
+//				};
+//				tmp.setName("tzsc_search_output");
+//				tmp.start();
 			} else {
 				ret = "抱歉，没找到关于 "+toSearch+" 的物品";
 			}
@@ -109,26 +120,36 @@ public class WXMsgProcessor {
 			if (rets.size() == 0) {
 				ret = "所有物品均已呈现";
 			} else {
-				ret = "";
-				//TODO use thread pool to do the following sending action asyncly.
-				Thread tmp = new Thread() {
-					public void run() {
-						try {
-							WXApi wxapi = new WXApi();
-							for (WXMsg retMsg : rets) {
-								retMsg.createTime = System.currentTimeMillis();
-								retMsg.fromUserName = appId;
-								retMsg.toUserName = userName;
-								
-								wxapi.sendWXMsg(retMsg);
-							}
-						} catch (Exception e) {
-							MyLogger.get().warn("failed while get more.", e);
-						}
-					}
-				};
-				tmp.setName("tzsc_more_output");
-				tmp.start();
+				WXMsg retMsg = rets.get(0);
+				retMsg.createTime = System.currentTimeMillis();
+				retMsg.fromUserName = appId;
+				retMsg.toUserName = userName;
+				retMsg.msgId = msg.msgId;
+				
+				String retStr = WXMsgFactory.genXML(retMsg);
+				out.write(retStr.getBytes());
+				return;
+				
+//				ret = "";
+//				//TODO use thread pool to do the following sending action asyncly.
+//				Thread tmp = new Thread() {
+//					public void run() {
+//						try {
+//							WXApi wxapi = new WXApi();
+//							for (WXMsg retMsg : rets) {
+//								retMsg.createTime = System.currentTimeMillis();
+//								retMsg.fromUserName = appId;
+//								retMsg.toUserName = userName;
+//								
+//								wxapi.sendWXMsg(retMsg);
+//							}
+//						} catch (Exception e) {
+//							MyLogger.get().warn("failed while get more.", e);
+//						}
+//					}
+//				};
+//				tmp.setName("tzsc_more_output");
+//				tmp.start();
 			}	
 		} else {
 			ret = WXPutStateMgr.instance().putTextMsg(userName, msg.content);

@@ -14,13 +14,43 @@ public class WXPutStateMgr {
 		}
 		
 		public List<WXMsg> next() {
-			List<WXMsg> ret = new ArrayList<WXMsg>();
-			for (int i=0; idx<all.size()&&i<page_size; ++idx,++i) {
-				WXMsg.PicText msg = genWXMsg(all.get(idx));
-				ret.add(msg);
+			List<WXMsg> rets = new ArrayList<WXMsg>();
+//			for (int i=0; idx<all.size()&&i<page_size; ++idx,++i) {
+//				WXMsg.PicText msg = genWXMsg(all.get(idx));
+//				rets.add(msg);
+//			}
+			
+			WXMsg.PicText ret = new WXMsg.PicText();
+			
+			for (int i=0; idx<all.size() && i<page_size; ++idx,++i) {
+				State state = all.get(idx);
+				
+				WXMsg.PicText.Item item = new WXMsg.PicText.Item();
+
+				for (State.Info info : state.infos) {
+					if (item.title == null && info.t == State.Info.MsgType.text) {
+						item.title = info.content;
+					}
+					if (item.picUrl == null && info.t == State.Info.MsgType.pic) {
+						item.picUrl = info.content;
+					}
+					if (item.title != null && item.picUrl != null) {
+						break;
+					}
+				}
+				
+				if (item.picUrl == null && item.title == null) {
+					continue;
+				}
+				
+				ret.items.add(item);
 			}
 			
-			return ret;
+			if (ret.items.size() != 0) {
+				rets.add(ret);
+			}
+			
+			return rets;
 		}
 		
 		public boolean isEnd() {
