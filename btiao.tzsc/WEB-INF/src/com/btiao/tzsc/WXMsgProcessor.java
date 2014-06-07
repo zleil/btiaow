@@ -78,6 +78,7 @@ public class WXMsgProcessor {
 				retMsg.msgId = msg.msgId;
 				
 				String retStr = WXMsgFactory.genXML(retMsg);
+				MyLogger.get().debug("processTextMsg search response msg:\n"+retStr);
 				out.write(retStr.getBytes());
 				return;
 				
@@ -127,6 +128,9 @@ public class WXMsgProcessor {
 				retMsg.msgId = msg.msgId;
 				
 				String retStr = WXMsgFactory.genXML(retMsg);
+				
+				MyLogger.get().debug("processTextMsg8 response msg:\n"+retStr);
+				
 				out.write(retStr.getBytes());
 				return;
 				

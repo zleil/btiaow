@@ -117,10 +117,12 @@ public class WXMsgFactory {
 			sb.append("<ArticleCount>"+((WXMsg.PicText)msg).items.size()+"</ArticleCount>");
 			sb.append("<Articles>");
 			for (WXMsg.PicText.Item item : ((WXMsg.PicText) msg).items) {
-				if (item.title != null) sb.append("<item><Title><![CDATA["+item.title+"]]></Title>");
+				sb.append("<item>");
+				if (item.title != null) sb.append("<Title><![CDATA["+item.title+"]]></Title>");
 				if (item.desc != null) sb.append("<Description><![CDATA["+item.desc+"]]></Description>");
 				if (item.picUrl != null) sb.append("<PicUrl><![CDATA["+item.picUrl+"]]></PicUrl>");
-				if (item.url != null) sb.append("<Url><![CDATA["+item.url+"]]></Url></item>");
+				if (item.url != null) sb.append("<Url><![CDATA["+item.url+"]]></Url>");
+				sb.append("</item>");
 			}
 			sb.append("</Articles></xml>");
 			
