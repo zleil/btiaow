@@ -1,11 +1,12 @@
-package com.btiao.tzsc;
+package com.btiao.tzsc.weixin;
 
 import java.io.OutputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.btiao.tzsc.WXMsg.Text;
+import com.btiao.tzsc.service.MyLogger;
+import com.btiao.tzsc.weixin.WXMsg.Text;
 
 public class WXMsgProcessor {
 	static public String helpStr = "发送文字、图片，描述物品\n" +

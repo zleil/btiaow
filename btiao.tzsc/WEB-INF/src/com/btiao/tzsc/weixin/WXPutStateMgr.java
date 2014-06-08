@@ -1,11 +1,14 @@
-package com.btiao.tzsc;
+package com.btiao.tzsc.weixin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.btiao.tzsc.State.Info.MsgType;
+import com.btiao.tzsc.service.State;
+import com.btiao.tzsc.service.StateMgr;
+import com.btiao.tzsc.service.State.Info;
+import com.btiao.tzsc.service.State.Info.MsgType;
 
 public class WXPutStateMgr {
 	static class PageView {

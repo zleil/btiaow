@@ -1,4 +1,4 @@
-package com.btiao.tzsc;
+package com.btiao.tzsc.weixin;
 
 import java.util.ArrayList;
 import java.util.List;

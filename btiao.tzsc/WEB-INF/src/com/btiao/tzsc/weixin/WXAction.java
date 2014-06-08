@@ -1,12 +1,15 @@
-package com.btiao.tzsc;
+package com.btiao.tzsc.weixin;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.btiao.tzsc.service.MyLogger;
 
 public class WXAction extends HttpServlet {
 	/**

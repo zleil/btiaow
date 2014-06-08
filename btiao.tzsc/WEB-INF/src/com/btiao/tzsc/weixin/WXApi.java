@@ -1,4 +1,4 @@
-package com.btiao.tzsc;
+package com.btiao.tzsc.weixin;
 
 import java.io.InputStream;
 
@@ -7,6 +7,8 @@ import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
+
+import com.btiao.tzsc.service.MyLogger;
 
 public class WXApi {
 	static public void main(String[] args) throws Exception {

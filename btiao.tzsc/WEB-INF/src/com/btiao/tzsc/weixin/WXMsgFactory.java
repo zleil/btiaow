@@ -1,4 +1,4 @@
-package com.btiao.tzsc;
+package com.btiao.tzsc.weixin;
 
 import java.io.StringReader;
 
@@ -6,8 +6,9 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 
-import com.btiao.tzsc.WXMsg.PicText;
-import com.btiao.tzsc.WXMsg.Text;
+import com.btiao.tzsc.service.MyLogger;
+import com.btiao.tzsc.weixin.WXMsg.PicText;
+import com.btiao.tzsc.weixin.WXMsg.Text;
 
 public class WXMsgFactory {
 	static public void main(String[] args) {
