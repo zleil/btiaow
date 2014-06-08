@@ -23,13 +23,13 @@ public class State {
 		return nextId ++;
 	}
 	
-	public final long id;
-	public String areaId;
-	public String name;
-	public List<Info> infos = new ArrayList<Info>();
+	public final long id; //id of a state
+	public String areaId; //小区名称
+	public String userId; //用户名
+	public List<Info> infos = new ArrayList<Info>(); //元信息描述
 	
 	public State(String name) {
 		id = genNextId();
-		this.name = name;
+		this.userId = name;
 	}
 }

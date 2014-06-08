@@ -65,7 +65,7 @@ public class StateMgr {
 			return sts.size();
 		} else {
 			return -1;
-		}		
+		}
 	}
 	
 	private Map<String,List<State>> all = new HashMap<String,List<State>>();
