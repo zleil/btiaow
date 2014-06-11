@@ -22,7 +22,7 @@ public class WXAction extends HttpServlet {
 			HttpServletResponse response) {
 		try {
 			String areaId = getAreaId(request.getRequestURI());
-			MyLogger.getAccess().info("areaId=" + areaId + ",src-ip=" + request.getRemoteAddr());
+			MyLogger.getAccess().info("do wxpost: areaId=" + areaId + ",src-ip=" + request.getRemoteAddr());
 			
 			if (!isValidReq(request)) {
 				MyLogger.getAttackLog().warn("found a invalid request!!!");
@@ -30,6 +30,8 @@ public class WXAction extends HttpServlet {
 			}
 			
 			_doPost(request, response);
+			
+			MyLogger.getAccess().info("end wxpost");
 		} catch (Throwable e) {
 			MyLogger.get().error("process wx post error!", e);
 		}

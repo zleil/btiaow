@@ -1,17 +1,19 @@
 package com.btiao.tzsc.service;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class State {
-	static public class Info {
-		static public enum MsgType {
-			text, pic
+public class State implements Serializable {
+	static public class Info implements Serializable {
+		static public class MsgType {
+			static public int text = 1;
+			static public int pic = 2;
 		}
 		
-		public MsgType t;
+		public int t;
 		public String content;
-		public Info(MsgType t, String content) {
+		public Info(int t, String content) {
 			this.t = t;
 			this.content = content;
 		}
@@ -24,7 +26,7 @@ public class State {
 	}
 	
 	public final long id; //id of a state
-	public String areaId; //小区名称
+	public long areaId; //小区名称
 	public String userId; //用户名
 	public List<Info> infos = new ArrayList<Info>(); //元信息描述
 	
