@@ -5,7 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class State implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5974420041156366603L;
+
 	static public class Info implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 2937649078497298008L;
 		static public class MsgType {
 			static public int text = 1;
 			static public int pic = 2;

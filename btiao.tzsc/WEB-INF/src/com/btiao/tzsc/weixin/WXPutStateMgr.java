@@ -38,6 +38,8 @@ public class WXPutStateMgr {
 					if (item.title != null && item.picUrl != null) {
 						break;
 					}
+					
+					item.url = "http://182.92.81.56/btiao/tzsc/wx_dispDetail/65536?stateId=" + state.id; 
 				}
 				
 				if (item.picUrl == null && item.title == null) {
@@ -160,8 +162,9 @@ public class WXPutStateMgr {
 		State.Info info = new State.Info(MsgType.text, text);
 		state.infos.add(info);
 		
-		return "发送文字、图片，继续描述\n\n" + "发送数字 0 ，取消描述\n" +
-		"发送数字 1 ，提交物品信息";
+		return "发送文字、图片，继续描述\n\n" + 
+			"发送数字 0 ，取消描述\n" +
+			"发送数字 1 ，提交物品信息";
 	}
 	
 	public String putUrlMsg(String name, String url) {

@@ -9,18 +9,22 @@ import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.weixin.WXMsg.Text;
 
 public class WXMsgProcessor {
-	static public String helpStr = "发送文字、图片，描述物品\n" +
+	static public String helpFullStr = "发送文字、图片，描述物品\n" +
 							"发送数字 0 ，取消描述\n" +
 							"发送数字 1 ，提交物品信息\n\n" +
 							
 							"发送数字 5 ，查看您的物品\n" +
-							"发送数字 5 x ，细看第x件物品\n\n" +
 							"发送数字 3 x ，删除第x件物品\n" +
 							
 							"发送\"搜索 xxx\"，搜索xxx物品\n" + 
 							"发送数字 8 ，显示更多物品\n" +
 							"发送数字 8 x ，细看第x件物品";
 	
+	static public String helpStr = "发送文字、图片，描述物品\n\n" +
+			
+			"发送数字 5 ，查看您的物品\n\n" +
+			
+			"发送\"搜索 xxx\"，搜索xxx物品\n";
 	
 	public void proc(WXMsg msg, HttpServletResponse rsp) throws Exception {
 		rsp.setCharacterEncoding("UTF-8");
@@ -37,7 +41,6 @@ public class WXMsgProcessor {
 			ret.msgId = msg.msgId;
 			ret.toUserName = msg.msgId;
 			
-			System.out.println(helpStr);
 			rsp.getOutputStream().write(WXMsgFactory.genXML(ret).getBytes());
 		}
 	}

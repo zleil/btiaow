@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration monitorInterval="30">
   <appenders>  
     <File name="tzsc_appender" filename="logs/tzsc.log">  
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
-    </File>  
+    </File>
+    <File name="access_appender" filename="logs/access.log">  
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
+    </File>
+    <File name="attack_appender" filename="logs/attack.log">  
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
+    </File>
+    <Appender type="Console" name="STDOUT">
+      <Layout type="PatternLayout" pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Appender>  
   </appenders>  
   <loggers>  
     <logger name="tzsc" level="debug">  
       <appender-ref ref="tzsc_appender"/>  
     </logger>
+    <logger name="attack" level="debug">  
+      <appender-ref ref="attack_appender"/>  
+    </logger>
+    <logger name="access" level="debug">
+      <appender-ref ref="access_appender"/>
+    </logger>
+    <root level="debug">
+    	<appender-ref ref="STDOUT"/>
+    </root>
   </loggers>
 </configuration>

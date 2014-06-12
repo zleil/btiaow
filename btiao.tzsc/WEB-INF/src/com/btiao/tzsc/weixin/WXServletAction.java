@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.btiao.tzsc.service.MyLogger;
 
-public class WXAction extends HttpServlet {
+public class WXServletAction extends HttpServlet {
 	/**
 	 * 
 	 */
@@ -117,6 +117,10 @@ public class WXAction extends HttpServlet {
 		String echostr = request.getParameter("echostr");
 		String token = "cqzytsyrjnnjdwiloveurebecca";
 		
+		if (sig == null || tm == null || nonce == null || echostr == null) {
+			return false;
+		}
+		
 		StringBuilder sb = new StringBuilder();
 		String[] beSort = {tm, nonce, token};
 		Arrays.sort(beSort);
@@ -145,6 +149,6 @@ public class WXAction extends HttpServlet {
 	}
 	
 	private String getAreaId(String uri) {
-		return uri.substring(uri.indexOf('/') + 1);
+		return uri.substring(uri.lastIndexOf('/') + 1);
 	}
 }

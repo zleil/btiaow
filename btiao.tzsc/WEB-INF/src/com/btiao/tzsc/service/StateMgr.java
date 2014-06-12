@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class StateMgr {
 	static private StateMgr inst = null;
+	static private String persistDir = "tzscdb";
 	static private String persistFn = "tzsc.db";
 	
 	static public synchronized StateMgr instance() {
@@ -33,6 +34,11 @@ public class StateMgr {
 		return ret;
 	}
 	
+	public synchronized State getState(long stateId) {
+		State s = stateId2State.get(stateId);
+		return s;
+	}
+	
 	public synchronized List<State> getAllStateByUserName(String name) {
 		List<State> ret = new ArrayList<State>();
 		
@@ -49,6 +55,8 @@ public class StateMgr {
 		if (states == null) {
 			states = new ArrayList<State>();
 			all.put(userName, states);
+			
+			stateId2State.put(state.id, state);
 		}
 		states.add(state);
 		
@@ -67,7 +75,8 @@ public class StateMgr {
 	public synchronized int delOneState(String userName, int idx) {
 		List<State> sts = all.get(userName);
 		if (idx >= 1 && idx <= sts.size()) {
-			sts.remove(idx-1);
+			State s = sts.remove(idx-1);
+			stateId2State.remove(s.id);
 			
 			isChanged = true;
 			return sts.size();
@@ -86,7 +95,6 @@ public class StateMgr {
 	
 	static public void main(String[] args) {
 		StateMgr.instance().addState("abc", new State(""));
-		while (true);
 	}
 	
 	private StateMgr() {
@@ -101,7 +109,7 @@ public class StateMgr {
 			public void run() {
 				while (true) {
 					try {
-						Thread.sleep(1000*2);
+						Thread.sleep(1000*30);
 						
 						if (!StateMgr.instance().isChanged()) {
 							continue;
@@ -109,7 +117,7 @@ public class StateMgr {
 						
 						MyLogger.get().info("persist once");
 						
-						String dest = StateMgr.persistFn + "_" + System.currentTimeMillis();
+						String dest = persistDir+File.separator+StateMgr.persistFn + "_" + System.currentTimeMillis();
 						new File(StateMgr.persistFn).renameTo(new File(dest));
 						
 						synchronized(StateMgr.instance()) {
@@ -132,7 +140,7 @@ public class StateMgr {
 		FileInputStream fin = null;
 		ObjectInputStream objIn = null;
 		try {
-			File file = new File(persistFn);
+			File file = new File(persistDir+File.separator+persistFn);
 			if (file.exists()) {
 				fin = new FileInputStream(file);
 				objIn = new ObjectInputStream(fin);
@@ -147,19 +155,27 @@ public class StateMgr {
 	}
 	
 	private void persist() throws Exception {
+		//1. write to a tmp file
 		FileOutputStream fout = null;
 		ObjectOutputStream objOut = null;
 		try {
-			fout = new FileOutputStream(new File(persistFn));
+			fout = new FileOutputStream(new File(persistDir+File.separator+persistFn+".tmp"));
 			objOut = new ObjectOutputStream(fout);
 			objOut.writeObject(all);
 		} finally {
 			if (objOut != null) objOut.close();
 			if (fout != null) fout.close();
 		}
+		
+		//2. rename to the latest db file
+		File file = new File(persistDir+File.separator+persistFn+".tmp");
+		if (file.exists()) {
+			file.renameTo(new File(persistDir+File.separator+persistFn));
+		}
 	}
 	
 	
 	private volatile boolean isChanged = false;
 	private Map<String,List<State>> all = new HashMap<String,List<State>>();
+	private Map<Long,State> stateId2State = new HashMap<Long,State>();
 }

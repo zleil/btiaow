@@ -11,12 +11,23 @@
    <!-- Restlet adapter -->
    <servlet>
       <servlet-name>wx_act</servlet-name>
-      <servlet-class>com.btiao.tzsc.WXAction</servlet-class>
+      <servlet-class>com.btiao.tzsc.weixin.WXServletAction</servlet-class>
+   </servlet>
+   
+   <servlet>
+      <servlet-name>wx_dispDetail</servlet-name>
+      <servlet-class>com.btiao.tzsc.weixin.WXAction</servlet-class>
    </servlet>
 
    <!-- Catch all requests -->
    <servlet-mapping>
       <servlet-name>wx_act</servlet-name>
       <url-pattern>/wx_act/*</url-pattern>
+   </servlet-mapping>
+   
+   <!-- Catch all requests -->
+   <servlet-mapping>
+      <servlet-name>wx_dispDetail</servlet-name>
+      <url-pattern>/wx_dispDetail/*</url-pattern>
    </servlet-mapping>
 </web-app>
