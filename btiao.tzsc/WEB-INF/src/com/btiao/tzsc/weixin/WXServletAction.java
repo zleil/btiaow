@@ -33,7 +33,7 @@ public class WXServletAction extends HttpServlet {
 			
 			MyLogger.getAccess().info("end wxpost");
 		} catch (Throwable e) {
-			MyLogger.get().error("process wx post error!", e);
+			MyLogger.getAccess().error("process wx post error!", e);
 		}
 	}
 	
@@ -100,6 +100,9 @@ public class WXServletAction extends HttpServlet {
 		try {
 			out = response.getWriter();
 			
+			String areaId = getAreaId(request.getRequestURI());
+			MyLogger.getAccess().info("areaId=" + areaId + ",src-ip=" + request.getRemoteAddr());
+			
 			if (isValidReq(request)) {
 				out.print(echostr);
 				return;
@@ -130,9 +133,6 @@ public class WXServletAction extends HttpServlet {
 		
 		String sha1str = Sha1.doit(sb.toString());
 		
-		String areaId = getAreaId(request.getRequestURI());
-		MyLogger.getAccess().info("areaId=" + areaId + ",src-ip=" + request.getRemoteAddr());
-		
 		if (sig.equals(sha1str)) {
 			return true;
 		} else {
@@ -143,7 +143,7 @@ public class WXServletAction extends HttpServlet {
 					"\n\n\ttosha1="+sb.toString() +
 					"\n\tresult sha1="+sha1str;
 			
-			MyLogger.get().info(record);
+			MyLogger.getAttackLog().info(record);
 			return false;
 		}
 	}
