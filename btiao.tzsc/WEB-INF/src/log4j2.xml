@@ -10,9 +10,9 @@
     <File name="attack_appender" filename="logs/attack.log">  
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
     </File>
-    <Appender type="Console" name="STDOUT">
+    <appender type="Console" name="STDOUT">
       <Layout type="PatternLayout" pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-    </Appender>  
+    </appender>  
   </appenders>  
   <loggers>  
     <logger name="tzsc" level="debug">  
