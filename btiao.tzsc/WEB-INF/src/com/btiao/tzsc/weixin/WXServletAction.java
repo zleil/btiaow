@@ -120,7 +120,14 @@ public class WXServletAction extends HttpServlet {
 		String echostr = request.getParameter("echostr");
 		String token = "cqzytsyrjnnjdwiloveurebecca";
 		
-		if (sig == null || tm == null || nonce == null || echostr == null) {
+		if (sig == null || tm == null || nonce == null) {
+			String record = "\n\tsignature="+sig +
+					"\n\ttimestamp="+tm +
+					"\n\tnonce="+nonce +
+					"\n\techostr="+echostr;
+			
+			MyLogger.getAttackLog().info(record);
+			
 			return false;
 		}
 		

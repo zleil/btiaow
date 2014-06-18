@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class StateMgr {
 	static private StateMgr inst = null;
@@ -145,6 +147,13 @@ public class StateMgr {
 				fin = new FileInputStream(file);
 				objIn = new ObjectInputStream(fin);
 				all = (Map<String, List<State>>) objIn.readObject();
+				
+				Set<Entry<String,List<State>>> entries = all.entrySet();
+				for (Entry<String,List<State>> entry : entries) {
+					for (State state : entry.getValue()) {
+						this.stateId2State.put(state.id, state);
+					}
+				}
 			}			
 		} finally {
 			if (objIn != null) objIn.close();
