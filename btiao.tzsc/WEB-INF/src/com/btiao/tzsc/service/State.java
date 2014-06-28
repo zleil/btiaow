@@ -9,6 +9,8 @@ public class State implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 5974420041156366603L;
+	
+	private static String nextIdFile = "stateNextId.db";
 
 	static public class Info implements Serializable {
 		/**
@@ -28,15 +30,34 @@ public class State implements Serializable {
 		}
 	}
 	
-	static volatile long nextId = 100000000;
+	static volatile Long nextId = new Long(100000000);
+	
+	static {
+		Long persistedNextId = (Long) new PersistObj().load(nextIdFile);
+		if (persistedNextId != null) {
+			nextId = persistedNextId;
+		}
+		
+		PersistObj.addBackTask(nextIdFile);
+	}
+	
 	static synchronized long genNextId() {
 		//TODO persist it after modify.
-		return nextId ++;
+		long ret = nextId ++;
+		try {
+			new PersistObj().persist(nextIdFile, nextId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ret;
 	}
 	
 	public final long id; //id of a state
 	public long areaId; //小区名称
 	public String userId; //用户名
+	public long publishTime; //发布时间
 	public List<Info> infos = new ArrayList<Info>(); //元信息描述
 	
 	public State(String name) {

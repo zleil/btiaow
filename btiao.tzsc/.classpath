@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="WEB-INF/src"/>
+	<classpathentry kind="src" path="webs"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/third/lib/jdom-2.0.5.jar"/>
 	<classpathentry kind="lib" path="/third/lib/log4j-api-2.0-beta8.jar"/>

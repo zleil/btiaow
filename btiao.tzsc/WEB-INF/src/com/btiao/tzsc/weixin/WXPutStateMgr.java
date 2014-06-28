@@ -196,6 +196,8 @@ public class WXPutStateMgr {
 			return "";
 		}
 		
+		state.publishTime = System.currentTimeMillis();
+		
 		int total = StateMgr.instance().addState(name, state);
 		
 		return "您又多了件物品，候着邻居来买吧\n\n您当前有"+total+"件物品";

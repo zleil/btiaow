@@ -1,10 +1,5 @@
 package com.btiao.tzsc.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +9,6 @@ import java.util.Set;
 
 public class StateMgr {
 	static private StateMgr inst = null;
-	static private String persistDir = "tzscdb";
 	static private String persistFn = "tzsc.db";
 	
 	static public synchronized StateMgr instance() {
@@ -106,83 +100,42 @@ public class StateMgr {
 			MyLogger.get().error("load persist failed!", e);
 		}
 		
-		Thread persistTh = new Thread() {
+		PersistObj.addBackTask(new Runnable() {
 			@Override
 			public void run() {
-				while (true) {
-					try {
-						Thread.sleep(1000*30);
-						
-						if (!StateMgr.instance().isChanged()) {
-							continue;
-						}
-						
-						MyLogger.get().info("persist once");
-						
-						String dest = persistDir+File.separator+StateMgr.persistFn + "_" + System.currentTimeMillis();
-						new File(StateMgr.persistFn).renameTo(new File(dest));
-						
-						synchronized(StateMgr.instance()) {
-							persist();
-							
-							StateMgr.instance().setUnchanged();
-						}
-					} catch (Throwable e) {
-						MyLogger.get().error("persist failed!", e);
-					}
+				if (!StateMgr.instance().isChanged()) {
+					return;
+				}
+				
+				MyLogger.get().info("persist once");
+				
+				new PersistObj().moveAndBack(StateMgr.persistFn);
+				
+				synchronized(StateMgr.instance()) {
+					new PersistObj().persist(StateMgr.persistFn, all);
+					
+					StateMgr.instance().setUnchanged();
 				}
 			}
-		};
-		
-		persistTh.setName("tzsc_persist");
-		persistTh.start();
+		});
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void load() throws Exception {
-		FileInputStream fin = null;
-		ObjectInputStream objIn = null;
-		try {
-			File file = new File(persistDir+File.separator+persistFn);
-			if (file.exists()) {
-				fin = new FileInputStream(file);
-				objIn = new ObjectInputStream(fin);
-				all = (Map<String, List<State>>) objIn.readObject();
-				
-				Set<Entry<String,List<State>>> entries = all.entrySet();
-				for (Entry<String,List<State>> entry : entries) {
-					for (State state : entry.getValue()) {
-						this.stateId2State.put(state.id, state);
-					}
-				}
-			}			
-		} finally {
-			if (objIn != null) objIn.close();
-			if (fin != null) fin.close();
+		Object persistAll = new PersistObj().load(StateMgr.persistFn);
+		if (persistAll == null) {
+			return;
 		}
 		
+		all = (Map<String, List<State>>) persistAll;
 		
-	}
-	
-	private void persist() throws Exception {
-		//1. write to a tmp file
-		FileOutputStream fout = null;
-		ObjectOutputStream objOut = null;
-		try {
-			fout = new FileOutputStream(new File(persistDir+File.separator+persistFn+".tmp"));
-			objOut = new ObjectOutputStream(fout);
-			objOut.writeObject(all);
-		} finally {
-			if (objOut != null) objOut.close();
-			if (fout != null) fout.close();
-		}
-		
-		//2. rename to the latest db file
-		File file = new File(persistDir+File.separator+persistFn+".tmp");
-		if (file.exists()) {
-			file.renameTo(new File(persistDir+File.separator+persistFn));
-		}
-	}
-	
+		Set<Entry<String,List<State>>> entries = all.entrySet();
+		for (Entry<String,List<State>> entry : entries) {
+			for (State state : entry.getValue()) {
+				this.stateId2State.put(state.id, state);
+			}
+		}		
+	}	
 	
 	private volatile boolean isChanged = false;
 	private Map<String,List<State>> all = new HashMap<String,List<State>>();
