@@ -36,20 +36,22 @@ public class State implements Serializable {
 		Long persistedNextId = (Long) new PersistObj().load(nextIdFile);
 		if (persistedNextId != null) {
 			nextId = persistedNextId;
+			
+			MyLogger.get().info("get persist stateNextId: " + persistedNextId);
 		}
 		
 		PersistObj.addBackTask(nextIdFile);
 	}
 	
+	static public void main(String[] args){
+		nextId ++;
+		nextId ++;
+		System.out.println(nextId);
+	}
+	
 	static synchronized long genNextId() {
-		//TODO persist it after modify.
-		long ret = nextId ++;
-		try {
-			new PersistObj().persist(nextIdFile, nextId);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		long ret = nextId++;
+		new PersistObj().persist(nextIdFile, nextId);
 		
 		return ret;
 	}

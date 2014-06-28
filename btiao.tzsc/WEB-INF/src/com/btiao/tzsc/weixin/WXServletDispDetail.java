@@ -87,7 +87,7 @@ public class WXServletDispDetail extends HttpServlet {
 			Date date=new Date(state.publishTime);
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String timeStr = formatter.format(date);
-			sb.append("&nbsp;&nbsp;<span>");
+			sb.append("&nbsp;&nbsp;<span>发布时间：");
 			sb.append(timeStr);
 			sb.append("</span></h2>");
 			
@@ -104,12 +104,13 @@ public class WXServletDispDetail extends HttpServlet {
 					sb.append("\"/>");
 				}
 			}
+			
+			sb.append("</div>");
+			sb.append("<div id=\"rightCol\">&nbsp;</div>");
 		} else {
 			sb.append("对不起，您访问的物品可能已经被交换了：-） 再看看别的物品吧～～～");
 		}
-		sb.append("</div>");
-		sb.append("<div id=\"rightCol\">&nbsp;</div>");
-		sb.append("");
+		
 		sb.append("</body></html>");
 		
 		out.write(sb.toString());

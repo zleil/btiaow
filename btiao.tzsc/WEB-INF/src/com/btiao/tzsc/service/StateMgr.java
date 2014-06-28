@@ -51,10 +51,9 @@ public class StateMgr {
 		if (states == null) {
 			states = new ArrayList<State>();
 			all.put(userName, states);
-			
-			stateId2State.put(state.id, state);
 		}
 		states.add(state);
+		stateId2State.put(state.id, state);
 		
 		isChanged = true;
 		

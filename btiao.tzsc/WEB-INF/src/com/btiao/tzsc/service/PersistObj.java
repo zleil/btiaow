@@ -82,7 +82,7 @@ public class PersistObj {
 				fin = new FileInputStream(file);
 				objIn = new ObjectInputStream(fin);
 				@SuppressWarnings("unchecked")
-				Object ret = (Map<String, List<State>>) objIn.readObject();
+				Object ret = objIn.readObject();
 				
 				return ret;
 			}			
