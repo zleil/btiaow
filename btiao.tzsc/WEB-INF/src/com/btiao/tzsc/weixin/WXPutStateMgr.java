@@ -85,7 +85,7 @@ public class WXPutStateMgr {
 	public String putTextMsg(String name, String text) {
 		List<State> all = StateMgr.instance(areaId).getAllStateByUserName(name);
 		if (all != null && all.size() >= 8) {
-			return Tip.get().reachMaxSwitch;
+			return Tip.get().reachMaxSwitch; 
 		}
 		
 		State state = this.curPuts.get(name);
