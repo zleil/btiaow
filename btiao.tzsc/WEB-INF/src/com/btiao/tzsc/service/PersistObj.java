@@ -10,6 +10,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PersistObj {
+	static public void main(String[] args) {
+		System.out.println(new PersistObj().load("tzsc.db"));
+	}
+	
 	static private String persistDir = "tzscdb";
 	
 	static ScheduledExecutorService service = Executors.newScheduledThreadPool(10);
@@ -25,15 +29,6 @@ public class PersistObj {
 		service.scheduleAtFixedRate(
 		        task, 10,
 				30, TimeUnit.SECONDS);
-	}
-	
-	static void addBackTask(final String fn) {
-		addBackTask(new Runnable() {
-			@Override
-			public void run() {
-				new PersistObj().moveAndBack(fn);
-			}	
-		});
 	}
 	
 	public void persist(String fn, Object obj) {
@@ -67,8 +62,9 @@ public class PersistObj {
 	}
 	
 	public void moveAndBack(String fn) {
-		String dest = persistDir+File.separator+fn + "_" + System.currentTimeMillis();
-		new File(fn).renameTo(new File(dest));
+		String old = persistDir+File.separator+fn;
+		String dest = old + "_" + System.currentTimeMillis();
+		new File(old).renameTo(new File(dest));
 	}
 	
 	public Object load(String fn) {

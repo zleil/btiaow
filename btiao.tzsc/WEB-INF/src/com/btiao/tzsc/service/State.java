@@ -25,9 +25,15 @@ public class State implements Serializable {
 		
 		public int t;
 		public String content;
+		
 		public Info(int t, String content) {
 			this.t = t;
 			this.content = content;
+		}
+		
+		@Override
+		public String toString() {
+			return "{t:"+t+",content:\""+content+"\"}";
 		}
 	}
 	
@@ -40,8 +46,6 @@ public class State implements Serializable {
 			
 			MyLogger.get().info("get persist stateNextId: " + persistedNextId);
 		}
-		
-		PersistObj.addBackTask(nextIdFile);
 	}
 	
 	static public void main(String[] args){
@@ -62,6 +66,19 @@ public class State implements Serializable {
 	public String userId; //用户名
 	public long publishTime; //发布时间
 	public List<Info> infos = new ArrayList<Info>(); //元信息描述
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{id:"+id+",areaId:"+areaId+",userId:\""+userId+"\""+
+				"publishTime:"+publishTime+"infos:[");
+		for (Info info : infos) {
+			sb.append(info);
+		}
+		sb.append("]}");
+		
+		return sb.toString();
+	}
 	
 	public State(String name) {
 		id = genNextId();

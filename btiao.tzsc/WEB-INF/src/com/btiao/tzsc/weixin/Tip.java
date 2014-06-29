@@ -49,4 +49,6 @@ public class Tip {
 	public String hoursBefore = " 小时前";
 	public String minutesBefore = " 分钟前";
 	public String rightNow = "刚才发布";
+	
+	public String reachMaxSwitch = "抱歉，系统限制最多存在8个待交换物品～";
 }

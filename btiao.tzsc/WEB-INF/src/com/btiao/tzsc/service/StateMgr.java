@@ -113,10 +113,10 @@ public class StateMgr {
 				
 				MyLogger.get().info("persist once");
 				
-				new PersistObj().moveAndBack(StateMgr.persistFn);
+				new PersistObj().moveAndBack(StateMgr.persistFn+"_"+areaId);
 				
 				synchronized(StateMgr.instance(areaId)) {
-					new PersistObj().persist(StateMgr.persistFn, all);
+					new PersistObj().persist(StateMgr.persistFn+"_"+areaId, all);
 					
 					StateMgr.instance(areaId).setUnchanged();
 				}

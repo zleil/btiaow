@@ -15,6 +15,10 @@ public class WXPutStateMgr {
 		}
 		
 		public WXMsg next() {
+			return next(false);
+		}
+		
+		public WXMsg next(boolean addSeq) {
 			if (idx >= all.size()) {
 				return null;
 			}
@@ -28,7 +32,7 @@ public class WXPutStateMgr {
 
 				for (State.Info info : state.infos) {
 					if (item.title == null && info.t == State.Info.MsgType.text) {
-						item.title = info.content;
+						item.title = (addSeq ? ("["+(idx+1)+"]") : "") + info.content;
 					}
 					if (item.picUrl == null && info.t == State.Info.MsgType.pic) {
 						item.picUrl = info.content;
@@ -79,6 +83,11 @@ public class WXPutStateMgr {
 //	}
 	
 	public String putTextMsg(String name, String text) {
+		List<State> all = StateMgr.instance(areaId).getAllStateByUserName(name);
+		if (all != null && all.size() >= 8) {
+			return Tip.get().reachMaxSwitch;
+		}
+		
 		State state = this.curPuts.get(name);
 		
 		if (state == null) {
@@ -129,6 +138,8 @@ public class WXPutStateMgr {
 		}
 		
 		State state = this.curPuts.remove(name);
+		state.areaId = this.areaId;
+		
 		if (state.infos.size() == 0) {
 			return "";
 		}
@@ -158,7 +169,7 @@ public class WXPutStateMgr {
 		
 		PageView pv = new PageView(allSelf);
 		
-		return pv.next();
+		return pv.next(true);
 	}
 	
 	public String delOne(String name, int idx) {

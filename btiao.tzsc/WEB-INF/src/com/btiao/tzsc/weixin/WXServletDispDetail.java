@@ -66,6 +66,7 @@ public class WXServletDispDetail extends HttpServlet {
 		State state = StateMgr.instance(areaId).getState(stateId);
 		
 		StringBuilder sb = new StringBuilder();
+		sb.append("<!DOCTYPE HTML>");
 		sb.append("<html><head>");
 		sb.append("<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\">");
 		sb.append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0\">");
@@ -100,7 +101,7 @@ public class WXServletDispDetail extends HttpServlet {
 					timeStr = "" + (int)minites + Tip.get().minutesBefore;
 				}
 				
-			} if (hours < 24) {
+			} else if (hours < 24) {
 				timeStr = "" + (int)hours + Tip.get().hoursBefore;
 			} else {
 				Date date = new Date(state.publishTime);
@@ -108,13 +109,14 @@ public class WXServletDispDetail extends HttpServlet {
 				timeStr = formatter.format(date);
 			}
 			
-			sb.append("<span>发布时间：");
+			sb.append("<p>发布时间：");
 			sb.append(timeStr);
-			sb.append("</span>");
+			sb.append("</p>");
 			
-			sb.append("<span><a href=\"javascript:viewProfile();\">&nbsp;&nbsp;关注此跳蚤市场</a></span>");
+			//sb.append("<span><a href=\"javascript:viewProfile();\">&nbsp;&nbsp;关注此跳蚤市场</a></span>");
 			
-			sb.append("<span><a href=\"tel:"+ state.getPhoneNum()+"\"></a></span>");
+			String phone = state.getPhoneNum();
+			sb.append("<a href=\"tel:"+ phone +"\">点击电话交流("+phone+")</a>");
 			
 			sb.append("</h2>");
 			
@@ -125,7 +127,7 @@ public class WXServletDispDetail extends HttpServlet {
 					sb.append("<p>");
 					sb.append(info.content);
 					sb.append("</p>");
-				} else {
+				} else if (info.t == State.Info.MsgType.pic) {
 					sb.append("<img src=\"");
 					sb.append(info.content);
 					sb.append("\"/>");
