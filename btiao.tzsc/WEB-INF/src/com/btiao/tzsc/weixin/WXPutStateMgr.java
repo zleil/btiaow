@@ -3,6 +3,7 @@ package com.btiao.tzsc.weixin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.btiao.tzsc.service.State;
 import com.btiao.tzsc.service.StateMgr;
 import com.btiao.tzsc.service.State.Info.MsgType;
@@ -86,28 +87,38 @@ public class WXPutStateMgr {
 		State.Info info = new State.Info(MsgType.text, text);
 		state.infos.add(info);
 		
-		return "发送文字、图片，继续描述\n\n" + 
-			"发送数字 0 ，取消描述\n" +
-			"发送数字 1 ，提交物品信息";
+		return Tip.get().continuePutTip;
 	}
 	
 	public String putUrlMsg(String name, String url) {
 		State state = this.curPuts.get(name);
 		
 		if (state == null) {
-			return "亲，得先用文字描述下物品呦";
+			return Tip.get().noFirstTextDescError;
 		}
 		
 		State.Info info = new State.Info(MsgType.pic, url);
 		state.infos.add(info);
 		
-		return "发送文字、图片，继续描述物品\n\n" + "发送数字 0 ，取消描述\n" +
-		"发送数字 1 ，提交物品描述";
+		return Tip.get().continuePutTip;
+	}
+	
+	public String putPhoneNum(String name, String tel) {
+		State state = this.curPuts.get(name);
+		
+		if (state == null) {
+			return Tip.get().noFirstTextDescError;
+		}
+		
+		State.Info info = new State.Info(MsgType.phone, tel);
+		state.infos.add(info);
+		
+		return Tip.get().continuePutTip;
 	}
 	
 	public String cancelPut(String name) {
 		curPuts.remove(name);
-		return "取消成功\n\n" + WXMsgProcessor.helpStr;
+		return Tip.get().cancelSuccess + "\n\n" + Tip.get().helpStr;
 	}
 	
 	public String endPut(String name) {
@@ -120,11 +131,23 @@ public class WXPutStateMgr {
 			return "";
 		}
 		
+		boolean hasPutPhone = false;
+		for (State.Info info : state.infos) {
+			if (info.t == State.Info.MsgType.phone) {
+				hasPutPhone = true;
+				break;
+			}
+		}
+		
+		if (!hasPutPhone) {
+			return Tip.get().noPhoneNumDescErrorTip;
+		}
+		
 		state.publishTime = System.currentTimeMillis();
 		
 		int total = StateMgr.instance().addState(name, state);
 		
-		return "您又多了件物品，候着邻居来买吧\n\n您当前有"+total+"件物品";
+		return Tip.get().putSuccessTip + total;
 	}
 	
 	public WXMsg returnSelfAll(String name) {
@@ -138,19 +161,17 @@ public class WXPutStateMgr {
 	public String delOne(String name, int idx) {
 		int ret = StateMgr.instance().delOneState(name, idx);
 		if (ret >= 0) {			
-			return "删除成功\n您当前还有"+ret+"件物品";
+			return Tip.get().delStateSuccess + ret;
 		} else {
 			List<State> allSelf = StateMgr.instance().getAllStateByUserName(name);
-			return "您要删除的物品"+idx+"不存在\n您当前有"+((allSelf != null) ? allSelf.size() : 0)+"件待交换物品";
+			return Tip.get().delStateFailed + ((allSelf != null) ? allSelf.size() : 0);
 		}
 	}
 	
 	public WXMsg search(String name, String text) {
 		if (this.curPuts.containsKey(name)) {
 			WXMsg.Text msg = new WXMsg.Text();
-			msg.content = "您正在描述物品，请先取消或提交，再进行搜索\n\n"+
-					"发送数字 0 ，取消描述\n" + 
-					"发送数字 1 ，提交物品信息";
+			msg.content = Tip.get().doOtherActWhenPutErrorTip;
 			
 			return msg;
 		}
@@ -178,7 +199,7 @@ public class WXPutStateMgr {
 			PageView pv = pvs.get(name);
 			if (pv == null) {
 				WXMsg.Text msg = new WXMsg.Text();
-				msg.content = "没有更多的信息";
+				msg.content = Tip.get().noMoreDataTip;
 				
 				return msg;
 			}

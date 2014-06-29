@@ -6,13 +6,6 @@ import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.weixin.WXMsg.Text;
 
 public class WXMsgProcessor {
-	static public String helpStr = "发送文字、图片，描述物品\n\n" +
-							
-							"发送数字 5 ，查看您的物品\n" +
-							"发送数字 3 x ，删除第x件物品\n\n" +
-							
-							"发送\"搜索 xxx\"，搜索xxx物品\n" + 
-							"发送数字 8 ，显示更多物品";
 	
 	public void proc(WXMsg reqWxMsg, HttpServletResponse rsp) throws Exception {
 		rsp.setCharacterEncoding("UTF-8");
@@ -29,7 +22,7 @@ public class WXMsgProcessor {
 	
 	private WXMsg getHelpMsg(WXMsg req) {
 		WXMsg.Text ret = new WXMsg.Text();
-		ret.content = helpStr;
+		ret.content = Tip.get().helpStr;
 		ret.createTime = req.createTime;
 		ret.fromUserName = req.toUserName;
 		ret.msgId = req.msgId;
@@ -94,7 +87,7 @@ public class WXMsgProcessor {
 				out.write(retStr.getBytes());
 				return;
 			} else {
-				ret = "您没有任何交换物品，赶紧提交吧\n\n" + helpStr;
+				ret = "您没有任何交换物品，赶紧提交吧\n\n" + Tip.get().helpStr;
 			}
 		} else if (reqWxMsg.content.startsWith("3")) {
 			int idx = -1;
@@ -123,8 +116,16 @@ public class WXMsgProcessor {
 				out.write(retStr.getBytes());
 				return;
 			}
+		} else if (reqWxMsg.content.startsWith("@")) {
+			String tel = reqWxMsg.content.substring(1);
+			if (!checkPhoneNum(tel)) {
+				ret = WXPutStateMgr.instance().putPhoneNum(userName, tel);
+			} else {
+				ret = Tip.get().phoneNumErrorTip;
+			}
 		} else if (reqWxMsg.content.startsWith("h") || reqWxMsg.content.startsWith("帮助")) {
 			WXMsg helpMsg = getHelpMsg(reqWxMsg);
+			((WXMsg.Text)helpMsg).content = Tip.get().welcomeStr + "\n\n" + Tip.get().helpStr;
 			MyLogger.get().debug("processTextMsg help response msg:\n"+helpMsg);
 			out.write(WXMsgFactory.genXML(helpMsg).getBytes());
 			
@@ -144,5 +145,15 @@ public class WXMsgProcessor {
 		
 		MyLogger.get().debug("processTextMsg response msg:\n"+retXML);
 		out.write(retXML.getBytes());
+	}
+	
+	private boolean checkPhoneNum(String tel) {
+		try {
+			Integer.parseInt(tel);
+		} catch (Throwable e) {
+			return false;
+		}
+		
+		return tel.length() == 9;
 	}
 }

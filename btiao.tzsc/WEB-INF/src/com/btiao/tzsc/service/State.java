@@ -20,6 +20,7 @@ public class State implements Serializable {
 		static public class MsgType {
 			static public int text = 1;
 			static public int pic = 2;
+			static public int phone = 2;
 		}
 		
 		public int t;
