@@ -66,6 +66,7 @@ public class WXServletDispDetail extends HttpServlet {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html><head>");
 		sb.append("<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\">");
+		sb.append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0\">");
 		sb.append("<link rel=\"stylesheet\" href=\"../webs/a.css\" media=\"all\">");
 		sb.append("</head><body>");
 		if (state != null) {
@@ -86,14 +87,22 @@ public class WXServletDispDetail extends HttpServlet {
 			
 			sb.append("<h2>");
 			
-			Date date=new Date(state.publishTime);
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String timeStr = formatter.format(date);
-			sb.append("&nbsp;&nbsp;<span>发布时间：");
+			String timeStr = "";
+			long curTime = System.currentTimeMillis();
+			float hours = (curTime - state.publishTime)/3600;
+			if (hours < 24) {
+				timeStr = "" + (int)hours + " 小时前";
+			} else {
+				Date date = new Date(state.publishTime);
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				timeStr = formatter.format(date);
+			}
+			
+			sb.append("<span>发布时间：");
 			sb.append(timeStr);
 			sb.append("</span>");
 			
-			sb.append("<span><a href=\"javascript:viewProfile();\">关注此跳蚤市场</a></span>");
+			sb.append("<span><a href=\"javascript:viewProfile();\">&nbsp;&nbsp;关注此跳蚤市场</a></span>");
 			
 			sb.append("</h2>");
 			
