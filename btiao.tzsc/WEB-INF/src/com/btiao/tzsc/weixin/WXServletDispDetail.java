@@ -19,6 +19,8 @@ public class WXServletDispDetail extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 8378786285598298529L;
+	
+	public static String URI = "http://182.92.81.56/btiao/tzsc/wx_dispDetail/";
 
 	@Override
 	public void doGet(HttpServletRequest request,
@@ -82,14 +84,18 @@ public class WXServletDispDetail extends HttpServlet {
 			sb.append(title);
 			sb.append("</h1>");
 			
-			sb.append("<h2><span><a href=\"javascript:viewProfile();\">关注此跳蚤市场</a></span>");
+			sb.append("<h2>");
 			
 			Date date=new Date(state.publishTime);
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String timeStr = formatter.format(date);
 			sb.append("&nbsp;&nbsp;<span>发布时间：");
 			sb.append(timeStr);
-			sb.append("</span></h2>");
+			sb.append("</span>");
+			
+			sb.append("<span><a href=\"javascript:viewProfile();\">关注此跳蚤市场</a></span>");
+			
+			sb.append("</h2>");
 			
 			for (int i=1; i<state.infos.size(); ++i) {
 				State.Info info = state.infos.get(i);

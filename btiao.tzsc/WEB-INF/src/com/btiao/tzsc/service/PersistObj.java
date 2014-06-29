@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -81,7 +79,6 @@ public class PersistObj {
 			if (file.exists()) {
 				fin = new FileInputStream(file);
 				objIn = new ObjectInputStream(fin);
-				@SuppressWarnings("unchecked")
 				Object ret = objIn.readObject();
 				
 				return ret;

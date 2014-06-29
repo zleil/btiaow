@@ -1,48 +1,41 @@
 package com.btiao.tzsc.weixin;
 
 import java.io.OutputStream;
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
-
 import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.weixin.WXMsg.Text;
 
 public class WXMsgProcessor {
-	static public String helpFullStr = "发送文字、图片，描述物品\n" +
-							"发送数字 0 ，取消描述\n" +
-							"发送数字 1 ，提交物品信息\n\n" +
+	static public String helpStr = "发送文字、图片，描述物品\n\n" +
 							
 							"发送数字 5 ，查看您的物品\n" +
-							"发送数字 3 x ，删除第x件物品\n" +
+							"发送数字 3 x ，删除第x件物品\n\n" +
 							
 							"发送\"搜索 xxx\"，搜索xxx物品\n" + 
-							"发送数字 8 ，显示更多物品\n" +
-							"发送数字 8 x ，细看第x件物品";
+							"发送数字 8 ，显示更多物品";
 	
-	static public String helpStr = "发送文字、图片，描述物品\n\n" +
-			
-			"发送数字 5 ，查看您的物品\n\n" +
-			
-			"发送\"搜索 xxx\"，搜索xxx物品\n";
-	
-	public void proc(WXMsg msg, HttpServletResponse rsp) throws Exception {
+	public void proc(WXMsg reqWxMsg, HttpServletResponse rsp) throws Exception {
 		rsp.setCharacterEncoding("UTF-8");
 		
-		if (msg instanceof WXMsg.Text) {
-			processTextMsg((Text) msg, rsp.getOutputStream());
-		} else if (msg instanceof WXMsg.Picture){
-			processPicMsg((WXMsg.Picture) msg, rsp.getOutputStream());
-		} else {
-			WXMsg.Text ret = new WXMsg.Text();
-			ret.content = helpStr;
-			ret.createTime = msg.createTime;
-			ret.fromUserName = msg.toUserName;
-			ret.msgId = msg.msgId;
-			ret.toUserName = msg.msgId;
-			
-			rsp.getOutputStream().write(WXMsgFactory.genXML(ret).getBytes());
+		if (reqWxMsg instanceof WXMsg.Text) {
+			processTextMsg((Text) reqWxMsg, rsp.getOutputStream());
+		} else if (reqWxMsg instanceof WXMsg.Picture){
+			processPicMsg((WXMsg.Picture) reqWxMsg, rsp.getOutputStream());
+		} else {			
+			WXMsg helpMsg = getHelpMsg(reqWxMsg);
+			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
 		}
+	}
+	
+	private WXMsg getHelpMsg(WXMsg req) {
+		WXMsg.Text ret = new WXMsg.Text();
+		ret.content = helpStr;
+		ret.createTime = req.createTime;
+		ret.fromUserName = req.toUserName;
+		ret.msgId = req.msgId;
+		ret.toUserName = req.fromUserName;
+		
+		return ret;
 	}
 	
 	private void processPicMsg(WXMsg.Picture msg, OutputStream out) throws Exception {
@@ -61,75 +54,67 @@ public class WXMsgProcessor {
 		out.write(retXML.getBytes());
 	}
 	
-	private void processTextMsg(final WXMsg.Text msg, OutputStream out) throws Exception  {
-		final String userName = msg.fromUserName;
-		final String appId = msg.toUserName;
+	private void processTextMsg(final WXMsg.Text reqWxMsg, OutputStream out) throws Exception  {
+		final String userName = reqWxMsg.fromUserName;
+		final String appId = reqWxMsg.toUserName;
 		
 		String ret = null;
-		if (msg.content.startsWith("1")) {
+		if (reqWxMsg.content.startsWith("1")) {
 			ret = WXPutStateMgr.instance().endPut(userName);
-		} else if (msg.content.startsWith("0")) {
+		} else if (reqWxMsg.content.startsWith("0")) {
 			ret = WXPutStateMgr.instance().cancelPut(userName);
-		} else if (msg.content.startsWith("搜索")) {
-			String toSearch = msg.content.substring(2).trim();
-			final List<WXMsg> msgs = WXPutStateMgr.instance().search(userName, toSearch);
+		} else if (reqWxMsg.content.startsWith("搜索")) {
+			String toSearch = reqWxMsg.content.substring(2).trim();
+			WXMsg retMsg = WXPutStateMgr.instance().search(userName, toSearch);
 
-			if (msgs.size() != 0) {
-				WXMsg retMsg = msgs.get(0);
+			if (retMsg != null) {
 				retMsg.createTime = System.currentTimeMillis();
 				retMsg.fromUserName = appId;
 				retMsg.toUserName = userName;
-				retMsg.msgId = msg.msgId;
+				retMsg.msgId = reqWxMsg.msgId;
 				
 				String retStr = WXMsgFactory.genXML(retMsg);
 				MyLogger.get().debug("processTextMsg search response msg:\n"+retStr);
 				out.write(retStr.getBytes());
 				return;
-				
-//				ret = "";
-//				//TODO use thread pool to do the following sending action asyncly.
-//				Thread tmp = new Thread() {
-//					public void run() {
-//						try {
-//							WXApi wxapi = new WXApi();
-//							for (WXMsg retMsg : msgs) {
-//								retMsg.createTime = System.currentTimeMillis();
-//								retMsg.fromUserName = appId;
-//								retMsg.toUserName = userName;
-//								
-//								wxapi.sendWXMsg(retMsg);
-//							}
-//						} catch (Exception e) {
-//							MyLogger.get().warn("failed while get more.", e);
-//						}
-//					}
-//				};
-//				tmp.setName("tzsc_search_output");
-//				tmp.start();
 			} else {
 				ret = "抱歉，没找到关于 "+toSearch+" 的物品";
 			}
-		} else if (msg.content.startsWith("5")) {
-			ret = WXPutStateMgr.instance().returnSelfAll(userName);
-		} else if (msg.content.startsWith("3")) {
+		} else if (reqWxMsg.content.startsWith("5")) {
+			WXMsg retMsg = WXPutStateMgr.instance().returnSelfAll(userName);
+			
+			if (retMsg != null) {
+				retMsg.createTime = System.currentTimeMillis();
+				retMsg.fromUserName = appId;
+				retMsg.toUserName = userName;
+				retMsg.msgId = reqWxMsg.msgId;
+				
+				String retStr = WXMsgFactory.genXML(retMsg);
+				MyLogger.get().debug("processTextMsg search response msg:\n"+retStr);
+				out.write(retStr.getBytes());
+				return;
+			} else {
+				ret = "您没有任何交换物品，赶紧提交吧\n\n" + helpStr;
+			}
+		} else if (reqWxMsg.content.startsWith("3")) {
 			int idx = -1;
 			try {
-				idx = Integer.parseInt(msg.content.substring(2).trim());
+				idx = Integer.parseInt(reqWxMsg.content.substring(2).trim());
 				ret = WXPutStateMgr.instance().delOne(userName, idx);
 			} catch (NumberFormatException e) {
 				ret = "发送数字 3 x ，删除您的第x个物品";
 			}
 			
-		} else if (msg.content.startsWith("8")) {
-			final List<WXMsg> rets = WXPutStateMgr.instance().more(userName);
-			if (rets.size() == 0) {
+		} else if (reqWxMsg.content.startsWith("8")) {
+			WXMsg retMsg = WXPutStateMgr.instance().more(userName);
+			
+			if (retMsg == null) {
 				ret = "所有物品均已呈现";
 			} else {
-				WXMsg retMsg = rets.get(0);
 				retMsg.createTime = System.currentTimeMillis();
 				retMsg.fromUserName = appId;
 				retMsg.toUserName = userName;
-				retMsg.msgId = msg.msgId;
+				retMsg.msgId = reqWxMsg.msgId;
 				
 				String retStr = WXMsgFactory.genXML(retMsg);
 				
@@ -137,30 +122,15 @@ public class WXMsgProcessor {
 				
 				out.write(retStr.getBytes());
 				return;
-				
-//				ret = "";
-//				//TODO use thread pool to do the following sending action asyncly.
-//				Thread tmp = new Thread() {
-//					public void run() {
-//						try {
-//							WXApi wxapi = new WXApi();
-//							for (WXMsg retMsg : rets) {
-//								retMsg.createTime = System.currentTimeMillis();
-//								retMsg.fromUserName = appId;
-//								retMsg.toUserName = userName;
-//								
-//								wxapi.sendWXMsg(retMsg);
-//							}
-//						} catch (Exception e) {
-//							MyLogger.get().warn("failed while get more.", e);
-//						}
-//					}
-//				};
-//				tmp.setName("tzsc_more_output");
-//				tmp.start();
-			}	
+			}
+		} else if (reqWxMsg.content.startsWith("h") || reqWxMsg.content.startsWith("帮助")) {
+			WXMsg helpMsg = getHelpMsg(reqWxMsg);
+			MyLogger.get().debug("processTextMsg help response msg:\n"+helpMsg);
+			out.write(WXMsgFactory.genXML(helpMsg).getBytes());
+			
+			return;
 		} else {
-			ret = WXPutStateMgr.instance().putTextMsg(userName, msg.content);
+			ret = WXPutStateMgr.instance().putTextMsg(userName, reqWxMsg.content);
 		}
 		
 		WXMsg.Text retMsg = new WXMsg.Text();
@@ -168,7 +138,7 @@ public class WXMsgProcessor {
 		retMsg.fromUserName = appId;
 		retMsg.toUserName = userName;
 		retMsg.createTime = System.currentTimeMillis();
-		retMsg.msgId = msg.msgId;
+		retMsg.msgId = reqWxMsg.msgId;
 		
 		String retXML = WXMsgFactory.genXML(retMsg);
 		
