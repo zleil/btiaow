@@ -20,7 +20,7 @@ public class State implements Serializable {
 		static public class MsgType {
 			static public int text = 1;
 			static public int pic = 2;
-			static public int phone = 2;
+			static public int phone = 3;
 		}
 		
 		public int t;
@@ -66,5 +66,15 @@ public class State implements Serializable {
 	public State(String name) {
 		id = genNextId();
 		this.userId = name;
+	}
+	
+	public String getPhoneNum() {
+		for (Info info : infos) {
+			if (info.t == Info.MsgType.phone) {
+				return info.content;
+			}
+		}
+		
+		return "...";
 	}
 }

@@ -60,11 +60,13 @@ public class WXPutStateMgr {
 		private List<State> all;
 	}
 	
-	static private WXPutStateMgr inst;
+	static private Map<Long,WXPutStateMgr> insts = new HashMap<Long,WXPutStateMgr>();
 	
-	static synchronized WXPutStateMgr instance() {
+	static synchronized WXPutStateMgr instance(long areaId) {
+		WXPutStateMgr inst = insts.get(areaId);
 		if (inst == null) {
-			inst = new WXPutStateMgr();
+			inst = new WXPutStateMgr(areaId);
+			insts.put(areaId, inst);
 		}
 		
 		return inst;
@@ -140,18 +142,19 @@ public class WXPutStateMgr {
 		}
 		
 		if (!hasPutPhone) {
-			return Tip.get().noPhoneNumDescErrorTip;
+			this.curPuts.put(name, state);
+			return Tip.get().noPhoneNumDescErrorTip + "\n\n" + Tip.get().phoneNumFillHelpTip;
 		}
 		
 		state.publishTime = System.currentTimeMillis();
 		
-		int total = StateMgr.instance().addState(name, state);
+		int total = StateMgr.instance(areaId).addState(name, state);
 		
 		return Tip.get().putSuccessTip + total;
 	}
 	
 	public WXMsg returnSelfAll(String name) {
-		List<State> allSelf = StateMgr.instance().getAllStateByUserName(name);
+		List<State> allSelf = StateMgr.instance(areaId).getAllStateByUserName(name);
 		
 		PageView pv = new PageView(allSelf);
 		
@@ -159,11 +162,11 @@ public class WXPutStateMgr {
 	}
 	
 	public String delOne(String name, int idx) {
-		int ret = StateMgr.instance().delOneState(name, idx);
-		if (ret >= 0) {			
+		int ret = StateMgr.instance(areaId).delOneState(name, idx);
+		if (ret >= 0) {
 			return Tip.get().delStateSuccess + ret;
 		} else {
-			List<State> allSelf = StateMgr.instance().getAllStateByUserName(name);
+			List<State> allSelf = StateMgr.instance(areaId).getAllStateByUserName(name);
 			return Tip.get().delStateFailed + ((allSelf != null) ? allSelf.size() : 0);
 		}
 	}
@@ -176,7 +179,7 @@ public class WXPutStateMgr {
 			return msg;
 		}
 		
-		List<State> allMatched = StateMgr.instance().searchState(text);
+		List<State> allMatched = StateMgr.instance(areaId).searchState(text);
 		PageView pv = new PageView(allMatched);
 		
 		WXMsg ret = pv.next();
@@ -214,6 +217,12 @@ public class WXPutStateMgr {
 		}
 		
 	}
+	
+	private WXPutStateMgr(long areaId) {
+		this.areaId = areaId;
+	}
+	
+	private final long areaId;
 	
 	private Map<String,State> curPuts = new HashMap<String,State>();
 	

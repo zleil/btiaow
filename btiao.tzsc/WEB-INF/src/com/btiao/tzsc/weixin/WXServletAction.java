@@ -42,6 +42,9 @@ public class WXServletAction extends HttpServlet {
 		String xmlStr = null;
 		
 		try {
+			String areaIdStr = getAreaId(request.getRequestURI());
+			long areaId = Long.parseLong(areaIdStr);
+			
 			InputStream bf = request.getInputStream();
 			int size = request.getContentLength();
 			MyLogger.get().debug("char-encode="+request.getCharacterEncoding());
@@ -74,7 +77,7 @@ public class WXServletAction extends HttpServlet {
 			
 			WXMsg msg = WXMsgFactory.gen(xmlStr);
 			if (msg != null) {
-				new WXMsgProcessor().proc(msg, response);
+				new WXMsgProcessor(areaId).proc(msg, response);
 			} else {
 				MyLogger.get().warn("can't parse wxmsg");
 			}

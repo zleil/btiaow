@@ -6,6 +6,9 @@ import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.weixin.WXMsg.Text;
 
 public class WXMsgProcessor {
+	public WXMsgProcessor(long areaId) {
+		this.areaId = areaId;
+	}
 	
 	public void proc(WXMsg reqWxMsg, HttpServletResponse rsp) throws Exception {
 		rsp.setCharacterEncoding("UTF-8");
@@ -13,7 +16,7 @@ public class WXMsgProcessor {
 		if (reqWxMsg instanceof WXMsg.Text) {
 			processTextMsg((Text) reqWxMsg, rsp.getOutputStream());
 		} else if (reqWxMsg instanceof WXMsg.Picture){
-			processPicMsg((WXMsg.Picture) reqWxMsg, rsp.getOutputStream());
+			processPicMsg(areaId, (WXMsg.Picture) reqWxMsg, rsp.getOutputStream());
 		} else {			
 			WXMsg helpMsg = getHelpMsg(reqWxMsg);
 			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
@@ -31,8 +34,8 @@ public class WXMsgProcessor {
 		return ret;
 	}
 	
-	private void processPicMsg(WXMsg.Picture msg, OutputStream out) throws Exception {
-		String ret = WXPutStateMgr.instance().putUrlMsg(msg.fromUserName, msg.picUrl);
+	private void processPicMsg(long areaId, WXMsg.Picture msg, OutputStream out) throws Exception {
+		String ret = WXPutStateMgr.instance(areaId).putUrlMsg(msg.fromUserName, msg.picUrl);
 		
 		WXMsg.Text rspMsg = new WXMsg.Text();
 		rspMsg.fromUserName = msg.toUserName;
@@ -53,12 +56,12 @@ public class WXMsgProcessor {
 		
 		String ret = null;
 		if (reqWxMsg.content.startsWith("1")) {
-			ret = WXPutStateMgr.instance().endPut(userName);
+			ret = WXPutStateMgr.instance(areaId).endPut(userName);
 		} else if (reqWxMsg.content.startsWith("0")) {
-			ret = WXPutStateMgr.instance().cancelPut(userName);
+			ret = WXPutStateMgr.instance(areaId).cancelPut(userName);
 		} else if (reqWxMsg.content.startsWith("搜索")) {
 			String toSearch = reqWxMsg.content.substring(2).trim();
-			WXMsg retMsg = WXPutStateMgr.instance().search(userName, toSearch);
+			WXMsg retMsg = WXPutStateMgr.instance(areaId).search(userName, toSearch);
 
 			if (retMsg != null) {
 				retMsg.createTime = System.currentTimeMillis();
@@ -74,7 +77,7 @@ public class WXMsgProcessor {
 				ret = "抱歉，没找到关于 "+toSearch+" 的物品";
 			}
 		} else if (reqWxMsg.content.startsWith("5")) {
-			WXMsg retMsg = WXPutStateMgr.instance().returnSelfAll(userName);
+			WXMsg retMsg = WXPutStateMgr.instance(areaId).returnSelfAll(userName);
 			
 			if (retMsg != null) {
 				retMsg.createTime = System.currentTimeMillis();
@@ -93,13 +96,13 @@ public class WXMsgProcessor {
 			int idx = -1;
 			try {
 				idx = Integer.parseInt(reqWxMsg.content.substring(2).trim());
-				ret = WXPutStateMgr.instance().delOne(userName, idx);
+				ret = WXPutStateMgr.instance(areaId).delOne(userName, idx);
 			} catch (NumberFormatException e) {
 				ret = "发送数字 3 x ，删除您的第x个物品";
 			}
 			
 		} else if (reqWxMsg.content.startsWith("8")) {
-			WXMsg retMsg = WXPutStateMgr.instance().more(userName);
+			WXMsg retMsg = WXPutStateMgr.instance(areaId).more(userName);
 			
 			if (retMsg == null) {
 				ret = "所有物品均已呈现";
@@ -119,9 +122,9 @@ public class WXMsgProcessor {
 		} else if (reqWxMsg.content.startsWith("@")) {
 			String tel = reqWxMsg.content.substring(1);
 			if (!checkPhoneNum(tel)) {
-				ret = WXPutStateMgr.instance().putPhoneNum(userName, tel);
+				ret = WXPutStateMgr.instance(areaId).putPhoneNum(userName, tel);
 			} else {
-				ret = Tip.get().phoneNumErrorTip;
+				ret = Tip.get().phoneNumFillHelpTip;
 			}
 		} else if (reqWxMsg.content.startsWith("h") || reqWxMsg.content.startsWith("帮助")) {
 			WXMsg helpMsg = getHelpMsg(reqWxMsg);
@@ -131,7 +134,7 @@ public class WXMsgProcessor {
 			
 			return;
 		} else {
-			ret = WXPutStateMgr.instance().putTextMsg(userName, reqWxMsg.content);
+			ret = WXPutStateMgr.instance(areaId).putTextMsg(userName, reqWxMsg.content);
 		}
 		
 		WXMsg.Text retMsg = new WXMsg.Text();
@@ -156,4 +159,6 @@ public class WXMsgProcessor {
 		
 		return tel.length() == 9;
 	}
+	
+	private final long areaId;
 }

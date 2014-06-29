@@ -26,9 +26,6 @@ public class WXServletDispDetail extends HttpServlet {
 	public void doGet(HttpServletRequest request,
 			HttpServletResponse response) {	
 		try {
-			String areaId = getAreaId(request.getRequestURI());
-			MyLogger.getAccess().info("do wx dispDetail: areaId=" + areaId + ",src-ip=" + request.getRemoteAddr());
-			
 			_doGet(request, response);
 			
 			MyLogger.getAccess().info("do wx dispDetail end");
@@ -46,6 +43,11 @@ public class WXServletDispDetail extends HttpServlet {
 		
 		PrintWriter out;
 		try {
+			String areaIdStr = getAreaId(request.getRequestURI());
+			long areaId = Long.parseLong(areaIdStr);
+			
+			MyLogger.getAccess().info("do wx dispDetail: areaId=" + areaIdStr + ",src-ip=" + request.getRemoteAddr());
+			
 			long stateId = Long.parseLong(stateIdStr);
 			
 			MyLogger.getAccess().info("stateId="+stateId);
@@ -54,14 +56,14 @@ public class WXServletDispDetail extends HttpServlet {
 			
 			out = response.getWriter();
 			
-			display(stateId, out);
+			display(areaId, stateId, out);
 		} catch (IOException e) {
 			MyLogger.get().warn("process wx_dispdetail _doGet failed!", e);
 		}
 	}
 	
-	private void display(long stateId, PrintWriter out) {
-		State state = StateMgr.instance().getState(stateId);
+	private void display(long areaId, long stateId, PrintWriter out) {
+		State state = StateMgr.instance(areaId).getState(stateId);
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html><head>");
@@ -89,9 +91,17 @@ public class WXServletDispDetail extends HttpServlet {
 			
 			String timeStr = "";
 			long curTime = System.currentTimeMillis();
-			float hours = (curTime - state.publishTime)/3600;
-			if (hours < 24) {
-				timeStr = "" + (int)hours + " 小时前";
+			float hours = (curTime - state.publishTime)/(3600000);
+			if (hours < 1) {
+				int minites = (int)((curTime - state.publishTime)/(60000));
+				if (minites <= 0) {
+					timeStr = Tip.get().rightNow;
+				} else {
+					timeStr = "" + (int)minites + Tip.get().minutesBefore;
+				}
+				
+			} if (hours < 24) {
+				timeStr = "" + (int)hours + Tip.get().hoursBefore;
 			} else {
 				Date date = new Date(state.publishTime);
 				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -103,6 +113,8 @@ public class WXServletDispDetail extends HttpServlet {
 			sb.append("</span>");
 			
 			sb.append("<span><a href=\"javascript:viewProfile();\">&nbsp;&nbsp;关注此跳蚤市场</a></span>");
+			
+			sb.append("<span><a href=\"tel:"+ state.getPhoneNum()+"\"></a></span>");
 			
 			sb.append("</h2>");
 			

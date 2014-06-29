@@ -11,6 +11,7 @@ public class Tip {
 	
 	private Tip() {}
 	
+	
 	public String continuePutTip = "发送文字、图片，继续描述物品\n\n" + 
 			"发送数字 0 ，取消描述\n" +
 			"发送数字 1 ，提交物品信息";
@@ -25,9 +26,9 @@ public class Tip {
 							"发送数字 3 x ，删除第x件物品\n\n" +
 							
 							"发送\"搜索 xxx\"，搜索xxx物品\n" + 
-							"发送数字 8 ，显示更多物品";
+							"发送数字 8 ，显示更多搜到的物品";
 	
-	public String phoneNumErrorTip = "以@开头表示您要输入您的电话号码，但您输入的电话号码似乎不对，@符号子后不是9位数字哦～";
+	public String phoneNumFillHelpTip = "单独发送以@开头的信息，表示您要输入您的电话号码，@符号子后必须是9位数字哦～";
 	
 	public String noFirstTextDescError = "亲，得先用文字描述下物品呦";
 	
@@ -44,4 +45,8 @@ public class Tip {
 			"发送数字 1 ，提交物品信息";
 	
 	public String noMoreDataTip = "没有更多的信息了～";
+	
+	public String hoursBefore = " 小时前";
+	public String minutesBefore = " 分钟前";
+	public String rightNow = "刚才发布";
 }

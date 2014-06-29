@@ -8,12 +8,15 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class StateMgr {
-	static private StateMgr inst = null;
+	static private Map<Long,StateMgr> insts = new HashMap<Long,StateMgr>();
 	static private String persistFn = "tzsc.db";
 	
-	static public synchronized StateMgr instance() {
+	static public synchronized StateMgr instance(long areaId) {
+		StateMgr inst = insts.get(areaId);
+		
 		if (inst == null) {
-			inst = new StateMgr();
+			inst = new StateMgr(areaId);
+			insts.put(areaId, inst);
 		}
 		
 		return inst;
@@ -89,10 +92,12 @@ public class StateMgr {
 	}
 	
 	static public void main(String[] args) {
-		StateMgr.instance().addState("abc", new State(""));
+		StateMgr.instance(0).addState("abc", new State(""));
 	}
 	
-	private StateMgr() {
+	private StateMgr(final long areaId) {
+		this.areaId = areaId;
+		
 		try {
 			load();
 		} catch (Exception e) {
@@ -102,7 +107,7 @@ public class StateMgr {
 		PersistObj.addBackTask(new Runnable() {
 			@Override
 			public void run() {
-				if (!StateMgr.instance().isChanged()) {
+				if (!StateMgr.instance(areaId).isChanged()) {
 					return;
 				}
 				
@@ -110,10 +115,10 @@ public class StateMgr {
 				
 				new PersistObj().moveAndBack(StateMgr.persistFn);
 				
-				synchronized(StateMgr.instance()) {
+				synchronized(StateMgr.instance(areaId)) {
 					new PersistObj().persist(StateMgr.persistFn, all);
 					
-					StateMgr.instance().setUnchanged();
+					StateMgr.instance(areaId).setUnchanged();
 				}
 			}
 		});
@@ -134,7 +139,14 @@ public class StateMgr {
 				this.stateId2State.put(state.id, state);
 			}
 		}		
-	}	
+	}
+	
+	@Override
+	public String toString() {
+		return "StateMgr#" + areaId;
+	}
+	
+	private final long areaId;
 	
 	private volatile boolean isChanged = false;
 	private Map<String,List<State>> all = new HashMap<String,List<State>>();
