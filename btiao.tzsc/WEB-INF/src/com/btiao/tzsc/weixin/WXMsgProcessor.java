@@ -95,7 +95,7 @@ public class WXMsgProcessor {
 		} else if (reqWxMsg.content.startsWith("3")) {
 			int idx = -1;
 			try {
-				idx = Integer.parseInt(reqWxMsg.content.substring(2).trim());
+				idx = Integer.parseInt(reqWxMsg.content.substring(1).trim());
 				ret = WXPutStateMgr.instance(areaId).delOne(userName, idx);
 			} catch (NumberFormatException e) {
 				ret = "发送数字 3 x ，删除您的第x个物品";
@@ -121,7 +121,7 @@ public class WXMsgProcessor {
 			}
 		} else if (reqWxMsg.content.startsWith("@")) {
 			String tel = reqWxMsg.content.substring(1);
-			if (!checkPhoneNum(tel)) {
+			if (checkPhoneNum(tel)) {
 				ret = WXPutStateMgr.instance(areaId).putPhoneNum(userName, tel);
 			} else {
 				ret = Tip.get().phoneNumFillHelpTip;
@@ -157,7 +157,7 @@ public class WXMsgProcessor {
 			return false;
 		}
 		
-		return tel.length() == 9;
+		return tel.length() == 11;
 	}
 	
 	private final long areaId;

@@ -126,7 +126,7 @@ public class StateMgr {
 	
 	@SuppressWarnings("unchecked")
 	private void load() throws Exception {
-		Object persistAll = new PersistObj().load(StateMgr.persistFn);
+		Object persistAll = new PersistObj().load(StateMgr.persistFn+"_"+areaId);
 		if (persistAll == null) {
 			return;
 		}

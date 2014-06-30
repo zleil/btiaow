@@ -1,5 +1,6 @@
 package com.btiao.tzsc.weixin;
 
+import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,11 +8,17 @@ import java.util.Map;
 import com.btiao.tzsc.service.State;
 import com.btiao.tzsc.service.StateMgr;
 import com.btiao.tzsc.service.State.Info.MsgType;
+import com.btiao.tzsc.weixin.WXMsg.PicText;
 
 public class WXPutStateMgr {
 	static class PageView {
 		public PageView(List<State> sts) {
 			all = sts;
+		}
+		
+		public PageView(List<State> sts, int page_size) {
+			all = sts;
+			this.page_size = page_size;
 		}
 		
 		public WXMsg next() {
@@ -83,9 +90,11 @@ public class WXPutStateMgr {
 //	}
 	
 	public String putTextMsg(String name, String text) {
+		text = normalize(text);
+		
 		List<State> all = StateMgr.instance(areaId).getAllStateByUserName(name);
 		if (all != null && all.size() >= 8) {
-			return Tip.get().reachMaxSwitch; 
+			return Tip.get().reachMaxSwitch;
 		}
 		
 		State state = this.curPuts.get(name);
@@ -191,9 +200,9 @@ public class WXPutStateMgr {
 		}
 		
 		List<State> allMatched = StateMgr.instance(areaId).searchState(text);
-		PageView pv = new PageView(allMatched);
+		PageView pv = new PageView(allMatched, 9);
 		
-		WXMsg ret = pv.next();
+		WXMsg.PicText ret = (PicText) pv.next();
 		
 		if (ret != null) {
 			synchronized (pvs) {
@@ -201,6 +210,10 @@ public class WXPutStateMgr {
 				
 				if (pv.isEnd()) {
 					pvs.remove(name);
+				} else {
+					WXMsg.PicText.Item item = new WXMsg.PicText.Item();
+					item.title = Tip.get().moreTip;
+					ret.items.add(item);
 				}
 			}
 		}
@@ -231,6 +244,24 @@ public class WXPutStateMgr {
 	
 	private WXPutStateMgr(long areaId) {
 		this.areaId = areaId;
+	}
+	
+	private String normalize(String text) {
+		text = Normalizer.normalize(text, Normalizer.Form.NFD);
+		
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i<text.length(); ++i) {
+			char ch = text.charAt(i);
+			if (ch == '<') {
+				sb.append("&lt;");
+			} else if (ch == '>') {
+				sb.append("&gt;");
+			} else {
+				sb.append(ch);
+			}
+		}
+		
+		return sb.toString();
 	}
 	
 	private final long areaId;
