@@ -117,6 +117,7 @@ public class WXServletDispDetail extends HttpServlet {
 			
 			String phone = state.getPhoneNum();
 			sb.append("<a href=\"tel:"+ phone +"\">点击电话交流("+phone+")</a>");
+			sb.append("<p class=\"note\">声明：请自行确认物品，本跳蚤市场暂时不做任何承诺与保证。</p>");
 			
 			sb.append("</h2>");
 			

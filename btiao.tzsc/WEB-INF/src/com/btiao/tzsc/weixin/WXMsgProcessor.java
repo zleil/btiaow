@@ -13,10 +13,20 @@ public class WXMsgProcessor {
 	public void proc(WXMsg reqWxMsg, HttpServletResponse rsp) throws Exception {
 		rsp.setCharacterEncoding("UTF-8");
 		
+		if (reqWxMsg == null) {
+			WXMsg helpMsg = getHelpMsg(reqWxMsg);
+			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
+			return;
+		}
+		
 		if (reqWxMsg instanceof WXMsg.Text) {
 			processTextMsg((Text) reqWxMsg, rsp.getOutputStream());
 		} else if (reqWxMsg instanceof WXMsg.Picture){
 			processPicMsg(areaId, (WXMsg.Picture) reqWxMsg, rsp.getOutputStream());
+		} else if (reqWxMsg instanceof WXMsg.Event) {
+			WXMsg.Text helpMsg = (Text) getHelpMsg(reqWxMsg);
+			helpMsg.content = Tip.get().welcomeStr + "\n\n" + helpMsg.content;
+			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
 		} else {			
 			WXMsg helpMsg = getHelpMsg(reqWxMsg);
 			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
@@ -152,7 +162,7 @@ public class WXMsgProcessor {
 	
 	private boolean checkPhoneNum(String tel) {
 		try {
-			Integer.parseInt(tel);
+			Long.parseLong(tel);
 		} catch (Throwable e) {
 			return false;
 		}

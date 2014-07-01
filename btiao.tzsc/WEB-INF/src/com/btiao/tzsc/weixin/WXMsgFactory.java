@@ -147,20 +147,28 @@ public class WXMsgFactory {
 			if (type.equals("text")) {
 				msg = new WXMsg.Text();
 				((WXMsg.Text)msg).content = root.getChildText("Content");
+				
+				msg.msgId = root.getChildText("MsgId");
 			} else if (type.equals("image")) {
 				msg = new WXMsg.Picture();
 				((WXMsg.Picture)msg).picUrl = root.getChildText("PicUrl");
 				((WXMsg.Picture)msg).mediaId = root.getChildText("MediaId");
+				
+				msg.msgId = root.getChildText("MsgId");
+			} else if (type.equals("event")) {
+				msg = new WXMsg.Event();
+				((WXMsg.Event)msg).event = root.getChildText("Event");
+			} else {
+				return null;
 			}
 			
 			msg.createTime = Long.parseLong(root.getChildText("CreateTime"));
 			msg.fromUserName = root.getChildText("FromUserName");
-			msg.msgId = root.getChildText("MsgId");
 			msg.toUserName = root.getChildText("ToUserName");
 			
 			return msg;
 		} catch (Throwable e) {
-			e.printStackTrace();
+			MyLogger.get().warn("gen WXMsg object failed!\n" + xml, e);
 		}
 		
 		return null;

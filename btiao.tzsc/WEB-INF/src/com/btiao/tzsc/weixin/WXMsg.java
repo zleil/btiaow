@@ -28,4 +28,11 @@ public class WXMsg {
 		
 		public List<Item> items = new ArrayList<Item>();
 	}
+	
+	public static class Event extends WXMsg {
+		static public final String SUB = "subscribe";
+		static public final String UNSUB = "unsubscribe";
+		
+		public String event;
+	}
 }

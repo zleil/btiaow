@@ -27,7 +27,7 @@ public class Tip {
 							
 							"发送\"搜索 xxx\"，搜索xxx物品";
 	
-	public String phoneNumFillHelpTip = "单独发送以@开头的信息，表示您要输入您的电话号码，@符号子后必须是9位数字哦～";
+	public String phoneNumFillHelpTip = "单独发送以@开头的信息，表示您要输入您的电话号码，@符号子后必须是11位数字哦～";
 	
 	public String noFirstTextDescError = "亲，得先用文字描述下物品呦";
 	
