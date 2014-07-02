@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration monitorInterval="30">
   <appenders>  
+  	<File name="suggestion_appender" filename="logs/suggestion.txt">
+  		<param name="BufferSize" value="0" />
+  	</File>
     <File name="tzsc_appender" filename="logs/tzsc.log">  
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
     </File>
@@ -23,6 +26,9 @@
     </logger>
     <logger name="access" level="debug">
       <appender-ref ref="access_appender"/>
+    </logger>
+    <logger name="suggestion" level="error">
+    	<appender-ref ref="suggestion_appender"/>
     </logger>
     <root level="debug">
     	<appender-ref ref="STDOUT"/>

@@ -25,7 +25,10 @@ public class Tip {
 							"发送数字 5 ，查看您的物品\n" +
 							"发送数字 3 x ，删除第x件物品\n\n" +
 							
-							"发送\"搜索 xxx\"，搜索xxx物品";
+							"发送空格，看看大家发布的物品\n\n" +
+							//"发送\"搜索 xxx\"，搜索xxx物品\n\n" +
+							
+							"发送叹号 \"! xxx\"，发送可留下对本市场的xxx吐槽和意见";
 	
 	public String phoneNumFillHelpTip = "单独发送以@开头的信息，表示您要输入您的电话号码，@符号子后必须是11位数字哦～";
 	
@@ -52,4 +55,6 @@ public class Tip {
 	public String reachMaxSwitch = "抱歉，系统限制最多存在8个待交换物品～";
 	
 	public String moreTip = ">>还有更多呢!\n发送数字 8 ，显示更多搜到的物品";
+	
+	public String thanksSuggestion = "感谢您提供宝贵的建议。";
 }

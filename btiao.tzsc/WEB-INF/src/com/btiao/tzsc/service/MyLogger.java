@@ -16,6 +16,10 @@ public class MyLogger {
 		return LogManager.getLogger("attack");
 	}
 	
+	static public Logger getSuggestion() {
+		return LogManager.getLogger("suggestion");
+	}
+	
 	static public Logger getAccess() {
 		return LogManager.getLogger("access");
 	}

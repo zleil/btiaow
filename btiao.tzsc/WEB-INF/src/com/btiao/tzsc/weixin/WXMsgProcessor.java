@@ -65,11 +65,16 @@ public class WXMsgProcessor {
 		final String appId = reqWxMsg.toUserName;
 		
 		String ret = null;
-		if (reqWxMsg.content.startsWith("1")) {
+		if (reqWxMsg.content.startsWith("!") ||
+				reqWxMsg.content.startsWith("！")) {
+			MyLogger.getSuggestion().fatal("{user:\"" + reqWxMsg.fromUserName + "\"; areaId:\"" + areaId + "\";}\n" + reqWxMsg.content);
+			ret = Tip.get().thanksSuggestion;
+		} else if (reqWxMsg.content.startsWith("1")) {
 			ret = WXPutStateMgr.instance(areaId).endPut(userName);
 		} else if (reqWxMsg.content.startsWith("0")) {
 			ret = WXPutStateMgr.instance(areaId).cancelPut(userName);
-		} else if (reqWxMsg.content.startsWith("搜索")) {
+		} else if (reqWxMsg.content.startsWith(" ") ||
+				reqWxMsg.content.startsWith("\n")) {
 			String toSearch = reqWxMsg.content.substring(2).trim();
 			WXMsg retMsg = WXPutStateMgr.instance(areaId).search(userName, toSearch);
 
