@@ -21,18 +21,18 @@ import com.btiao.tzsc.service.MyLogger;
  * @author rebecca
  *
  */
-public class WXSession {
-	static private WXSession inst = null;
+public class WXApiSession {
+	static private WXApiSession inst = null;
 	
-	static synchronized WXSession instance() {
+	static synchronized WXApiSession instance() {
 		if (inst == null) {
-			inst = new WXSession();
+			inst = new WXApiSession();
 		}
 		return inst;
 	}
 	
 	static public void main(String[] args) {
-		System.out.println(WXSession.instance().getToken());
+		System.out.println(WXApiSession.instance().getToken());
 	}
 	
 	static CloseableHttpClient getAHttpClient() throws KeyManagementException, NoSuchAlgorithmException {
@@ -113,7 +113,7 @@ public class WXSession {
         }
 	}
 	
-	private WXSession() {}
+	private WXApiSession() {}
 	
 	private String token = null;
 	private long timeout = 7200; //second
