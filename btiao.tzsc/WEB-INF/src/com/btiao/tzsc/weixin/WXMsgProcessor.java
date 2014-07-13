@@ -23,14 +23,72 @@ public class WXMsgProcessor {
 			processTextMsg((Text) reqWxMsg, rsp.getOutputStream());
 		} else if (reqWxMsg instanceof WXMsg.Picture){
 			processPicMsg(areaId, (WXMsg.Picture) reqWxMsg, rsp.getOutputStream());
-		} else if (reqWxMsg instanceof WXMsg.Event) {
+		} else if (reqWxMsg instanceof WXMsg.SubEvent) {
 			WXMsg.Text helpMsg = (Text) getHelpMsg(reqWxMsg);
 			helpMsg.content = Tip.get().welcomeStr + "\n\n" + helpMsg.content;
 			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
+		} else if (reqWxMsg instanceof WXMsg.Click) {
+			processClickMsg(reqWxMsg, rsp.getOutputStream());
 		} else {			
 			WXMsg helpMsg = getHelpMsg(reqWxMsg);
 			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
 		}
+	}
+	
+	private void processClickMsg(WXMsg reqWxMsg, OutputStream out) throws Exception {
+		String userName = reqWxMsg.fromUserName;
+		String clickKey = ((WXMsg.Click)reqWxMsg).key;
+		String ret = null;
+		if (clickKey.equals("act_publish")) {
+			ret = WXPutStateMgr.instance(areaId).endPut(userName);
+		} else if (clickKey.equals("act_cancel")) {
+			ret = WXPutStateMgr.instance(areaId).cancelPut(userName);
+		} else if (clickKey.equals("act_browse")) {
+			WXMsg retMsg = WXPutStateMgr.instance(areaId).more(userName);
+			if (retMsg == null) {
+				retMsg = WXPutStateMgr.instance(areaId).search(userName, "");
+
+				if (retMsg != null) {
+					retMsg.createTime = System.currentTimeMillis();
+					retMsg.fromUserName = reqWxMsg.toUserName;
+					retMsg.toUserName = userName;
+					retMsg.msgId = reqWxMsg.msgId;
+					new WXApi().sendWXMsg(retMsg);
+//					String retStr = WXMsgFactory.genXML(retMsg);
+//					MyLogger.get().debug("processClickMsg first msg:\n"+retStr);
+//					out.write(retStr.getBytes());
+					return;
+				} else {
+					ret = Tip.get().nopublish;
+				}
+			} else {
+				retMsg.createTime = System.currentTimeMillis();
+				retMsg.fromUserName = reqWxMsg.toUserName;
+				retMsg.toUserName = userName;
+				retMsg.msgId = reqWxMsg.msgId;
+				new WXApi().sendWXMsg(retMsg);
+//				String retStr = WXMsgFactory.genXML(retMsg);
+//				MyLogger.get().debug("processClickMsg more msg:\n"+retStr);
+//				out.write(retStr.getBytes());
+				return;
+			}
+			
+		} else {
+			return;
+		}
+		
+		WXMsg.Text retMsg = new WXMsg.Text();
+		retMsg.content = ret;
+		retMsg.fromUserName = reqWxMsg.toUserName;
+		retMsg.toUserName = userName;
+		retMsg.createTime = System.currentTimeMillis();
+		retMsg.msgId = reqWxMsg.msgId;
+		
+		new WXApi().sendWXMsg(retMsg);
+//		String retXML = WXMsgFactory.genXML(retMsg);
+//		
+//		MyLogger.get().debug("processClickMsg response msg:\n"+retXML);
+//		out.write(retXML.getBytes());
 	}
 	
 	private WXMsg getHelpMsg(WXMsg req) {
@@ -69,28 +127,8 @@ public class WXMsgProcessor {
 				reqWxMsg.content.startsWith("！")) {
 			MyLogger.getSuggestion().fatal("{user:\"" + reqWxMsg.fromUserName + "\"; areaId:\"" + areaId + "\";}\n" + reqWxMsg.content);
 			ret = Tip.get().thanksSuggestion;
-		} else if (reqWxMsg.content.startsWith("1")) {
-			ret = WXPutStateMgr.instance(areaId).endPut(userName);
 		} else if (reqWxMsg.content.startsWith("0")) {
 			ret = WXPutStateMgr.instance(areaId).cancelPut(userName);
-		} else if (reqWxMsg.content.startsWith(" ") ||
-				reqWxMsg.content.startsWith("\n")) {
-			String toSearch = reqWxMsg.content.substring(2).trim();
-			WXMsg retMsg = WXPutStateMgr.instance(areaId).search(userName, toSearch);
-
-			if (retMsg != null) {
-				retMsg.createTime = System.currentTimeMillis();
-				retMsg.fromUserName = appId;
-				retMsg.toUserName = userName;
-				retMsg.msgId = reqWxMsg.msgId;
-				
-				String retStr = WXMsgFactory.genXML(retMsg);
-				MyLogger.get().debug("processTextMsg search response msg:\n"+retStr);
-				out.write(retStr.getBytes());
-				return;
-			} else {
-				ret = "抱歉，没找到关于 "+toSearch+" 的物品";
-			}
 		} else if (reqWxMsg.content.startsWith("5")) {
 			WXMsg retMsg = WXPutStateMgr.instance(areaId).returnSelfAll(userName);
 			
@@ -115,25 +153,6 @@ public class WXMsgProcessor {
 			} catch (NumberFormatException e) {
 				ret = "发送数字 3 x ，删除您的第x个物品";
 			}
-			
-		} else if (reqWxMsg.content.startsWith("8")) {
-			WXMsg retMsg = WXPutStateMgr.instance(areaId).more(userName);
-			
-			if (retMsg == null) {
-				ret = "所有物品均已呈现";
-			} else {
-				retMsg.createTime = System.currentTimeMillis();
-				retMsg.fromUserName = appId;
-				retMsg.toUserName = userName;
-				retMsg.msgId = reqWxMsg.msgId;
-				
-				String retStr = WXMsgFactory.genXML(retMsg);
-				
-				MyLogger.get().debug("processTextMsg8 response msg:\n"+retStr);
-				
-				out.write(retStr.getBytes());
-				return;
-			}
 		} else if (reqWxMsg.content.startsWith("@")) {
 			String tel = reqWxMsg.content.substring(1);
 			if (checkPhoneNum(tel)) {
@@ -141,13 +160,6 @@ public class WXMsgProcessor {
 			} else {
 				ret = Tip.get().phoneNumFillHelpTip;
 			}
-		} else if (reqWxMsg.content.startsWith("h") || reqWxMsg.content.startsWith("帮助")) {
-			WXMsg helpMsg = getHelpMsg(reqWxMsg);
-			((WXMsg.Text)helpMsg).content = Tip.get().welcomeStr + "\n\n" + Tip.get().helpStr;
-			MyLogger.get().debug("processTextMsg help response msg:\n"+helpMsg);
-			out.write(WXMsgFactory.genXML(helpMsg).getBytes());
-			
-			return;
 		} else {
 			ret = WXPutStateMgr.instance(areaId).putTextMsg(userName, reqWxMsg.content);
 		}

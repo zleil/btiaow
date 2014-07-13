@@ -18,6 +18,11 @@
       <servlet-name>wx_dispDetail</servlet-name>
       <servlet-class>com.btiao.tzsc.weixin.WXServletDispDetail</servlet-class>
    </servlet>
+   
+   <servlet>
+      <servlet-name>wx_managemine</servlet-name>
+      <servlet-class>com.btiao.tzsc.weixin.WXServletManagMine</servlet-class>
+   </servlet>
 
    <!-- Catch all requests -->
    <servlet-mapping>
@@ -29,5 +34,10 @@
    <servlet-mapping>
       <servlet-name>wx_dispDetail</servlet-name>
       <url-pattern>/wx_dispDetail/*</url-pattern>
+   </servlet-mapping>
+   
+   <servlet-mapping>
+      <servlet-name>wx_managemine</servlet-name>
+      <url-pattern>/wx_managemine/*</url-pattern>
    </servlet-mapping>
 </web-app>

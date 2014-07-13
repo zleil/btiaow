@@ -20,17 +20,9 @@ public class Tip {
 	
 	public String welcomeStr = "欢迎访问便条网跳蚤市场～";
 	
-	public String helpStr = "发送文字、图片，描述待交换物品\n\n" +
-							
-							"发送数字 5 ，查看您的物品\n" +
-							"发送数字 3 x ，删除第x件物品\n\n" +
-							
-							"发送空格，看看大家发布的物品\n\n" +
-							//"发送\"搜索 xxx\"，搜索xxx物品\n\n" +
-							
-							"发送叹号 \"! xxx\"，发送可留下对本市场的xxx吐槽和意见";
+	public String helpStr = "发送文字、图片，描述您要发布的物品，再提交";
 	
-	public String phoneNumFillHelpTip = "单独发送以@开头的信息，表示您要输入您的电话号码，@符号子后必须是11位数字哦～";
+	public String phoneNumFillHelpTip = "提示：发送'@13812345678'，提供您的手机号13812345678";
 	
 	public String noFirstTextDescError = "亲，得先用文字描述下物品呦";
 	
@@ -54,7 +46,10 @@ public class Tip {
 	
 	public String reachMaxSwitch = "抱歉，系统限制最多存在8个待交换物品～";
 	
-	public String moreTip = ">>还有更多呢!\n发送数字 8 ，显示更多搜到的物品";
+	public String moreTip = "再次点击'找找看'，查看更多物品";
+	public String allReturnedTip = "就这么多了，总件数：";
 	
 	public String thanksSuggestion = "感谢您提供宝贵的建议。";
+	
+	public String nopublish = "抱歉，当前还没有任何发布的物品";
 }

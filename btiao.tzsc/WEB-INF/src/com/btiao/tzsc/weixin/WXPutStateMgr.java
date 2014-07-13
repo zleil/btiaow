@@ -48,7 +48,7 @@ public class WXPutStateMgr {
 						break;
 					}
 					
-					item.url = WXServletDispDetail.URI+state.areaId+"?stateId=" + state.id; 
+					item.url = WXServletDispDetail.dispDetailURI+state.areaId+"?stateId=" + state.id; 
 				}
 				
 				if (item.picUrl == null && item.title == null) {
@@ -59,6 +59,10 @@ public class WXPutStateMgr {
 			}
 			
 			return ret;
+		}
+		
+		public int getTotal() {
+			return all.size();
 		}
 		
 		public boolean isEnd() {
@@ -143,14 +147,14 @@ public class WXPutStateMgr {
 	
 	public String endPut(String name) {
 		if (!curPuts.containsKey(name)) {
-			return "";
+			return Tip.get().helpStr;
 		}
 		
 		State state = this.curPuts.remove(name);
 		state.areaId = this.areaId;
 		
 		if (state.infos.size() == 0) {
-			return "";
+			return Tip.get().helpStr;
 		}
 		
 		boolean hasPutPhone = false;
@@ -210,6 +214,10 @@ public class WXPutStateMgr {
 				
 				if (pv.isEnd()) {
 					pvs.remove(name);
+					
+					WXMsg.PicText.Item item = new WXMsg.PicText.Item();
+					item.title = Tip.get().allReturnedTip + pv.getTotal();
+					ret.items.add(item);
 				} else {
 					WXMsg.PicText.Item item = new WXMsg.PicText.Item();
 					item.title = Tip.get().moreTip;
@@ -225,10 +233,7 @@ public class WXPutStateMgr {
 		synchronized (pvs) {
 			PageView pv = pvs.get(name);
 			if (pv == null) {
-				WXMsg.Text msg = new WXMsg.Text();
-				msg.content = Tip.get().noMoreDataTip;
-				
-				return msg;
+				return null;
 			}
 			
 			WXMsg ret = pv.next();

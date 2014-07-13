@@ -20,7 +20,7 @@ public class WXServletDispDetail extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 8378786285598298529L;
 	
-	public static String URI = "http://182.92.81.56/btiao/tzsc/wx_dispDetail/";
+	public static String dispDetailURI = "http://"+WXApiSession.serverip+"/btiao/tzsc/wx_dispDetail/";
 
 	@Override
 	public void doGet(HttpServletRequest request,

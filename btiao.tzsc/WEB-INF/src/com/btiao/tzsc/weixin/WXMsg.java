@@ -9,6 +9,10 @@ public class WXMsg {
 	public long createTime;
 	public String msgId;
 	
+	public static class Click extends WXMsg {
+		public String key;
+	}
+	
 	public static class Text extends WXMsg {
 		public String content;
 	}
@@ -29,7 +33,7 @@ public class WXMsg {
 		public List<Item> items = new ArrayList<Item>();
 	}
 	
-	public static class Event extends WXMsg {
+	public static class SubEvent extends WXMsg {
 		static public final String SUB = "subscribe";
 		static public final String UNSUB = "unsubscribe";
 		

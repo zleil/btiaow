@@ -22,6 +22,10 @@ import com.btiao.tzsc.service.MyLogger;
  *
  */
 public class WXApiSession {
+	static public String serverip = "182.92.81.56";
+	static public String appId = "wxb064780e6b5d244d";
+	static public String secret = "2fafd29d2366f0a7b05d5f439f9fea02";
+		
 	static private WXApiSession inst = null;
 	
 	static synchronized WXApiSession instance() {
@@ -121,7 +125,5 @@ public class WXApiSession {
 	
 	private long timeoutShrink = 60; //second
 	
-	//TODO dynamic modify appId and secret.
-	private String appId = "wxb064780e6b5d244d";
-	private String secret = "2fafd29d2366f0a7b05d5f439f9fea02";
+	
 }

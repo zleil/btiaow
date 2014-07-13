@@ -45,7 +45,7 @@ public class WXMsgFactory {
 	
 	static private String genWXPicTextMsgJsonStr(WXMsg.PicText msg) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{{\"touser\":\""+msg.toUserName+"\",");
+		sb.append("{\"touser\":\""+msg.toUserName+"\",");
 		sb.append("\"msgtype\":\"news\",\"news\":{\"articles\":[");
 		
 		boolean first = true;
@@ -94,7 +94,7 @@ public class WXMsgFactory {
 			
 			sb.append("}");
 		}
-		sb.append("]}}");
+		sb.append("]}");
 		
 		return sb.toString();
 	}
@@ -156,8 +156,15 @@ public class WXMsgFactory {
 				
 				msg.msgId = root.getChildText("MsgId");
 			} else if (type.equals("event")) {
-				msg = new WXMsg.Event();
-				((WXMsg.Event)msg).event = root.getChildText("Event");
+				String eventType = root.getChildText("Event");
+				if (eventType.equals("subscribe")) {
+					msg = new WXMsg.SubEvent();
+				} else if (eventType.equals("CLICK")) {
+					msg = new WXMsg.Click();
+					((WXMsg.Click)msg).key = root.getChildText("EventKey");
+				} else {
+					return null;
+				}
 			} else {
 				return null;
 			}
