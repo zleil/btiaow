@@ -23,6 +23,11 @@
       <servlet-name>wx_managemine</servlet-name>
       <servlet-class>com.btiao.tzsc.weixin.WXServletManagMine</servlet-class>
    </servlet>
+   
+   <servlet>
+      <servlet-name>api</servlet-name>
+      <servlet-class>com.btiao.tzsc.restful.Api</servlet-class>
+   </servlet>
 
    <!-- Catch all requests -->
    <servlet-mapping>
@@ -39,5 +44,10 @@
    <servlet-mapping>
       <servlet-name>wx_managemine</servlet-name>
       <url-pattern>/wx_managemine/*</url-pattern>
+   </servlet-mapping>
+   
+   <servlet-mapping>
+      <servlet-name>api</servlet-name>
+      <url-pattern>/api</url-pattern>
    </servlet-mapping>
 </web-app>

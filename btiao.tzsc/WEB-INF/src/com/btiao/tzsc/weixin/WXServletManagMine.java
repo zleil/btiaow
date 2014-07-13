@@ -53,7 +53,7 @@ public class WXServletManagMine extends HttpServlet {
 		sb.append("<link rel=\"stylesheet\" href=\"../webs/a.css\" media=\"all\">");
 		sb.append("</head><body>");
 		
-		sb.append("<script type=\"text/javascript\" src=\"http://mat1.gtimg.com/app/opent/js/jquery-1.4.3.min.js\"></script>");
+		sb.append("<script type=\"text/javascript\" src=\"../webs/jquery.js\"></script>");
 		sb.append("<script type=\"text/javascript\" src=\"../webs/managmine.js\"></script>");
 		
 		sb.append("<script type=\"text/javascript\">");
@@ -64,11 +64,16 @@ public class WXServletManagMine extends HttpServlet {
 
 		List<State> states = StateMgr.instance(areaId).getAllStateByUserName(uinfo.openId);
 		for (State state : states) {
-			sb.append("<div class=\"perState\" id=\""+state.id+"\">");
+			sb.append("<div class=\"perState\" id=\"state_"+state.id+"\">");
 			sb.append("<ul>");
 			sb.append("<li class=\"perSateTitle\">"+state.infos.get(0).content+"</li>");
-			sb.append("<li class=\"perStatePic\"><img src=\""+state.getFirstPicUrl()+"\"></img></li>");
+			String picurl = state.getFirstPicUrl();
+			if (picurl != null && !picurl.equals("")) sb.append("<li class=\"perStatePic\"><img src=\""+picurl+"\"></img></li>");
 			sb.append("</ul>");
+			sb.append("<div>");
+			sb.append("<button class=\"switched\" onclick=\"act_switched("+state.id+")\">已成交</button>");
+			sb.append("<button class=\"cancel\" onclick=\"act_canceled("+state.id+")\">不买了</button>");
+			sb.append("</div>");
 			sb.append("</div>");
 		}
 		
