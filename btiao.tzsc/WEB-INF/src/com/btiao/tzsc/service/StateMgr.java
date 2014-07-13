@@ -76,6 +76,10 @@ public class StateMgr {
 			State s = sts.remove(idx-1);
 			stateId2State.remove(s.id);
 			
+			if (sts.size() == 0) {
+				all.remove(userName);
+			}
+			
 			isChanged = true;
 			return sts.size();
 		} else {
@@ -93,6 +97,11 @@ public class StateMgr {
 		for (int idx=0; idx<states.size(); ++idx) {
 			if (state.id == states.get(idx).id) {
 				states.remove(idx);
+				stateId2State.remove(stateid);
+				
+				if (states.size() == 0) {
+					all.remove(state.userId);
+				}
 				
 				isChanged = true;
 				return ErrCode.success;
@@ -157,7 +166,7 @@ public class StateMgr {
 			for (State state : entry.getValue()) {
 				this.stateId2State.put(state.id, state);
 			}
-		}		
+		}
 	}
 	
 	@Override

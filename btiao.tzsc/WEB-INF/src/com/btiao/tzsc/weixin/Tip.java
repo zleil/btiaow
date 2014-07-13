@@ -16,7 +16,7 @@ public class Tip {
 			"发送数字 0 ，取消描述\n" +
 			"发送数字 1 ，提交物品信息";
 	
-	public String noPhoneNumDescErrorTip = "对不起，您还没有提供电话号码";
+	public String noPhoneNumDescErrorTip = "抱歉，还需您提供手机号码";
 	
 	public String welcomeStr = "欢迎访问便条网跳蚤市场～";
 	
@@ -46,10 +46,10 @@ public class Tip {
 	
 	public String reachMaxSwitch = "抱歉，系统限制最多存在8个待交换物品～";
 	
-	public String moreTip = "再次点击'找找看'，查看更多物品";
+	public String moreTip = "还有很多呢，继续 '找找看' 吧";
 	public String allReturnedTip = "就这么多了，总件数：";
 	
 	public String thanksSuggestion = "感谢您提供宝贵的建议。";
 	
-	public String nopublish = "抱歉，当前还没有任何发布的物品";
+	public String nopublish = "所以物品都卖完了，真是太热闹！";
 }

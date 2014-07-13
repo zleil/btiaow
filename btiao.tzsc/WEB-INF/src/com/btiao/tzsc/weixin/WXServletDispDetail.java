@@ -128,7 +128,7 @@ public class WXServletDispDetail extends HttpServlet {
 					sb.append("<p>");
 					sb.append(info.content);
 					sb.append("</p>");
-				} else if (info.t == State.Info.MsgType.pic) {
+				} else if (info.t == State.Info.MsgType.pic && info.content != null && !info.content.equals("")) {
 					sb.append("<img src=\"");
 					sb.append(info.content);
 					sb.append("\"/>");
@@ -138,7 +138,7 @@ public class WXServletDispDetail extends HttpServlet {
 			sb.append("</div>");
 			sb.append("<div id=\"rightCol\">&nbsp;</div>");
 		} else {
-			sb.append("对不起，您访问的物品可能已经被交换了：-） 再看看别的物品吧～～～");
+			sb.append("非常抱歉，您访问的物品可能已经被交换了：-） 再看看别的物品吧～～～");
 		}
 		
 		sb.append("</body></html>");

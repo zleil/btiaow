@@ -33,3 +33,19 @@ width:90%;
 .note{
 color:red;
 }
+.perState{
+background-color:#fafafa;
+padding: 0 0 0.5em 0;
+}
+.perSateTitle{
+background-color:#f0f0f0;
+border-color:#f0f0f0;
+border-style:solid;
+border-width:0.5em 0 0.5em 0;
+}
+.perSateTitle,.perStatePic{
+list-style-type:none;
+}
+.perState > ul {
+padding:0;
+}

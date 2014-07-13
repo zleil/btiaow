@@ -26,7 +26,7 @@ public class WXMsgProcessor {
 		} else if (reqWxMsg instanceof WXMsg.SubEvent) {
 			WXMsg.Text helpMsg = (Text) getHelpMsg(reqWxMsg);
 			helpMsg.content = Tip.get().welcomeStr + "\n\n" + helpMsg.content;
-			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
+			new WXApi().sendWXMsg(helpMsg);
 		} else if (reqWxMsg instanceof WXMsg.Click) {
 			processClickMsg(reqWxMsg, rsp.getOutputStream());
 		} else {			

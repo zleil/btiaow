@@ -139,8 +139,8 @@ public class WXApi {
 			InputStream input = rsp.getEntity().getContent();
 			input.read(buf, 0, (int) len);
 			
-			MyLogger.get().info("wxpost:"+url+"\n"+entityArgs);
-			MyLogger.get().info("resp:\n"+new String(buf, "UTF-8"));
+			MyLogger.get().info("post to wx:"+url+"\n"+entityArgs);
+			MyLogger.get().info("resp from wx:\n"+new String(buf, "UTF-8"));
 			
 			return new JSONObject(new String(buf)); 
 		} finally {
