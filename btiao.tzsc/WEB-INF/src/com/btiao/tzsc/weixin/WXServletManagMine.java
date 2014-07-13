@@ -52,10 +52,19 @@ public class WXServletManagMine extends HttpServlet {
 		sb.append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0\">");
 		sb.append("<link rel=\"stylesheet\" href=\"../webs/a.css\" media=\"all\">");
 		sb.append("</head><body>");
+		
+		sb.append("<script type=\"text/javascript\" src=\"http://mat1.gtimg.com/app/opent/js/jquery-1.4.3.min.js\"></script>");
+		sb.append("<script type=\"text/javascript\" src=\"../webs/managmine.js\"></script>");
+		
+		sb.append("<script type=\"text/javascript\">");
+		sb.append("var uid="+uinfo.openId+";");
+		sb.append("var areaId="+areaId+";");
+		sb.append("var token="+uinfo.accesToken+";");
+		sb.append("</script>");
 
 		List<State> states = StateMgr.instance(areaId).getAllStateByUserName(uinfo.openId);
 		for (State state : states) {
-			sb.append("<div class=\"perState\">");
+			sb.append("<div class=\"perState\" id=\""+state.id+"\">");
 			sb.append("<ul>");
 			sb.append("<li class=\"perSateTitle\">"+state.infos.get(0).content+"</li>");
 			sb.append("<li class=\"perStatePic\"><img src=\""+state.getFirstPicUrl()+"\"></img></li>");

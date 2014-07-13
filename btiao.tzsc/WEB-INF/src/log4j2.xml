@@ -43,7 +43,7 @@
       <appender-ref ref="tzsc_appender"/>  
     </logger>
     <logger name="attack" level="debug">  
-      <appender-ref ref="attack_appender"/>  
+      <appender-ref ref="attack_appender"/>
     </logger>
     <logger name="access" level="debug">
       <appender-ref ref="access_appender"/>

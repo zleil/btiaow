@@ -83,6 +83,25 @@ public class StateMgr {
 		}
 	}
 	
+	public synchronized int delOneStateById(long stateid) {
+		State state = stateId2State.get(stateid);
+		if (state == null) {
+			return ErrCode.no_such_state;
+		}
+		
+		List<State> states = all.get(state.userId);
+		for (int idx=0; idx<states.size(); ++idx) {
+			if (state.id == states.get(idx).id) {
+				states.remove(idx);
+				
+				isChanged = true;
+				return ErrCode.success;
+			}
+		}
+
+		return ErrCode.internel_error;
+	}
+	
 	public boolean isChanged() {
 		return isChanged;
 	}
