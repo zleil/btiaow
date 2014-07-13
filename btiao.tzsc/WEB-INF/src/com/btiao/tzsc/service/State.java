@@ -94,4 +94,14 @@ public class State implements Serializable {
 		
 		return "...";
 	}
+	
+	public String getFirstPicUrl() {
+		for (Info info : infos) {
+			if (info.t == Info.MsgType.pic) {
+				return info.content;
+			}
+		}
+		
+		return "";
+	}
 }

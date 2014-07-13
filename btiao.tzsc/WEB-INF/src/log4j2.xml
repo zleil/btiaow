@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration monitorInterval="30">
   <appenders>  
-  	<File name="suggestion_appender" filename="logs/suggestion.txt">
-  		<param name="BufferSize" value="0" />
-  	</File>
-    <File name="tzsc_appender" filename="logs/tzsc.log">  
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
-    </File>
-    <File name="access_appender" filename="logs/access.log">  
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
-    </File>
-    <File name="attack_appender" filename="logs/attack.log">  
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
-    </File>
+  	<RollingFile name="suggestion_appender" bufferedIO="false" 
+  		filename="logs/suggestion.txt"
+  		filePattern="logs/$${date:yyyy-MM}/suggestion-%d{MM-dd-yyyy}-%i.log.gz">
+  		<PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} - %n%msg%n"/>
+  		<Policies>
+        	<OnStartupTriggeringPolicy />
+        	<SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+  	</RollingFile>
+    <RollingFile name="tzsc_appender" filename="logs/tzsc.log"
+    	filePattern="logs/$${date:yyyy-MM}/tzsc-%d{MM-dd-yyyy}-%i.log.gz">  
+      <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <Policies>
+        	<OnStartupTriggeringPolicy />
+        	<SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>  
+    </RollingFile>
+    <RollingFile name="access_appender" filename="logs/access.log"
+    	filePattern="logs/$${date:yyyy-MM}/access-%d{MM-dd-yyyy}-%i.log.gz">  
+      <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <Policies>
+        	<OnStartupTriggeringPolicy />
+        	<SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>  
+    </RollingFile>
+    <RollingFile name="attack_appender" filename="logs/attack.log"
+    	filePattern="logs/$${date:yyyy-MM}/attack-%d{MM-dd-yyyy}-%i.log.gz">  
+      <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <Policies>
+        	<OnStartupTriggeringPolicy />
+        	<SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>  
+    </RollingFile>
     <Console name="STDOUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
   </appenders>  
   <loggers>  
