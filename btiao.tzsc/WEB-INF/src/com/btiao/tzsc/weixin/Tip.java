@@ -52,4 +52,8 @@ public class Tip {
 	public String thanksSuggestion = "感谢您提供宝贵的建议。";
 	
 	public String nopublish = "所以物品都卖完了，真是太热闹！";
+	
+	public String mianZeNote = "小伙伴们，跳蚤市场暂无实力校对每样物品，您要自行与卖主交流识别好物品和价钱哦~";
+	
+	public String tzscTitle = "便条网 - 跳蚤市场";
 }

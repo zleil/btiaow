@@ -139,7 +139,7 @@ public class StateMgr {
 					return;
 				}
 				
-				MyLogger.get().info("persist once");
+				MyLogger.get().info("persist statemgr once: areaId="+areaId);
 				
 				new PersistObj().moveAndBack(StateMgr.persistFn+"_"+areaId);
 				

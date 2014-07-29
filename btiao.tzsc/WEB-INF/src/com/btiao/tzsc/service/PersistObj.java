@@ -92,4 +92,8 @@ public class PersistObj {
 		
 		return null;
 	}
+	
+	public void print(String fn) {
+		System.out.println(load(fn));
+	}
 }
