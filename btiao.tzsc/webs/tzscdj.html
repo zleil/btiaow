@@ -1,0 +1,76 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<title>便条网 - 望春园</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/jm/jquery.mobile-1.4.3.min.css" />
+	<script src="/jm/jquery-2.1.1.min.js"></script>
+	<script src="/jm/jquery.mobile-1.4.3.min.js"></script>
+	<script src="tzscdj.js"></script>
+</head>
+
+<body>
+<div data-role="page">
+
+	<div data-role="header">
+		<h1>跳蚤市场 - 摊位申请</h1>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<div class="ui-grid-b">
+			<div class="ui-block-a"><div class="ui-bar ui-bar-a"><a href="#selectPos" id="selDialog_build_bt" class="ui-btn ui-corner-all" data-transition="pop" data-rel="dialog"><span id="buildId">__</span>  号楼</a></div></div>
+			<div class="ui-block-b"><div class="ui-bar ui-bar-a"><a href="#selectPos" id="selDialog_floor_bt" class="ui-btn ui-corner-all"><span id="floorId">__</span>  层</a></div></div>
+			<div class="ui-block-c"><div class="ui-bar ui-bar-a"><a href="#selectPos" id="selDialog_room_bt" class="ui-btn ui-corner-all"><span id="roomId">__</span>  室</a></div></div>
+		</div>
+		<div class="ui-grid">
+			<div class="ui-block"><div class="ui-bar ui-bar-a"><a href="#selectTelPhone" id="selDialog_telphone" class="ui-btn ui-corner-all"  data-transition="pop" data-rel="dialog">手机号：<span id="telId">__</span></a></div></div>
+		</div>
+	</div><!-- /content -->
+	
+	<div role="main" class="ui-content">
+		<a href="#" class="ui-btn ui-corner-all">提交</a>
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4>@Copyright 便条科技有限公司</h4>
+	</div><!-- /footer -->
+
+</div>
+<div data-role="page" id="selectPos" data-close-btn="none">
+	<div data-role="header">
+		<h2 id="selectPos_Title">选择楼号</h2>
+	</div><!-- /header -->
+	<div role="main" class="ui-content">
+		<div class="ui-grid-d" id="seectPos_tb">
+		</div><!-- /grid-a -->
+	</div><!-- /content -->
+</div>
+<div data-role="page" id="selectTelPhone" data-close-btn="none">
+	<div data-role="header">
+		<h2>选择手机号码</h2>
+	</div><!-- /header -->
+	<div role="main" class="ui-content">
+		<div id="selTelId" style="font-size:1.2em;hight:1.5em">&nbsp;</div>
+		<div class="ui-grid-b" style="text-align:center">
+			<div class="ui-block-a" onclick="phoneDialog.addOne(1)"><div class="ui-bar ui-bar-a">1</div></div>
+			<div class="ui-block-b" onclick="phoneDialog.addOne(2)"><div class="ui-bar ui-bar-a">2</div></div>
+			<div class="ui-block-c" onclick="phoneDialog.addOne(3)"><div class="ui-bar ui-bar-a">3</div></div>
+			<div class="ui-block-a" onclick="phoneDialog.addOne(4)"><div class="ui-bar ui-bar-a">4</div></div>
+			<div class="ui-block-b" onclick="phoneDialog.addOne(5)"><div class="ui-bar ui-bar-a">5</div></div>
+			<div class="ui-block-c" onclick="phoneDialog.addOne(6)"><div class="ui-bar ui-bar-a">6</div></div>
+			<div class="ui-block-a" onclick="phoneDialog.addOne(7)"><div class="ui-bar ui-bar-a">7</div></div>
+			<div class="ui-block-b" onclick="phoneDialog.addOne(8)"><div class="ui-bar ui-bar-a">8</div></div>
+			<div class="ui-block-c" onclick="phoneDialog.addOne(9)"><div class="ui-bar ui-bar-a">9</div></div>
+		</div><!-- /grid-a -->
+		<div class="ui-grid" style="text-align:center">
+			<div class="ui-block" onclick="phoneDialog.addOne(0)"><div class="ui-bar ui-bar-a">0</div></div>
+		</div><!-- /grid-a -->
+	</div><!-- /content -->
+	<div role="main" class="ui-content">
+		<a href="#" onclick="phoneDialog.clear();" class="ui-btn ui-corner-all">清空</a>
+		<a href="#" data-rel="back" onclick="phoneDialog.finish();" class="ui-btn ui-corner-all">完成</a>
+	</div><!-- /content -->
+</div>
+</body>
+</html>
