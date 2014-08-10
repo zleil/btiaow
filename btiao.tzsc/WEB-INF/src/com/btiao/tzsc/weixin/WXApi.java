@@ -18,25 +18,25 @@ import com.btiao.tzsc.service.MyLogger;
 
 public class WXApi {
 	static public void main(String[] args) throws Exception {
-		WXMsg.Text msg = new WXMsg.Text();
-		msg.toUserName = "oQZIBj4Gbn__DoSZwcdKe3SKt4BE";
-		msg.content = "hello";
-		
+//		WXMsg.Text msg = new WXMsg.Text();
+//		msg.toUserName = "oQZIBj4Gbn__DoSZwcdKe3SKt4BE";
+//		msg.content = "hello";
+//		
 		WXApi api = new WXApi();
-		api.sendWXMsg(msg);
-		
-		WXMsg.PicText pictxt = new WXMsg.PicText();
-		pictxt.toUserName = "oQZIBj4Gbn__DoSZwcdKe3SKt4BE";
-		WXMsg.PicText.Item item = new WXMsg.PicText.Item();
-		item.title = "abc";
-		item.desc = "desc";
-		item.picUrl = "xx";
-		item.url = "http://www.baidu.com";
-		pictxt.items.add(item);
-		api.sendWXMsg(pictxt);
-		
-		//api.getUserInfo("oQZIBj4Gbn__DoSZwcdKe3SKt4BE");
-		//api.createMenu(65537, WXApi.class.getResource("menu.json").getPath());
+//		api.sendWXMsg(msg);
+//		
+//		WXMsg.PicText pictxt = new WXMsg.PicText();
+//		pictxt.toUserName = "oQZIBj4Gbn__DoSZwcdKe3SKt4BE";
+//		WXMsg.PicText.Item item = new WXMsg.PicText.Item();
+//		item.title = "abc";
+//		item.desc = "desc";
+//		item.picUrl = "xx";
+//		item.url = "http://www.baidu.com";
+//		pictxt.items.add(item);
+//		api.sendWXMsg(pictxt);
+//		
+//		api.getUserInfo("oQZIBj4Gbn__DoSZwcdKe3SKt4BE");
+		api.createMenu(65537, WXApi.class.getResource("menu.json").getPath());
 	}
 	
 	public int sendWXMsg(WXMsg msg) throws Exception {
