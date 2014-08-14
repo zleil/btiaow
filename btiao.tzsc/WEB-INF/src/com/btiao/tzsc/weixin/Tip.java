@@ -12,9 +12,7 @@ public class Tip {
 	private Tip() {}
 	
 	
-	public String continuePutTip = "发送文字、图片，继续描述物品\n\n" + 
-			"发送数字 0 ，取消描述\n" +
-			"发送数字 1 ，提交物品信息";
+	public String continuePutTip = "发送文字、图片，继续描述物品\n\n";
 	
 	public String noPhoneNumDescErrorTip = "抱歉，还需您提供手机号码";
 	
@@ -34,9 +32,7 @@ public class Tip {
 	
 	public String delStateFailed = "您要删除的物品不存在\n\n您当前的待交换物品数是：";
 	
-	public String doOtherActWhenPutErrorTip = "您正在描述物品，请先取消或提交，再进行其他“搜索”之类的操作\n\n"+
-			"发送数字 0 ，取消描述\n" + 
-			"发送数字 1 ，提交物品信息";
+	public String doOtherActWhenPutErrorTip = "您正在描述物品，请先取消或提交，再进行其他“搜索”之类的操作\n\n";
 	
 	public String noMoreDataTip = "没有更多的信息了～";
 	

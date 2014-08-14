@@ -20,14 +20,31 @@ PhoneDialog.prototype.addOne = function(id) {
 	}
 	
 	$("#selTelId").append(id);
-	this.telId += "" + id;
+	this.telId += id;
 	++this.nums;
 	
 	if (this.nums == 3 || this.nums == 7) {
 		$("#selTelId").append(" - ");
 	}
 }
-
+PhoneDialog.prototype.delOne = function() {
+	if (this.telId.length == 0) return;
+	
+	this.telId = this.telId.substring(0, this.telId.length-1);
+	--this.nums;
+	
+	if (this.telId.length == 3 || this.telId.length == 7) {
+		this.telId = this.telId.substring(0, this.telId.length-1);
+		--this.nums;
+	}
+	
+	var telId = this.telId;
+	this.clear();
+	
+	for (var i=0; i<telId.length; ++i) {
+		this.addOne(telId.charAt(i));
+	}
+}
 
 function SelDialog(id) {
 	this.id = id;
