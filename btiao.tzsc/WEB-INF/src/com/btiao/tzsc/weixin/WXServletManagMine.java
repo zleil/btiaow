@@ -3,11 +3,14 @@ package com.btiao.tzsc.weixin;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.btiao.tzsc.service.MyLogger;
+import com.btiao.tzsc.service.SessionMgr;
 import com.btiao.tzsc.service.State;
 import com.btiao.tzsc.service.StateMgr;
 
@@ -69,12 +72,38 @@ public class WXServletManagMine extends HttpServlet {
 				}
 			}
 			
-			WXOnlineUserMgr.instance(areaId).addUserInfo(uinfo);
+			SessionMgr.instance(areaId).addUserInfo(uinfo.openId, uinfo.accesToken);
 			
-			genManageMinePage(areaId, uinfo, out);
+			String baseUrl = "/btiao/tzsc/";
+			
+			String act = request.getParameter("act");
+			if (act == null) {
+				genManageMinePage(areaId, uinfo, out);
+			} else if (act != null && act.equals("dengji")) {
+				//可以增加一个机制
+				request.setAttribute("areaId", areaId);
+				setAccessToken(response, uinfo.openId, uinfo.accesToken);
+				response.addCookie(new Cookie("areaId", areaIdStr));
+				
+				RequestDispatcher disp = request.getRequestDispatcher(baseUrl+"webs/tzscdj.html");
+				disp.forward(request, response);
+			} else {
+				MyLogger.getAttackLog().warn("process wx_managemine: unkown act="+act+"\nfrom="+request.getRemoteAddr());
+				return;
+			}
 		} catch (Throwable e) {
 			MyLogger.get().warn("process wx_managemine _doGet failed!", e);
 		}
+	}
+	
+	private void setAccessToken(HttpServletResponse response, String usrId, String token) {
+		Cookie cookie = new Cookie("accessToken", token);
+		cookie.setMaxAge(3600);
+		response.addCookie(cookie);
+		
+		Cookie cookie2 = new Cookie("usrId", usrId);
+		cookie.setMaxAge(3600);
+		response.addCookie(cookie2);
 	}
 	
 	private void genManageMinePage(long areaId, WXUserInfo uinfo, PrintWriter out) {

@@ -11,8 +11,8 @@ import org.json.JSONObject;
 
 import com.btiao.tzsc.service.ErrCode;
 import com.btiao.tzsc.service.MyLogger;
+import com.btiao.tzsc.service.SessionMgr;
 import com.btiao.tzsc.service.StateMgr;
-import com.btiao.tzsc.weixin.WXOnlineUserMgr;
 
 public class Api extends HttpServlet {
 	/**
@@ -62,7 +62,7 @@ public class Api extends HttpServlet {
 			String wxtoken = jso.getString("wxtoken");
 			String actType = jso.getString("act");
 			
-			if (!WXOnlineUserMgr.instance(areaId).isOnlineUser(wxuid, wxtoken)) {
+			if (!SessionMgr.instance(areaId).isOnlineUser(wxuid, wxtoken)) {
 				errorRsp(ErrCode.auth_failed, response);
 				return;
 			}
