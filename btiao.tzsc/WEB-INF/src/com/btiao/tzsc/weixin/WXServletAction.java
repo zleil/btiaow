@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.btiao.tzsc.service.MyLogger;
+import com.btiao.tzsc.service.Util;
 
 public class WXServletAction extends HttpServlet {
 	/**
@@ -51,29 +52,7 @@ public class WXServletAction extends HttpServlet {
 			MyLogger.get().debug("size="+size);
 			MyLogger.get().debug("str="+request.getContentType());
 			
-			byte[] buffer = new byte[size];
-			int readed = 0;
-			int times = 0;
-			do {
-				int avail = bf.available();
-				MyLogger.get().debug("avail="+avail);
-				
-				int count = bf.read(buffer, 0, size-readed);
-				
-				if (count == -1) break;
-				readed += count;
-				if (readed >= size) break;
-				
-				try {
-					Thread.sleep(500);
-				} catch (Exception e) {}
-			} while (times++ < 6);
-			
-			MyLogger.get().debug("readed="+readed + ",times="+times);
-			
-			xmlStr = new String(buffer, "UTF-8");
-			
-			MyLogger.get().debug("receive wxmsg:\n" + xmlStr);
+			xmlStr = Util.getHttpEntityStr(bf, size, "UTF-8");
 			
 			WXMsg msg = WXMsgFactory.gen(xmlStr);
 			if (msg != null) {

@@ -10,6 +10,7 @@ public class SessionMgr {
 		SessionMgr inst = insts.get(areaId);
 		if (inst == null) {
 			inst = new SessionMgr(areaId);
+			inst.addUserInfo("zleil", "zleil");
 			insts.put(areaId, inst);
 			return inst;
 		}
