@@ -100,10 +100,15 @@ public class WXApi {
 			}
 			
 			JSONObject my = (JSONObject) buttonjso.get(2);
-			String redirectUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/"+areaId, "UTF-8");
+			String myredirectUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/"+areaId, "UTF-8");
 			String appid = WXApiSession.appId;
-			String myurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri="+redirectUrl+"&response_type=code&scope=snsapi_base#wechat_redirect";
+			String myurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri="+myredirectUrl+"&response_type=code&scope=snsapi_base#wechat_redirect";
 			my.put("url", myurl);
+			
+			JSONObject dengji = (JSONObject) ((JSONArray)((JSONObject)buttonjso.get(0)).get("sub_button")).get(2);
+			String dengjiRedirectUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/"+areaId+"?act=dengji", "UTF-8");
+			String dengjiUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri="+dengjiRedirectUrl+"&response_type=code&scope=snsapi_base#wechat_redirect";
+			dengji.put("url", dengjiUrl);
 			
 			String token = WXApiSession.instance().getToken();
 			String url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token="+token;

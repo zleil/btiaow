@@ -74,8 +74,6 @@ public class WXServletManagMine extends HttpServlet {
 			
 			SessionMgr.instance(areaId).addUserInfo(uinfo.openId, uinfo.accesToken);
 			
-			String baseUrl = "/btiao/tzsc/";
-			
 			String act = request.getParameter("act");
 			if (act == null) {
 				genManageMinePage(areaId, uinfo, out);
@@ -85,8 +83,8 @@ public class WXServletManagMine extends HttpServlet {
 				setAccessToken(response, uinfo.openId, uinfo.accesToken);
 				response.addCookie(new Cookie("areaId", areaIdStr));
 				
-				RequestDispatcher disp = request.getRequestDispatcher(baseUrl+"webs/tzscdj.html");
-				disp.forward(request, response);
+				MyLogger.get().info("do a redirect!");
+				response.sendRedirect("../webs/tzscdj.html");
 			} else {
 				MyLogger.getAttackLog().warn("process wx_managemine: unkown act="+act+"\nfrom="+request.getRemoteAddr());
 				return;
@@ -145,6 +143,18 @@ public class WXServletManagMine extends HttpServlet {
 	}
 	
 	private String getAreaId(String uri) {
-		return uri.substring(uri.lastIndexOf('/') + 1);
+		MyLogger.get().info("uri="+uri);
+		String t1 = uri.substring(uri.lastIndexOf("wx_managemine/") + "wx_managemine/".length());
+		int i = t1.indexOf('/');
+		if (i != -1) {
+			return t1.substring(0, i);
+		}
+		
+		i = t1.indexOf('?');
+		if (i != -1) {
+			return t1.substring(0, i);
+		}
+		
+		return t1;
 	}
 }
