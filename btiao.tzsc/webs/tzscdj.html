@@ -8,6 +8,13 @@
 	<script src="jm/jquery-2.1.1.min.js"></script>
 	<script src="jm/jquery.mobile-1.4.3.min.js"></script>
 	<script src="tzscdj.js"></script>
+	<style type="text/css">
+		.tzscdj-selgrid{
+			font-size:1.2em;
+			line-height:3em;
+			text-align:center;
+		}
+	</style>
 </head>
 
 <body>
@@ -52,19 +59,19 @@
 	</div><!-- /header -->
 	<div role="main" class="ui-content">
 		<div id="selTelId" style="font-size:1.2em;">&nbsp;</div>
-		<div class="ui-grid-b" style="text-align:center">
-			<div class="ui-block-a" onclick="phoneDialog.addOne(1)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">1</div></div>
-			<div class="ui-block-b" onclick="phoneDialog.addOne(2)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">2</div></div>
-			<div class="ui-block-c" onclick="phoneDialog.addOne(3)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">3</div></div>
-			<div class="ui-block-a" onclick="phoneDialog.addOne(4)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">4</div></div>
-			<div class="ui-block-b" onclick="phoneDialog.addOne(5)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">5</div></div>
-			<div class="ui-block-c" onclick="phoneDialog.addOne(6)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">6</div></div>
-			<div class="ui-block-a" onclick="phoneDialog.addOne(7)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">7</div></div>
-			<div class="ui-block-b" onclick="phoneDialog.addOne(8)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">8</div></div>
-			<div class="ui-block-c" onclick="phoneDialog.addOne(9)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">9</div></div>
-			<div class="ui-block-a" onclick="phoneDialog.addOne(0)"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">0</div></div>
-			<div class="ui-block-b" onclick="phoneDialog.delOne()"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em"><-|</div></div>
-			<div class="ui-block-c" onclick="phoneDialog.clear();"><div class="ui-bar ui-bar-a" style="font-size:1.2em;line-height:3em">清空</div></div>
+		<div class="ui-grid-b">
+			<div class="ui-block-a" onclick="phoneDialog.addOne(1)"><div class="ui-bar ui-bar-a tzscdj-selgrid">1</div></div>
+			<div class="ui-block-b" onclick="phoneDialog.addOne(2)"><div class="ui-bar ui-bar-a tzscdj-selgrid">2</div></div>
+			<div class="ui-block-c" onclick="phoneDialog.addOne(3)"><div class="ui-bar ui-bar-a tzscdj-selgrid">3</div></div>
+			<div class="ui-block-a" onclick="phoneDialog.addOne(4)"><div class="ui-bar ui-bar-a tzscdj-selgrid">4</div></div>
+			<div class="ui-block-b" onclick="phoneDialog.addOne(5)"><div class="ui-bar ui-bar-a tzscdj-selgrid">5</div></div>
+			<div class="ui-block-c" onclick="phoneDialog.addOne(6)"><div class="ui-bar ui-bar-a tzscdj-selgrid">6</div></div>
+			<div class="ui-block-a" onclick="phoneDialog.addOne(7)"><div class="ui-bar ui-bar-a tzscdj-selgrid">7</div></div>
+			<div class="ui-block-b" onclick="phoneDialog.addOne(8)"><div class="ui-bar ui-bar-a tzscdj-selgrid">8</div></div>
+			<div class="ui-block-c" onclick="phoneDialog.addOne(9)"><div class="ui-bar ui-bar-a tzscdj-selgrid">9</div></div>
+			<div class="ui-block-a" onclick="phoneDialog.addOne(0)"><div class="ui-bar ui-bar-a tzscdj-selgrid">0</div></div>
+			<div class="ui-block-b" onclick="phoneDialog.delOne()"><div class="ui-bar ui-bar-a tzscdj-selgrid"><-|</div></div>
+			<div class="ui-block-c" onclick="phoneDialog.clear();"><div class="ui-bar ui-bar-a tzscdj-selgrid">清空</div></div>
 		</div>
 	</div><!-- /content -->
 	<div role="main" class="ui-content">

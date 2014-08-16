@@ -76,18 +76,18 @@ SelDialog.prototype.setSelNum = function(num) {
 	
 	var idx = 1;
 	for (var i=1; i <= rows; ++i) {
-		tb.append('<div class="ui-block-a" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
-		tb.append('<div class="ui-block-b" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
-		tb.append('<div class="ui-block-c" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
-		tb.append('<div class="ui-block-d" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
-		tb.append('<div class="ui-block-e" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
+		tb.append('<div class="ui-block-a" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
+		tb.append('<div class="ui-block-b" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
+		tb.append('<div class="ui-block-c" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
+		tb.append('<div class="ui-block-d" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
+		tb.append('<div class="ui-block-e" data-rel="back" onclick="selDialog.close('+idx+');"><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
 	}
 	
-	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-a" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
-	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-b" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
-	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-c" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
-	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-d" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
-	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-e" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a">'+(idx++)+'</div></div>');
+	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-a" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
+	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-b" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
+	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-c" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
+	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-d" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
+	if (lastNumOfRow-- > 0) tb.append('<div class="ui-block-e" data-rel="back" onclick="selDialog.close('+idx+')";><div class="ui-bar ui-bar-a tzscdj-selgrid">'+(idx++)+'</div></div>');
 }
 
 SelDialog.prototype.onSelDialog = function(selWhat) {

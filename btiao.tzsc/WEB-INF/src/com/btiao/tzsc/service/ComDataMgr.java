@@ -18,6 +18,11 @@ public class ComDataMgr<DataType> {
 		return inst;
 	}
 	
+	static public void main(String[] args) {
+		ComDataMgr<UserInfo> a = ComDataMgr.<UserInfo>instance("UserInfo", 123);
+		System.out.println(a.all);
+	}
+	
 	static private Map<String,ComDataMgr<?>> insts = new HashMap<String,ComDataMgr<?>>();
 
 	public synchronized void add(String key, DataType one) {
@@ -42,7 +47,7 @@ public class ComDataMgr<DataType> {
 			UserInfo zleil = new UserInfo();
 			zleil.usrId = "zleil";
 			zleil.nick = "zhanglei";
-			all.put(zleil.usrId, ((DataType)zleil));
+			add(zleil.usrId, ((DataType)zleil));
 		}
 		
 		PersistObj.addBackTask(new Runnable() {

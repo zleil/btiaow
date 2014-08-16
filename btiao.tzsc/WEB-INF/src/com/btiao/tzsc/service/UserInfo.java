@@ -18,4 +18,14 @@ public class UserInfo implements Serializable {
 	
 	public boolean wuyeAuth = false; //物业认证
 	public boolean doorNoPicAuth = false; //门牌图片认证
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append("usrId:\""+usrId+"\",");
+		sb.append("telId:\""+telId+"\"");
+		sb.append("}");
+		
+		return sb.toString();
+	}
 }

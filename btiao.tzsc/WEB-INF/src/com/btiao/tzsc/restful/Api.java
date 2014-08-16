@@ -3,16 +3,21 @@ package com.btiao.tzsc.restful;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.btiao.tzsc.service.ComDataMgr;
 import com.btiao.tzsc.service.ErrCode;
+import com.btiao.tzsc.service.MetaDataId;
 import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.service.SessionMgr;
 import com.btiao.tzsc.service.StateMgr;
+import com.btiao.tzsc.service.UserInfo;
+import com.btiao.tzsc.service.Util;
 
 public class Api extends HttpServlet {
 	/**
@@ -33,36 +38,29 @@ public class Api extends HttpServlet {
 			MyLogger.get().debug("size="+size);
 			MyLogger.get().debug("str="+request.getContentType());
 			
-			byte[] buffer = new byte[size];
-			int readed = 0;
-			int times = 0;
-			do {
-				int avail = bf.available();
-				MyLogger.get().debug("avail="+avail);
-				
-				int count = bf.read(buffer, 0, size-readed);
-				
-				if (count == -1) break;
-				readed += count;
-				if (readed >= size) break;
-				
-				try {
-					Thread.sleep(500);
-				} catch (Exception e) {}
-			} while (times++ < 6);
+			String args = Util.getHttpEntityStr(bf, size, "UTF-8");
 			
-			MyLogger.get().debug("readed="+readed + ",times="+times);
-			
-			String args = new String(buffer, "UTF-8");
 			MyLogger.get().debug("receive restful api:\n" + args);
 			
 			JSONObject jso = new JSONObject(args);
 			long areaId = jso.getLong("areaId");
-			String wxuid = jso.getString("wxuid");
-			String wxtoken = jso.getString("wxtoken");
+			
+			String usrId = null,token = null;
+			
+			Cookie[] cookies = request.getCookies();
+			for (Cookie cookie : cookies) {
+				String n = cookie.getName();
+				String v = cookie.getValue();
+				if (n.equals("usrId")) {
+					usrId = v;
+				} else if (n.equals("token")) {
+					token = v;
+				}
+			}
+
 			String actType = jso.getString("act");
 			
-			if (!SessionMgr.instance(areaId).isOnlineUser(wxuid, wxtoken)) {
+			if (!SessionMgr.instance(areaId).isOnlineUser(usrId, token)) {
 				errorRsp(ErrCode.auth_failed, response);
 				return;
 			}
@@ -75,6 +73,15 @@ public class Api extends HttpServlet {
 			} else if (actType.equals("successSwitch")) {
 				long stateid = jso.getLong("stateid");
 				errcode = StateMgr.instance(areaId).delOneStateById(stateid);
+			} else if (actType.equals("dengji")) {
+				JSONObject uinfoJo = (JSONObject)jso.get("data");
+				UserInfo uinfo = new UserInfo();
+				uinfo.usrId = uinfoJo.getString("usrId");
+				uinfo.telId = uinfoJo.getString("telId");
+				uinfo.homeId = uinfoJo.getString("homeId");
+				
+				ComDataMgr<UserInfo> dm = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId);
+				dm.add(uinfo.usrId, uinfo);
 			} else {
 				errcode = ErrCode.unkown_act_of_api;
 			}

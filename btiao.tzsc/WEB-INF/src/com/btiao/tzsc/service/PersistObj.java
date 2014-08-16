@@ -25,7 +25,7 @@ public class PersistObj {
 		}
 	}
 	
-	static void addBackTask(Runnable task) {
+	static public void addBackTask(Runnable task) {
 		service.scheduleAtFixedRate(
 		        task, 10,
 				30, TimeUnit.SECONDS);
