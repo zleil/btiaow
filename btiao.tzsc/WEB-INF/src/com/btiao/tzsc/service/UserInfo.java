@@ -23,7 +23,12 @@ public class UserInfo implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("usrId:\""+usrId+"\",");
+		sb.append("nick:\""+nick+"\"");
 		sb.append("telId:\""+telId+"\"");
+		sb.append("homeId:\""+homeId+"\"");
+		sb.append("realSalePosId:\""+realSalePosId+"\"");
+		sb.append("wuyeAuth:\""+wuyeAuth+"\"");
+		sb.append("doorNoPicAuth:\""+doorNoPicAuth+"\"");
 		sb.append("}");
 		
 		return sb.toString();

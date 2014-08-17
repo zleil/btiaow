@@ -71,7 +71,7 @@ public class State implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{id:"+id+",areaId:"+areaId+",userId:\""+userId+"\""+
-				"publishTime:"+publishTime+"infos:[");
+				",publishTime:"+publishTime+",infos:[");
 		for (Info info : infos) {
 			sb.append(info);
 		}

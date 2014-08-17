@@ -31,6 +31,10 @@ public class SessionMgr {
 		return false;
 	}
 	
+	public synchronized String getall() {
+		return this.users.toString();
+	}
+	
 	private SessionMgr(long areaId) {
 		this.areaId = areaId;
 	}
