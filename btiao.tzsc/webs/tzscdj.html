@@ -3,7 +3,7 @@
 <head>
 	<title>便条网 - 望春园</title>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<link rel="stylesheet" href="jm/jquery.mobile-1.4.3.min.css" />
 	<script src="jm/jquery-2.1.1.min.js"></script>
 	<script src="jm/jquery.mobile-1.4.3.min.js"></script>
@@ -11,8 +11,11 @@
 	<style type="text/css">
 		.tzscdj-selgrid{
 			font-size:1.2em;
-			line-height:3em;
+			line-height:2.6em;
 			text-align:center;
+		}
+		#selTelId{
+			margin-bottom:1em;
 		}
 	</style>
 </head>
@@ -36,15 +39,20 @@
 	</div><!-- /content -->
 	
 	<div role="main" class="ui-content">
-		<a href="#" class="ui-btn ui-corner-all">提交</a>
+		<a href="#" class="ui-btn ui-corner-all" id="dengji_bt">提交</a>
 	</div><!-- /content -->
 
 	<div data-theme="a" data-role="footer" data-position="fixed">
 		<h4>@Copyright 便条科技有限公司</h4>
 	</div><!-- /footer -->
-
+	<div data-role="popup" id="dengjiOKTip">
+		<p>已完成登记^_^</p>
+		<p>提示：发送 “您家门”的照片（门牌号要清晰哦）到本订阅账号进行审核，可完成基本门牌认证</p>
+	</div>
 </div>
-<div data-role="page" id="selectPos" data-close-btn="none">
+<div data-role="popup" id="commonTip">
+</div>
+<div data-role="page" id="selectPos">
 	<div data-role="header">
 		<h2 id="selectPos_Title">选择楼号</h2>
 	</div><!-- /header -->
@@ -53,12 +61,12 @@
 		</div><!-- /grid-a -->
 	</div><!-- /content -->
 </div>
-<div data-role="page" id="selectTelPhone" data-close-btn="none">
+<div data-role="page" id="selectTelPhone">
 	<div data-role="header">
 		<h2>选择手机号码</h2>
 	</div><!-- /header -->
 	<div role="main" class="ui-content">
-		<div id="selTelId" style="font-size:1.2em;">&nbsp;</div>
+		<div id="selTelId" style="font-size:1.2em;">_</div>
 		<div class="ui-grid-b">
 			<div class="ui-block-a" onclick="phoneDialog.addOne(1)"><div class="ui-bar ui-bar-a tzscdj-selgrid">1</div></div>
 			<div class="ui-block-b" onclick="phoneDialog.addOne(2)"><div class="ui-bar ui-bar-a tzscdj-selgrid">2</div></div>

@@ -10,7 +10,7 @@ public class SessionMgr {
 		SessionMgr inst = insts.get(areaId);
 		if (inst == null) {
 			inst = new SessionMgr(areaId);
-			inst.addUserInfo("zleil", "zleil");
+			inst.addSession("zleil", "zleil");
 			insts.put(areaId, inst);
 			return inst;
 		}
@@ -18,7 +18,7 @@ public class SessionMgr {
 		return inst;
 	}
 	
-	public synchronized void addUserInfo(String uid, String token) {
+	public synchronized void addSession(String uid, String token) {
 		users.put(uid, token);
 	}
 	

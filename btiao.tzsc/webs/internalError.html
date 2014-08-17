@@ -1,0 +1,30 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<title>便条网 - 望春园</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link rel="stylesheet" href="jm/jquery.mobile-1.4.3.min.css" />
+	<script src="jm/jquery-2.1.1.min.js"></script>
+	<script src="jm/jquery.mobile-1.4.3.min.js"></script>
+</head>
+<body>
+<p>系统忙，请稍后再试~</p>
+<div data-role="popup" id="commonTip">
+我们正尽最大努力提供更完善的服务，努力中...
+</div>
+<script type="text/javascript">
+window.onload = function() {
+	var tip = $("#commonTip").popup({
+		afterclose: function( event, ui ) {
+  		  if (typeof(WeixinJSBridge) != "undefined") {
+  			  WeixinJSBridge.call("closeWindow");
+  		  } else {
+  			  window.close();
+  		  }
+  	  }
+	});
+}
+</script>
+</body>
+</html>

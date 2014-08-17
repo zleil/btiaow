@@ -69,7 +69,7 @@ public class WXServletDispDetail extends HttpServlet {
 		sb.append("<!DOCTYPE HTML>");
 		sb.append("<title>"+Tip.get().tzscTitle+"</title>");
 		sb.append("<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\">");
-		sb.append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0\">");
+		sb.append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,initial-scale=1,maximum-scale=1,user-scalable=no\">");
 		sb.append("<link rel=\"stylesheet\" href=\"../webs/a.css\" media=\"all\">");
 		
 		if (state != null) {

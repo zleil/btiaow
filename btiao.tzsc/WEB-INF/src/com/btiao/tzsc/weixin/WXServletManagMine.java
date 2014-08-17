@@ -1,9 +1,9 @@
 package com.btiao.tzsc.weixin;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +14,14 @@ import com.btiao.tzsc.service.SessionMgr;
 import com.btiao.tzsc.service.State;
 import com.btiao.tzsc.service.StateMgr;
 
+/**
+ * http://182.92.81.56/btiao/tzsc/wx_managemine/65537?code=zleil&act=xxx
+ * 
+ * act = dengji | null
+ * 
+ * @author zleil
+ *
+ */
 public class WXServletManagMine extends HttpServlet {
 	/**
 	 * 
@@ -72,43 +80,65 @@ public class WXServletManagMine extends HttpServlet {
 				}
 			}
 			
-			SessionMgr.instance(areaId).addUserInfo(uinfo.openId, uinfo.accesToken);
+			SessionMgr.instance(areaId).addSession(uinfo.openId, uinfo.accesToken);
 			
 			String act = request.getParameter("act");
+			
+			//可以增加一个机制
+			request.setAttribute("areaId", areaId);
+			setAccessToken(response, areaId, uinfo.openId, uinfo.accesToken);
+			
+			MyLogger.get().info("do a redirect!");
+			
 			if (act == null) {
 				genManageMinePage(areaId, uinfo, out);
 			} else if (act != null && act.equals("dengji")) {
-				//可以增加一个机制
-				request.setAttribute("areaId", areaId);
-				setAccessToken(response, uinfo.openId, uinfo.accesToken);
-				response.addCookie(new Cookie("areaId", areaIdStr));
-				
-				MyLogger.get().info("do a redirect!");
 				response.sendRedirect("../webs/tzscdj.html");
+			} else if (act.equals("admin")) {
+				
 			} else {
 				MyLogger.getAttackLog().warn("process wx_managemine: unkown act="+act+"\nfrom="+request.getRemoteAddr());
 				return;
 			}
 		} catch (Throwable e) {
-			MyLogger.get().warn("process wx_managemine _doGet failed!", e);
+			MyLogger.getAttackLog().warn("process wx_managemine _doGet failed!", e);
+			try {
+				response.sendRedirect("../webs/internalError.html");
+			} catch (IOException e1) {
+				MyLogger.getAttackLog().warn(e1);
+			}
 		}
 	}
 	
-	private void setAccessToken(HttpServletResponse response, String usrId, String token) {
+	private void setAccessToken(HttpServletResponse response, long areaId, String usrId, String token) {
+		int timeout = 3600;
+		String domain = "182.92.81.56";
+		String path = "/";
+		
 		Cookie cookie = new Cookie("accessToken", token);
-		cookie.setMaxAge(3600);
+		cookie.setMaxAge(timeout);
+		cookie.setDomain(domain);
+		cookie.setPath(path);
 		response.addCookie(cookie);
 		
 		Cookie cookie2 = new Cookie("usrId", usrId);
-		cookie.setMaxAge(3600);
+		cookie2.setMaxAge(timeout);
+		cookie2.setDomain(domain);
+		cookie2.setPath(path);
 		response.addCookie(cookie2);
+		
+		Cookie cookie3 = new Cookie("areaId", Long.toString(areaId));
+		cookie3.setMaxAge(timeout);
+		cookie3.setDomain(domain);
+		cookie3.setPath(path);
+		response.addCookie(cookie3);
 	}
 	
 	private void genManageMinePage(long areaId, WXUserInfo uinfo, PrintWriter out) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<!DOCTYPE HTML>");
 		sb.append("<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\">");
-		sb.append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0\">");
+		sb.append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,initial-scale=1,maximum-scale=1,user-scalable=no\">");
 		sb.append("<link rel=\"stylesheet\" href=\"../webs/a.css\" media=\"all\">");
 		
 		sb.append("<script type=\"text/javascript\" src=\"../webs/jquery.js\"></script>");

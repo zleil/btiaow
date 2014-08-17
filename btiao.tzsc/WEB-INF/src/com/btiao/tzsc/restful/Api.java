@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.btiao.tzsc.service.ComDataMgr;
@@ -19,6 +20,12 @@ import com.btiao.tzsc.service.StateMgr;
 import com.btiao.tzsc.service.UserInfo;
 import com.btiao.tzsc.service.Util;
 
+/*
+ * url: /baseUrl/api
+ * http entity:{act:xxx,data{...}}
+ * cookies: "usrId=xxx; accessToken=xxx; areaId=xxx; ...";
+ * @author zleil
+ */
 public class Api extends HttpServlet {
 	/**
 	 * 
@@ -41,9 +48,9 @@ public class Api extends HttpServlet {
 			String args = Util.getHttpEntityStr(bf, size, "UTF-8");
 			
 			MyLogger.get().debug("receive restful api:\n" + args);
-			
 			JSONObject jso = new JSONObject(args);
-			long areaId = jso.getLong("areaId");
+			
+			long areaId = 0;
 			
 			String usrId = null,token = null;
 			
@@ -53,9 +60,17 @@ public class Api extends HttpServlet {
 				String v = cookie.getValue();
 				if (n.equals("usrId")) {
 					usrId = v;
-				} else if (n.equals("token")) {
+				} else if (n.equals("accessToken")) {
 					token = v;
+				} else if (n.equals("areaId")) {
+					areaId = Long.parseLong(v);
 				}
+			}
+			
+			try {
+				areaId = jso.getLong("areaId");
+			} catch (JSONException e) {
+				;
 			}
 
 			String actType = jso.getString("act");
@@ -67,16 +82,14 @@ public class Api extends HttpServlet {
 			
 			int errcode = ErrCode.success;
 			
-			if (actType.equals("deleteState")) {
-				long stateid = jso.getLong("stateid");
+			if (actType.equals("stateChange")) {
+				JSONObject argJso = (JSONObject)jso.get("data");
+				long stateid = argJso.getLong("stateid");
 				errcode= StateMgr.instance(areaId).delOneStateById(stateid);
-			} else if (actType.equals("successSwitch")) {
-				long stateid = jso.getLong("stateid");
-				errcode = StateMgr.instance(areaId).delOneStateById(stateid);
 			} else if (actType.equals("dengji")) {
 				JSONObject uinfoJo = (JSONObject)jso.get("data");
 				UserInfo uinfo = new UserInfo();
-				uinfo.usrId = uinfoJo.getString("usrId");
+				uinfo.usrId = usrId;
 				uinfo.telId = uinfoJo.getString("telId");
 				uinfo.homeId = uinfoJo.getString("homeId");
 				
@@ -89,6 +102,11 @@ public class Api extends HttpServlet {
 			errorRsp(errcode, response);
 		} catch (Throwable e) {
 			MyLogger.getAccess().error("process restful api error!", e);
+			try {
+				errorRsp(ErrCode.internel_error, response);
+			} catch (Exception e1) {
+				MyLogger.getAccess().error(e1);
+			}
 		}
 	}
 	

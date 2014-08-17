@@ -1,11 +1,8 @@
 function act_switched(stateid) {
-	var args = "{\"areaId\":"+areaId+
-		",\"wxuid\":\""+uid+"\""+
-		",\"wxtoken\":\""+token+"\""+
-		",\"act\":"+"\"successSwitch\""+
-		",\"stateid\":"+stateid+
-		"}";
-	htmlobj=$.ajax({
+	var args = "{\"act\":\"stateChg\",data:{\"stateId\":\""+stateid+ "\"" +
+	"}}";
+	
+	$.ajax({
 		type: "POST",
 		data: args,
 		url:"../api",
@@ -27,7 +24,7 @@ function act_canceled(stateid) {
 		",\"act\":"+"\"deleteState\""+
 		",\"stateid\":"+stateid+
 		"}";
-	htmlobj=$.ajax({
+	$.ajax({
 		type: "POST",
 		data: args,
 		url:"../api",
