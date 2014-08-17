@@ -34,6 +34,10 @@ public class ComDataMgr<DataType> {
 		return this.all.get(id);
 	}
 	
+	public synchronized String getall() {
+		return this.all.toString();
+	}
+	
 	private ComDataMgr(final String dbId, final long areaId) {
 		this.areaId = areaId;
 		this.dbId = dbId;

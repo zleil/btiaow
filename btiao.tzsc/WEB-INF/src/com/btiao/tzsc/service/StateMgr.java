@@ -49,6 +49,10 @@ public class StateMgr {
 		return ret;
 	}
 	
+	public synchronized String getall() {
+		return this.all.toString();
+	}
+	
 	public synchronized int addState(String userName, State state) {
 		List<State> states = all.get(userName);
 		if (states == null) {

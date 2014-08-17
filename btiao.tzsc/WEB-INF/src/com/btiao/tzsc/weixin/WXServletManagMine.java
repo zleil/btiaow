@@ -95,7 +95,7 @@ public class WXServletManagMine extends HttpServlet {
 			} else if (act != null && act.equals("dengji")) {
 				response.sendRedirect("../webs/tzscdj.html");
 			} else if (act.equals("admin")) {
-				
+				response.sendRedirect("../webs/admin.jsp");
 			} else {
 				MyLogger.getAttackLog().warn("process wx_managemine: unkown act="+act+"\nfrom="+request.getRemoteAddr());
 				return;
