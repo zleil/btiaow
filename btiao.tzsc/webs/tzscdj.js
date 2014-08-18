@@ -119,6 +119,12 @@ SelDialog.prototype.onSelDialog = function(selWhat) {
 	return true;
 }
 
+function commonTip(tipStr, idSel) {
+	$(idSel).text(tipStr);
+	$(idSel).popup({});
+	$(idSel).popup("open");
+}
+
 function dengji() {
 	var telId = $("#telId").text();
 	telId = telId.replace(/-/g, "");
@@ -127,6 +133,18 @@ function dengji() {
 	var buildId = $("#buildId").text();
 	var floorId = $("#floorId").text();
 	var roomId = $("#roomId").text();
+	
+	if (!buildId.match(/^\d+$/) || !floorId.match(/^\d+$/) || !roomId.match(/^\d+$/)) {
+		var tipStr = "您还没有输入完整的房间号呦~";
+		commonTip(tipStr, "#commonTip");
+		return;
+	}
+	
+	if (!telId.match(/^\d{11}$/)) {
+		var tipStr = "您的手机号好像不对呦~" + telId;
+		commonTip(tipStr, "#commonTip");
+		return;
+	}
 	
 	var homeId = "" + buildId + "#" + floorId + roomId;
 	
@@ -152,8 +170,8 @@ function dengji() {
 			    });
 			    tip.popup("open");
 			} else {
-				$("#commonTip").text("服务忙，请稍后再登记：-）");
-				$("#commonTip").popup("open");
+				var tipStr = "服务忙，请稍后再登记：-）";
+				commonTip(tipStr, "#commonTip");
 			}
 		}
 	});

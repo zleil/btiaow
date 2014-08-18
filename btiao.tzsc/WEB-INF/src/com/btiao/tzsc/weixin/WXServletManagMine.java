@@ -2,15 +2,12 @@ package com.btiao.tzsc.weixin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.btiao.tzsc.service.ComDataMgr;
 import com.btiao.tzsc.service.MetaDataId;
 import com.btiao.tzsc.service.MyLogger;
@@ -104,7 +101,7 @@ public class WXServletManagMine extends HttpServlet {
 				genManageMinePage(areaId, uinfo, out);
 			} else if (act != null && act.equals("dengji")) {
 				UserInfo reguinfo = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId).get(uinfo.openId);
-				if (reguinfo.usrId.equals(uinfo.openId)) {
+				if (reguinfo != null) {
 					MyLogger.get().info("querystring is :\n"+request.getQueryString());
 					String tip = URLEncoder.encode("本微信账号已登记了房屋"+reguinfo.homeId+"，请确认是否需要重新登记？", "UTF-8");
 					String yesUrl = URLEncoder.encode("tzscdj.html", "UTF-8");
