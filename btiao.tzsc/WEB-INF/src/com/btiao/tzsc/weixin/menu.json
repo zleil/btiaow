@@ -1,7 +1,7 @@
  {
-     "button":[
-     {
-          "name":"发布", 
+       "button":[
+       {
+          "name":"卖东西", 
           "sub_button":[
           {
           	"type":"click",
@@ -11,23 +11,39 @@
           {
           	"type":"click",
           	"name":"取消",
-          	"key":"act_cancel"
+          	"key":"act_cancelpub"
           },
           {
-          	"type":"view",
-          	"name":"申请摊位",
-          	"url":"http://182.92.81.56/btiao/tzsc/webs/tzscdj.html"
+          	"type":"click",
+          	"name":"----",
+          	"key":"act_noexist"
+          },
+          {
+          	"type":"click",
+          	"name":"帮助",
+          	"key":"act_salehelp"
           }
           ]
       },
       {	
           "type":"click",
-          "name":"找找看", 
+          "name":"随便看",
           "key":"act_browse"
       },
-      {	
-          "type":"view",
-          "name":"我的物品"
+      {
+          "name":"更多", 
+          "sub_button":[
+          {	
+	          "type":"view",
+	          "name":"我的物品",
+	          "url":""
+          },
+          {
+			  "type":"view",
+	          "name":"摊位申请",
+	          "url":""
+          }
+          ]
       }
       ]
 }
