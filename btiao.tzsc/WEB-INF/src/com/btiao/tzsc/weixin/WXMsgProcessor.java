@@ -14,8 +14,8 @@ public class WXMsgProcessor {
 		rsp.setCharacterEncoding("UTF-8");
 		
 		if (reqWxMsg == null) {
-			WXMsg helpMsg = getHelpMsg(reqWxMsg);
-			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
+			WXMsg unSupportedMsg = getTextMsg(reqWxMsg, Tip.get().unSupportedMsgType);
+			rsp.getOutputStream().write(WXMsgFactory.genXML(unSupportedMsg).getBytes());
 			return;
 		}
 		
@@ -24,14 +24,15 @@ public class WXMsgProcessor {
 		} else if (reqWxMsg instanceof WXMsg.Picture){
 			processPicMsg(areaId, (WXMsg.Picture) reqWxMsg, rsp.getOutputStream());
 		} else if (reqWxMsg instanceof WXMsg.SubEvent) {
-			WXMsg.Text helpMsg = (Text) getHelpMsg(reqWxMsg);
+			MyLogger.getAccess().info("get a subevent:"+((WXMsg.SubEvent)reqWxMsg).event);
+			WXMsg.Text helpMsg = (Text) getTextMsg(reqWxMsg, Tip.get().saleHelpStr);
 			helpMsg.content = Tip.get().welcomeStr + "\n\n" + helpMsg.content;
 			new WXApi().sendWXMsg(helpMsg);
 		} else if (reqWxMsg instanceof WXMsg.Click) {
 			processClickMsg(reqWxMsg, rsp.getOutputStream());
-		} else {			
-			WXMsg helpMsg = getHelpMsg(reqWxMsg);
-			rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
+		} else {
+			WXMsg unSupportedMsg = getTextMsg(reqWxMsg, Tip.get().unSupportedMsgType);
+			rsp.getOutputStream().write(WXMsgFactory.genXML(unSupportedMsg).getBytes());
 		}
 	}
 	
@@ -39,9 +40,10 @@ public class WXMsgProcessor {
 		String userName = reqWxMsg.fromUserName;
 		String clickKey = ((WXMsg.Click)reqWxMsg).key;
 		String ret = null;
+		
 		if (clickKey.equals("act_publish")) {
 			ret = WXPutStateMgr.instance(areaId).endPut(userName);
-		} else if (clickKey.equals("act_cancel")) {
+		} else if (clickKey.equals("act_cancelpub")) {
 			ret = WXPutStateMgr.instance(areaId).cancelPut(userName);
 		} else if (clickKey.equals("act_browse")) {
 			WXMsg retMsg = WXPutStateMgr.instance(areaId).more(userName);
@@ -54,9 +56,6 @@ public class WXMsgProcessor {
 					retMsg.toUserName = userName;
 					retMsg.msgId = reqWxMsg.msgId;
 					new WXApi().sendWXMsg(retMsg);
-//					String retStr = WXMsgFactory.genXML(retMsg);
-//					MyLogger.get().debug("processClickMsg first msg:\n"+retStr);
-//					out.write(retStr.getBytes());
 					return;
 				} else {
 					ret = Tip.get().nopublish;
@@ -67,14 +66,13 @@ public class WXMsgProcessor {
 				retMsg.toUserName = userName;
 				retMsg.msgId = reqWxMsg.msgId;
 				new WXApi().sendWXMsg(retMsg);
-//				String retStr = WXMsgFactory.genXML(retMsg);
-//				MyLogger.get().debug("processClickMsg more msg:\n"+retStr);
-//				out.write(retStr.getBytes());
 				return;
 			}
-			
+		} else if (clickKey.equals("act_salehelp")) {
+			ret = Tip.get().saleHelpStr;
 		} else {
-			return;
+			ret = Tip.get().unknownClickAct;
+			MyLogger.getAttackLog().warn("receive a unknown click act:"+clickKey);
 		}
 		
 		WXMsg.Text retMsg = new WXMsg.Text();
@@ -85,25 +83,10 @@ public class WXMsgProcessor {
 		retMsg.msgId = reqWxMsg.msgId;
 		
 		new WXApi().sendWXMsg(retMsg);
-//		String retXML = WXMsgFactory.genXML(retMsg);
-//		
-//		MyLogger.get().debug("processClickMsg response msg:\n"+retXML);
-//		out.write(retXML.getBytes());
-	}
-	
-	private WXMsg getHelpMsg(WXMsg req) {
-		WXMsg.Text ret = new WXMsg.Text();
-		ret.content = Tip.get().helpStr;
-		ret.createTime = req.createTime;
-		ret.fromUserName = req.toUserName;
-		ret.msgId = req.msgId;
-		ret.toUserName = req.fromUserName;
-		
-		return ret;
 	}
 	
 	private void processPicMsg(long areaId, WXMsg.Picture msg, OutputStream out) throws Exception {
-		String ret = WXPutStateMgr.instance(areaId).putUrlMsg(msg.fromUserName, msg.picUrl);
+		String ret = WXPutStateMgr.instance(areaId).putPicUrlMsg(msg.fromUserName, msg.picUrl);
 		
 		WXMsg.Text rspMsg = new WXMsg.Text();
 		rspMsg.fromUserName = msg.toUserName;
@@ -122,47 +105,7 @@ public class WXMsgProcessor {
 		final String userName = reqWxMsg.fromUserName;
 		final String appId = reqWxMsg.toUserName;
 		
-		String ret = null;
-		if (reqWxMsg.content.startsWith("!") ||
-				reqWxMsg.content.startsWith("！")) {
-			MyLogger.getSuggestion().fatal("{user:\"" + reqWxMsg.fromUserName + "\"; areaId:\"" + areaId + "\";}\n" + reqWxMsg.content);
-			ret = Tip.get().thanksSuggestion;
-		} else if (reqWxMsg.content.startsWith("0")) {
-			ret = WXPutStateMgr.instance(areaId).cancelPut(userName);
-		} else if (reqWxMsg.content.startsWith("5")) {
-			WXMsg retMsg = WXPutStateMgr.instance(areaId).returnSelfAll(userName);
-			
-			if (retMsg != null) {
-				retMsg.createTime = System.currentTimeMillis();
-				retMsg.fromUserName = appId;
-				retMsg.toUserName = userName;
-				retMsg.msgId = reqWxMsg.msgId;
-				
-				String retStr = WXMsgFactory.genXML(retMsg);
-				MyLogger.get().debug("processTextMsg search response msg:\n"+retStr);
-				out.write(retStr.getBytes());
-				return;
-			} else {
-				ret = "您没有任何交换物品，赶紧提交吧\n\n" + Tip.get().helpStr;
-			}
-		} else if (reqWxMsg.content.startsWith("3")) {
-			int idx = -1;
-			try {
-				idx = Integer.parseInt(reqWxMsg.content.substring(1).trim());
-				ret = WXPutStateMgr.instance(areaId).delOne(userName, idx);
-			} catch (NumberFormatException e) {
-				ret = "发送数字 3 x ，删除您的第x个物品";
-			}
-		} else if (reqWxMsg.content.startsWith("@")) {
-			String tel = reqWxMsg.content.substring(1);
-			if (checkPhoneNum(tel)) {
-				ret = WXPutStateMgr.instance(areaId).putPhoneNum(userName, tel);
-			} else {
-				ret = Tip.get().phoneNumFillHelpTip;
-			}
-		} else {
-			ret = WXPutStateMgr.instance(areaId).putTextMsg(userName, reqWxMsg.content);
-		}
+		String ret = WXPutStateMgr.instance(areaId).putTextMsg(userName, reqWxMsg.content);
 		
 		WXMsg.Text retMsg = new WXMsg.Text();
 		retMsg.content = ret;
@@ -177,14 +120,15 @@ public class WXMsgProcessor {
 		out.write(retXML.getBytes());
 	}
 	
-	private boolean checkPhoneNum(String tel) {
-		try {
-			Long.parseLong(tel);
-		} catch (Throwable e) {
-			return false;
-		}
+	private WXMsg getTextMsg(WXMsg req, String txt) {
+		WXMsg.Text ret = new WXMsg.Text();
+		ret.content = Tip.get().saleHelpStr;
+		ret.createTime = req.createTime;
+		ret.fromUserName = req.toUserName;
+		ret.msgId = req.msgId;
+		ret.toUserName = req.fromUserName;
 		
-		return tel.length() == 11;
+		return ret;
 	}
 	
 	private final long areaId;

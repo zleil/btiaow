@@ -2,6 +2,11 @@ package com.btiao.tzsc.service;
 
 import java.io.Serializable;
 
+/**
+ * 用户等级的信息
+ * @author zleil
+ *
+ */
 public class UserInfo implements Serializable {
 	/**
 	 * 

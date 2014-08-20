@@ -23,4 +23,8 @@ public class MyLogger {
 	static public Logger getAccess() {
 		return LogManager.getLogger("access");
 	}
+	
+	static public Logger getUnknownAct() {
+		return LogManager.getLogger("unknownAct");
+	}
 }

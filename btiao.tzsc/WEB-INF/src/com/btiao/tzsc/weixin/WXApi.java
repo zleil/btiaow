@@ -42,6 +42,7 @@ public class WXApi {
 	public int sendWXMsg(WXMsg msg) throws Exception {
 		String str = WXMsgFactory.genJsonStr(msg);
 		if (str.equals("")) {
+			MyLogger.get().error("failed to convert msg object to string while sending it:"+msg);
 			return -1;
 		}
 

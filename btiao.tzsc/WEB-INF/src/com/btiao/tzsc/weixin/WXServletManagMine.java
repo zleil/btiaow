@@ -12,7 +12,7 @@ import com.btiao.tzsc.service.ComDataMgr;
 import com.btiao.tzsc.service.MetaDataId;
 import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.service.SessionMgr;
-import com.btiao.tzsc.service.State;
+import com.btiao.tzsc.service.WPState;
 import com.btiao.tzsc.service.StateMgr;
 import com.btiao.tzsc.service.UserInfo;
 
@@ -58,24 +58,24 @@ public class WXServletManagMine extends HttpServlet {
 				uinfo.openId = "zleil";
 				uinfo.accesToken = "zleil";
 				
-				List<State> states = StateMgr.instance(areaId).getAllStateByUserName("zleil");
+				List<WPState> states = StateMgr.instance(areaId).getAllStateByUserName("zleil");
 				if (states == null || states.size() == 0) {
-					State state = new State("zleil");
+					WPState state = new WPState("zleil");
 					state.areaId = areaId;
-					State.Info info = new State.Info(State.Info.MsgType.text, "test tile");
-					state.infos.add(info);
-					State.Info info2 = new State.Info(State.Info.MsgType.phone, "@13812345678");
-					state.infos.add(info2);
-					State.Info info3 = new State.Info(State.Info.MsgType.pic, "http://");
-					state.infos.add(info3);
+					WPState.Info info = new WPState.Info(WPState.Info.MsgType.text, "test tile");
+					state.getInfos().add(info);
+					WPState.Info info2 = new WPState.Info(WPState.Info.MsgType.phone, "@13812345678");
+					state.getInfos().add(info2);
+					WPState.Info info3 = new WPState.Info(WPState.Info.MsgType.pic, "http://");
+					state.getInfos().add(info3);
 					
 					StateMgr.instance(areaId).addState("zleil", state);
 					
-					State state2 = new State("zleil");
+					WPState state2 = new WPState("zleil");
 					state2.areaId = areaId;
-					state2.infos.add(info);
-					state2.infos.add(info2);
-					state2.infos.add(info3);
+					state2.getInfos().add(info);
+					state2.getInfos().add(info2);
+					state2.getInfos().add(info3);
 					
 					StateMgr.instance(areaId).addState("zleil", state2);
 				}
@@ -165,13 +165,13 @@ public class WXServletManagMine extends HttpServlet {
 		sb.append("var token=\""+uinfo.accesToken+"\";");
 		sb.append("</script>");
 		
-		List<State> states = StateMgr.instance(areaId).getAllStateByUserName(uinfo.openId);
+		List<WPState> states = StateMgr.instance(areaId).getAllStateByUserName(uinfo.openId);
 		
 		sb.append("<p>物品数：<span id=\"stateNum\">"+states.size()+"</span></p>");
 		
-		for (State state : states) {
+		for (WPState state : states) {
 			sb.append("<div class=\"perState\" id=\"state_"+state.id+"\">");
-			sb.append("<div><div class=\"perSateTitle\">"+state.infos.get(0).content+"</div>");
+			sb.append("<div><div class=\"perSateTitle\">"+state.getInfos().get(0).content+"</div>");
 			String picurl = state.getFirstPicUrl();
 			if (picurl != null && !picurl.equals("")) {
 				String stateUrl = WXServletDispDetail.dispDetailURI+state.areaId+"?stateId=" + state.id;

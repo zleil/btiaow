@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class State implements Serializable {
+public class WPState implements Serializable {
 	/**
 	 * 
 	 */
@@ -65,7 +65,16 @@ public class State implements Serializable {
 	public long areaId; //小区名称
 	public String userId; //用户名
 	public long publishTime; //发布时间
-	public List<Info> infos = new ArrayList<Info>(); //元信息描述
+	private List<Info> infos = new ArrayList<Info>(); //元信息描述
+	
+	public List<Info> getInfos() {
+		publishTime = System.currentTimeMillis();
+		return infos;
+	}
+	
+	public void add(Info info) {
+		infos.add(info);
+	}
 	
 	@Override
 	public String toString() {
@@ -80,7 +89,7 @@ public class State implements Serializable {
 		return sb.toString();
 	}
 	
-	public State(String name) {
+	public WPState(String name) {
 		id = genNextId();
 		this.userId = name;
 	}

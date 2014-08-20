@@ -34,6 +34,14 @@
         	<SizeBasedTriggeringPolicy size="10 MB"/>
       </Policies>  
     </RollingFile>
+    <RollingFile name="attack_appender" filename="logs/unknownAct.log"
+    	filePattern="logs/$${date:yyyy-MM}/attack-%d{MM-dd-yyyy}-%i.log.gz">  
+      <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <Policies>
+        	<OnStartupTriggeringPolicy />
+        	<SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>  
+    </RollingFile>
     <Console name="STDOUT">
       <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
@@ -47,6 +55,9 @@
     </logger>
     <logger name="access" level="debug">
       <appender-ref ref="access_appender"/>
+    </logger>
+    <logger name="unknownAct" level="error">
+    	<appender-ref ref="unknownAct_appender"/>
     </logger>
     <logger name="suggestion" level="error">
     	<appender-ref ref="suggestion_appender"/>

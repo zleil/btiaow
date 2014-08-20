@@ -22,26 +22,26 @@ public class StateMgr {
 		return inst;
 	}
 	
-	public synchronized List<State> searchState(String text) {
+	public synchronized List<WPState> searchState(String text) {
 		//TODO implements search action
 		
-		List<State> ret = new ArrayList<State>();
-		for (List<State> sts : all.values()) {
+		List<WPState> ret = new ArrayList<WPState>();
+		for (List<WPState> sts : all.values()) {
 			ret.addAll(sts);
 		}
 		
 		return ret;
 	}
 	
-	public synchronized State getState(long stateId) {
-		State s = stateId2State.get(stateId);
+	public synchronized WPState getState(long stateId) {
+		WPState s = stateId2State.get(stateId);
 		return s;
 	}
 	
-	public synchronized List<State> getAllStateByUserName(String name) {
-		List<State> ret = new ArrayList<State>();
+	public synchronized List<WPState> getAllStateByUserName(String name) {
+		List<WPState> ret = new ArrayList<WPState>();
 		
-		List<State> self = all.get(name);
+		List<WPState> self = all.get(name);
 		if (self != null) {
 			ret.addAll(self);
 		}
@@ -53,10 +53,10 @@ public class StateMgr {
 		return this.all.toString();
 	}
 	
-	public synchronized int addState(String userName, State state) {
-		List<State> states = all.get(userName);
+	public synchronized int addState(String userName, WPState state) {
+		List<WPState> states = all.get(userName);
 		if (states == null) {
-			states = new ArrayList<State>();
+			states = new ArrayList<WPState>();
 			all.put(userName, states);
 		}
 		states.add(state);
@@ -75,9 +75,9 @@ public class StateMgr {
 	 * 		否则，说明删除后的物品总数
 	 */
 	public synchronized int delOneState(String userName, int idx) {
-		List<State> sts = all.get(userName);
+		List<WPState> sts = all.get(userName);
 		if (idx >= 1 && idx <= sts.size()) {
-			State s = sts.remove(idx-1);
+			WPState s = sts.remove(idx-1);
 			stateId2State.remove(s.id);
 			
 			if (sts.size() == 0) {
@@ -92,12 +92,12 @@ public class StateMgr {
 	}
 	
 	public synchronized int delOneStateById(long stateid) {
-		State state = stateId2State.get(stateid);
+		WPState state = stateId2State.get(stateid);
 		if (state == null) {
 			return ErrCode.no_such_state;
 		}
 		
-		List<State> states = all.get(state.userId);
+		List<WPState> states = all.get(state.userId);
 		for (int idx=0; idx<states.size(); ++idx) {
 			if (state.id == states.get(idx).id) {
 				states.remove(idx);
@@ -124,7 +124,7 @@ public class StateMgr {
 	}
 	
 	static public void main(String[] args) {
-		StateMgr.instance(0).addState("abc", new State(""));
+		StateMgr.instance(0).addState("abc", new WPState(""));
 	}
 	
 	private StateMgr(final long areaId) {
@@ -163,11 +163,11 @@ public class StateMgr {
 			return;
 		}
 		
-		all = (Map<String, List<State>>) persistAll;
+		all = (Map<String, List<WPState>>) persistAll;
 		
-		Set<Entry<String,List<State>>> entries = all.entrySet();
-		for (Entry<String,List<State>> entry : entries) {
-			for (State state : entry.getValue()) {
+		Set<Entry<String,List<WPState>>> entries = all.entrySet();
+		for (Entry<String,List<WPState>> entry : entries) {
+			for (WPState state : entry.getValue()) {
 				this.stateId2State.put(state.id, state);
 			}
 		}
@@ -181,6 +181,6 @@ public class StateMgr {
 	private final long areaId;
 	
 	private volatile boolean isChanged = false;
-	private Map<String,List<State>> all = new HashMap<String,List<State>>();
-	private Map<Long,State> stateId2State = new HashMap<Long,State>();
+	private Map<String,List<WPState>> all = new HashMap<String,List<WPState>>();
+	private Map<Long,WPState> stateId2State = new HashMap<Long,WPState>();
 }

@@ -1,22 +1,29 @@
 package com.btiao.tzsc.weixin;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import com.btiao.tzsc.service.State;
+import com.btiao.tzsc.service.ComDataMgr;
+import com.btiao.tzsc.service.GlobalParam;
+import com.btiao.tzsc.service.MetaDataId;
+import com.btiao.tzsc.service.MyLogger;
+import com.btiao.tzsc.service.UserInfo;
+import com.btiao.tzsc.service.WPState;
 import com.btiao.tzsc.service.StateMgr;
-import com.btiao.tzsc.service.State.Info.MsgType;
+import com.btiao.tzsc.service.WPState.Info.MsgType;
 import com.btiao.tzsc.weixin.WXMsg.PicText;
 
 public class WXPutStateMgr {
 	static class PageView {
-		public PageView(List<State> sts) {
+		public PageView(List<WPState> sts) {
 			all = sts;
 		}
 		
-		public PageView(List<State> sts, int page_size) {
+		public PageView(List<WPState> sts, int page_size) {
 			all = sts;
 			this.page_size = page_size;
 		}
@@ -26,6 +33,8 @@ public class WXPutStateMgr {
 		}
 		
 		public WXMsg next(boolean addSeq) {
+			this.accessTime = System.currentTimeMillis();
+			
 			if (idx >= all.size()) {
 				return null;
 			}
@@ -33,15 +42,15 @@ public class WXPutStateMgr {
 			WXMsg.PicText ret = new WXMsg.PicText();
 			
 			for (int i=0; idx<all.size() && i<page_size; ++idx,++i) {
-				State state = all.get(idx);
+				WPState state = all.get(idx);
 				
 				WXMsg.PicText.Item item = new WXMsg.PicText.Item();
 
-				for (State.Info info : state.infos) {
-					if (item.title == null && info.t == State.Info.MsgType.text) {
+				for (WPState.Info info : state.getInfos()) {
+					if (item.title == null && info.t == WPState.Info.MsgType.text) {
 						item.title = (addSeq ? ("["+(idx+1)+"]") : "") + info.content;
 					}
-					if (item.picUrl == null && info.t == State.Info.MsgType.pic) {
+					if (item.picUrl == null && info.t == WPState.Info.MsgType.pic) {
 						item.picUrl = info.content;
 					}
 					if (item.title != null && item.picUrl != null) {
@@ -72,7 +81,8 @@ public class WXPutStateMgr {
 		public int page_size = 10;
 		
 		private int idx;
-		private List<State> all;
+		private List<WPState> all;
+		private long accessTime;
 	}
 	
 	static private Map<Long,WXPutStateMgr> insts = new HashMap<Long,WXPutStateMgr>();
@@ -87,112 +97,74 @@ public class WXPutStateMgr {
 		return inst;
 	}
 	
-//	public void startPut(String name) {
-//		if (!curPuts.containsKey(name)) {
-//			curPuts.put(name, new State(name));
-//		}
-//	}
-	
-	public String putTextMsg(String name, String text) {
-		text = normalize(text);
-		
-		List<State> all = StateMgr.instance(areaId).getAllStateByUserName(name);
-		if (all != null && all.size() >= 8) {
-			return Tip.get().reachMaxSwitch;
+	public synchronized String putTextMsg(String name, String text) {
+		String shouldRet = checkPut(name);
+		if (shouldRet != null) {
+			return shouldRet;
 		}
 		
-		State state = this.curPuts.get(name);
+		text = normalize(text);
+		
+		WPState state = this.curPuts.get(name);
 		
 		if (state == null) {
-			state = new State(name);
+			state = new WPState(name);
 			curPuts.put(name, state);
 		}
 		
-		State.Info info = new State.Info(MsgType.text, text);
-		state.infos.add(info);
+		WPState.Info info = new WPState.Info(MsgType.text, text);
+		state.getInfos().add(info);
 		
 		return Tip.get().continuePutTip;
 	}
 	
-	public String putUrlMsg(String name, String url) {
-		State state = this.curPuts.get(name);
-		
-		if (state == null) {
-			return Tip.get().noFirstTextDescError;
+	public synchronized String putPicUrlMsg(String name, String url) {
+		String shouldRet = checkPut(name);
+		if (shouldRet != null) {
+			return shouldRet;
 		}
 		
-		State.Info info = new State.Info(MsgType.pic, url);
-		state.infos.add(info);
-		
-		return Tip.get().continuePutTip;
-	}
-	
-	public String putPhoneNum(String name, String tel) {
-		State state = this.curPuts.get(name);
+		WPState state = this.curPuts.get(name);
 		
 		if (state == null) {
-			return Tip.get().noFirstTextDescError;
+			state = new WPState(name);
+			curPuts.put(name, state);
 		}
 		
-		State.Info info = new State.Info(MsgType.phone, tel);
-		state.infos.add(info);
+		WPState.Info info = new WPState.Info(MsgType.pic, url);
+		state.getInfos().add(info);
 		
 		return Tip.get().continuePutTip;
 	}
 	
-	public String cancelPut(String name) {
+	public synchronized String cancelPut(String name) {
 		curPuts.remove(name);
-		return Tip.get().cancelSuccess + "\n\n" + Tip.get().helpStr;
+		return Tip.get().cancelSuccess;
 	}
 	
-	public String endPut(String name) {
+	public synchronized String endPut(String name) {
 		if (!curPuts.containsKey(name)) {
-			return Tip.get().helpStr;
+			return Tip.get().notDescInPublish;
 		}
 		
-		State state = this.curPuts.remove(name);
+		WPState state = this.curPuts.remove(name);
 		state.areaId = this.areaId;
 		
-		if (state.infos.size() == 0) {
-			return Tip.get().helpStr;
+		if (state.getInfos().size() == 0) {
+			return Tip.get().notDescInPublish;
 		}
 		
-		boolean hasPutPhone = false;
-		for (State.Info info : state.infos) {
-			if (info.t == State.Info.MsgType.phone) {
-				hasPutPhone = true;
-				break;
-			}
-		}
+		ComDataMgr<UserInfo> uinfomgr = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), this.areaId);
+		UserInfo uinfo = uinfomgr.get(state.userId);
 		
-		if (!hasPutPhone) {
-			this.curPuts.put(name, state);
-			return Tip.get().noPhoneNumDescErrorTip + "\n\n" + Tip.get().phoneNumFillHelpTip;
-		}
+		WPState.Info phoneinfo = new WPState.Info(MsgType.phone, uinfo.telId);
+		state.getInfos().add(phoneinfo);
 		
 		state.publishTime = System.currentTimeMillis();
 		
 		int total = StateMgr.instance(areaId).addState(name, state);
 		
 		return Tip.get().putSuccessTip + total;
-	}
-	
-	public WXMsg returnSelfAll(String name) {
-		List<State> allSelf = StateMgr.instance(areaId).getAllStateByUserName(name);
-		
-		PageView pv = new PageView(allSelf);
-		
-		return pv.next(true);
-	}
-	
-	public String delOne(String name, int idx) {
-		int ret = StateMgr.instance(areaId).delOneState(name, idx);
-		if (ret >= 0) {
-			return Tip.get().delStateSuccess + ret;
-		} else {
-			List<State> allSelf = StateMgr.instance(areaId).getAllStateByUserName(name);
-			return Tip.get().delStateFailed + ((allSelf != null) ? allSelf.size() : 0);
-		}
 	}
 	
 	public WXMsg search(String name, String text) {
@@ -203,7 +175,7 @@ public class WXPutStateMgr {
 			return msg;
 		}
 		
-		List<State> allMatched = StateMgr.instance(areaId).searchState(text);
+		List<WPState> allMatched = StateMgr.instance(areaId).searchState(text);
 		PageView pv = new PageView(allMatched, 9);
 		
 		WXMsg.PicText ret = (PicText) pv.next();
@@ -247,8 +219,103 @@ public class WXPutStateMgr {
 		
 	}
 	
-	private WXPutStateMgr(long areaId) {
+	private WXPutStateMgr(final long areaId) {
 		this.areaId = areaId;
+		
+		Thread timeoutDelCurState = new Thread() {
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(GlobalParam.wxputstate_circle);
+						
+						WXPutStateMgr inst = WXPutStateMgr.instance(areaId);
+						synchronized (inst) {
+							List<String> timeoutUsrs = new ArrayList<String>();
+							
+							MyLogger.get().info("timeout for curPuts, areaId:"+areaId);
+							for (Entry<String,WPState> entry : inst.curPuts.entrySet()) {
+								String usrId = entry.getKey();
+								WPState state = entry.getValue();
+								
+								if (isStateTimeout(state)) {
+									timeoutUsrs.add(usrId);
+								}
+							}
+							
+							for (String usrId : timeoutUsrs) {
+								inst.curPuts.remove(usrId);
+								sendTimeoutMsg(usrId);
+							}
+							
+							MyLogger.get().info("timeout for pageview, areaId:"+areaId);
+							for (Entry<String,PageView> entry : inst.pvs.entrySet()) {
+								String usrId = entry.getKey();
+								PageView pv = entry.getValue();
+								
+								if (isPageViewTimeout(pv)) {
+									timeoutUsrs.add(usrId);
+								}
+							}
+							
+							for (String usrId : timeoutUsrs) {
+								inst.pvs.remove(usrId);
+								sendTimeoutMsg(usrId);
+							}
+						}
+					} catch (Throwable e) {
+						MyLogger.get().error("get a error in timeoutDelCurState thread!", e);
+					}
+				}
+			}
+			
+			void sendTimeoutMsg(String usrId) {
+				WXMsg.Text msg = new WXMsg.Text();
+				msg.content = Tip.get().saleHelpStr;
+				msg.createTime = System.currentTimeMillis();
+				msg.toUserName = usrId;
+				
+				try {
+					new WXApi().sendWXMsg(msg);
+				} catch (Exception e) {
+					MyLogger.get().warn("failed to send timeout msg to user:" + usrId, e);
+				}
+			}
+			
+			boolean isStateTimeout(WPState state) {
+				long time = System.currentTimeMillis() - state.publishTime;
+				return time > GlobalParam.wxputstate_statetimeout; // one day timeout
+			}
+			
+			boolean isPageViewTimeout(PageView pv) {
+				long time = System.currentTimeMillis() - pv.accessTime;
+				return time > GlobalParam.wxputstate_pageviewimeout; // one day timeout
+			}
+			
+			
+		};
+		timeoutDelCurState.setName("timeoutDelCurState_"+areaId);
+		timeoutDelCurState.start();
+	}
+	
+	private String checkPut(String name) {
+		ComDataMgr<UserInfo> uinfomgr = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), this.areaId);
+		ComDataMgr<UserInfo> dengjimgr = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, this.areaId);
+		UserInfo uinfo = uinfomgr.get(name);
+		if (uinfo == null) {
+			if (dengjimgr.get(name) == null) {
+				return Tip.get().notDengji;
+			} else {
+				return Tip.get().dengjiAndNotPass;
+			}
+		}
+		
+		List<WPState> all = StateMgr.instance(areaId).getAllStateByUserName(name);
+		if (all != null && all.size() >= GlobalParam.max_switch_wuping) {
+			return Tip.get().reachMaxSwitch;
+		}
+		
+		return null;
 	}
 	
 	private String normalize(String text) {
@@ -271,7 +338,9 @@ public class WXPutStateMgr {
 	
 	private final long areaId;
 	
-	private Map<String,State> curPuts = new HashMap<String,State>();
+	//为每个用户存放待提交物品信息
+	private Map<String,WPState> curPuts = new HashMap<String,WPState>();
 	
+	//为每个用户存放分页浏览的信息
 	private Map<String,PageView> pvs = new HashMap<String,PageView>();
 }

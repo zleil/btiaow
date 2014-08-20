@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.btiao.tzsc.service.MyLogger;
-import com.btiao.tzsc.service.State;
+import com.btiao.tzsc.service.WPState;
 import com.btiao.tzsc.service.StateMgr;
 
 public class WXServletDispDetail extends HttpServlet {
@@ -63,7 +63,7 @@ public class WXServletDispDetail extends HttpServlet {
 	}
 	
 	private void display(long areaId, long stateId, PrintWriter out) {
-		State state = StateMgr.instance(areaId).getState(stateId);
+		WPState state = StateMgr.instance(areaId).getState(stateId);
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("<!DOCTYPE HTML>");
@@ -108,7 +108,7 @@ public class WXServletDispDetail extends HttpServlet {
 			sb.append(timeStr);
 			sb.append("</p>");
 			
-			String title = state.infos.get(0).content;
+			String title = state.getInfos().get(0).content;
 			sb.append("<h1>");
 			sb.append(title);
 			sb.append("</h1>");
@@ -119,14 +119,14 @@ public class WXServletDispDetail extends HttpServlet {
 			sb.append("<div class=\"bottom\"></div>");
 			sb.append("<a class=\"tel\" href=\"tel:"+ phone +"\">"+phone+"</a>");
 			
-			for (int i=1; i<state.infos.size(); ++i) {
-				State.Info info = state.infos.get(i);
+			for (int i=1; i<state.getInfos().size(); ++i) {
+				WPState.Info info = state.getInfos().get(i);
 				
-				if (info.t == State.Info.MsgType.text) {
+				if (info.t == WPState.Info.MsgType.text) {
 					sb.append("<h1>");
 					sb.append(info.content);
 					sb.append("</h1>");
-				} else if (info.t == State.Info.MsgType.pic && info.content != null && !info.content.equals("")) {
+				} else if (info.t == WPState.Info.MsgType.pic && info.content != null && !info.content.equals("")) {
 					sb.append("<div class=\"image\"><img src=\"");
 					sb.append(info.content);
 					sb.append("\"/></div>");
