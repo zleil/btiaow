@@ -143,6 +143,11 @@ public class WXPutStateMgr {
 	}
 	
 	public synchronized String endPut(String name) {
+		String shouldRet = checkPut(name);
+		if (shouldRet != null) {
+			return shouldRet;
+		}
+		
 		if (!curPuts.containsKey(name)) {
 			return Tip.get().notDescInPublish;
 		}

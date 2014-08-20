@@ -2,7 +2,9 @@ package com.btiao.tzsc.weixin;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 
 import org.apache.http.HttpEntity;
@@ -49,6 +51,14 @@ public class WXApi {
 		String token = WXApiSession.instance().getToken();
 		String url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + token;
 		return post(url, str).getInt("errcode");
+	}
+	
+	public void sendRspWXMsg(WXMsg msg, OutputStream out) throws Exception{
+//		String msgxml = WXMsgFactory.genXML(msg);
+//		out.write(msgxml.getBytes());
+//		MyLogger.get().info("sendWXMsg xml:\n"+msgxml);
+		//不知道为什么上述发送代码总是发布到用户端，直接使用下述代码发送
+		sendWXMsg(msg);
 	}
 	
 	/**

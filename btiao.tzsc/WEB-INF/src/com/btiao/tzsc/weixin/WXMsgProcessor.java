@@ -27,12 +27,14 @@ public class WXMsgProcessor {
 			MyLogger.getAccess().info("get a subevent:"+((WXMsg.SubEvent)reqWxMsg).event);
 			WXMsg.Text helpMsg = (Text) getTextMsg(reqWxMsg, Tip.get().saleHelpStr);
 			helpMsg.content = Tip.get().welcomeStr + "\n\n" + helpMsg.content;
-			new WXApi().sendWXMsg(helpMsg);
+			//rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
+			new WXApi().sendRspWXMsg(helpMsg, rsp.getOutputStream());
 		} else if (reqWxMsg instanceof WXMsg.Click) {
 			processClickMsg(reqWxMsg, rsp.getOutputStream());
 		} else {
 			WXMsg unSupportedMsg = getTextMsg(reqWxMsg, Tip.get().unSupportedMsgType);
-			rsp.getOutputStream().write(WXMsgFactory.genXML(unSupportedMsg).getBytes());
+			//rsp.getOutputStream().write(WXMsgFactory.genXML(unSupportedMsg).getBytes());
+			new WXApi().sendRspWXMsg(unSupportedMsg, rsp.getOutputStream());
 		}
 	}
 	
@@ -56,6 +58,8 @@ public class WXMsgProcessor {
 					retMsg.toUserName = userName;
 					retMsg.msgId = reqWxMsg.msgId;
 					new WXApi().sendWXMsg(retMsg);
+					//out.write(WXMsgFactory.genXML(retMsg).getBytes());
+					//new WXApi().sendRspWXMsg(retMsg, out);
 					return;
 				} else {
 					ret = Tip.get().nopublish;
@@ -66,6 +70,8 @@ public class WXMsgProcessor {
 				retMsg.toUserName = userName;
 				retMsg.msgId = reqWxMsg.msgId;
 				new WXApi().sendWXMsg(retMsg);
+				//out.write(WXMsgFactory.genXML(retMsg).getBytes());
+				//new WXApi().sendRspWXMsg(retMsg, out);
 				return;
 			}
 		} else if (clickKey.equals("act_salehelp")) {
@@ -83,22 +89,21 @@ public class WXMsgProcessor {
 		retMsg.msgId = reqWxMsg.msgId;
 		
 		new WXApi().sendWXMsg(retMsg);
+		//out.write(WXMsgFactory.genXML(retMsg).getBytes());
+		//new WXApi().sendRspWXMsg(retMsg, out);
 	}
 	
 	private void processPicMsg(long areaId, WXMsg.Picture msg, OutputStream out) throws Exception {
 		String ret = WXPutStateMgr.instance(areaId).putPicUrlMsg(msg.fromUserName, msg.picUrl);
 		
-		WXMsg.Text rspMsg = new WXMsg.Text();
-		rspMsg.fromUserName = msg.toUserName;
-		rspMsg.toUserName = msg.fromUserName;
-		rspMsg.content = ret;
-		rspMsg.msgId = msg.msgId;
-		rspMsg.createTime = System.currentTimeMillis();
+		WXMsg.Text retMsg = new WXMsg.Text();
+		retMsg.fromUserName = msg.toUserName;
+		retMsg.toUserName = msg.fromUserName;
+		retMsg.content = ret;
+		retMsg.msgId = msg.msgId;
+		retMsg.createTime = System.currentTimeMillis();
 		
-		String retXML = WXMsgFactory.genXML(rspMsg);
-		
-		MyLogger.get().debug("processPicMsg response msg:\n"+retXML);
-		out.write(retXML.getBytes());
+		new WXApi().sendRspWXMsg(retMsg, out);
 	}
 	
 	private void processTextMsg(final WXMsg.Text reqWxMsg, OutputStream out) throws Exception  {
@@ -114,10 +119,9 @@ public class WXMsgProcessor {
 		retMsg.createTime = System.currentTimeMillis();
 		retMsg.msgId = reqWxMsg.msgId;
 		
-		String retXML = WXMsgFactory.genXML(retMsg);
-		
-		MyLogger.get().debug("processTextMsg response msg:\n"+retXML);
-		out.write(retXML.getBytes());
+		//MyLogger.get().debug("processTextMsg response msg:\n"+retXML);
+		//out.write(retXML.getBytes());
+		new WXApi().sendRspWXMsg(retMsg, out);
 	}
 	
 	private WXMsg getTextMsg(WXMsg req, String txt) {
