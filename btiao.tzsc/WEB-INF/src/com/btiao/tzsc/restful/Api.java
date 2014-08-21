@@ -21,9 +21,13 @@ import com.btiao.tzsc.service.UserInfo;
 import com.btiao.tzsc.service.Util;
 
 /*
+ * 1. request
  * url: /baseUrl/api
- * http entity:{act:xxx,data{...}}
+ * http entity:{act:xxx,data:...}
  * cookies: "usrId=xxx; accessToken=xxx; areaId=xxx; ...";
+ * 
+ * 2. response
+ * {errcode:xxx;data:...}
  * @author zleil
  */
 public class Api extends HttpServlet {
@@ -88,13 +92,15 @@ public class Api extends HttpServlet {
 				errcode= StateMgr.instance(areaId).delOneStateById(stateid);
 			} else if (actType.equals("dengji")) {
 				JSONObject uinfoJo = (JSONObject)jso.get("data");
-				UserInfo uinfo = new UserInfo();
-				uinfo.usrId = usrId;
+				UserInfo uinfo = new UserInfo(usrId);
 				uinfo.telId = uinfoJo.getString("telId");
 				uinfo.homeId = uinfoJo.getString("homeId");
 				
 				ComDataMgr<UserInfo> dm = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId);
 				dm.add(uinfo.usrId, uinfo);
+			} else if (actType.equals("getalldengji")) {
+				String usrs = ComDataMgr.<UserInfo>instance(MetaDataId.dengji,areaId).getall();
+				errorRsp(ErrCode.success, usrs, response);
 			} else {
 				errcode = ErrCode.unkown_act_of_api;
 			}
@@ -111,9 +117,18 @@ public class Api extends HttpServlet {
 	}
 	
 	private void errorRsp(int i, HttpServletResponse response) throws Exception {
+		errorRsp(i, null, response);
+	}
+	
+	private void errorRsp(int i, String dataStr, HttpServletResponse response) throws Exception {
 		response.setCharacterEncoding("UTF-8");
 		
 		OutputStream out = response.getOutputStream();
-		out.write(("{\"errcode\":"+i+"}").getBytes());
+		out.write(("{\"errcode\":"+i).getBytes());
+		if (dataStr != null) {
+			out.write(",\"data\":".getBytes());
+			out.write(dataStr.getBytes());
+		}
+		out.write("}".getBytes());
 	}
 }

@@ -2,6 +2,7 @@ package com.btiao.tzsc.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class ComDataMgr<DataType> {
 	static public synchronized <DataType> ComDataMgr<DataType> instance(String dbId, long areaId) {
@@ -35,7 +36,25 @@ public class ComDataMgr<DataType> {
 	}
 	
 	public synchronized String getall() {
-		return this.all.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		
+		boolean first = true;
+		for (Entry<String,DataType> entry : all.entrySet()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(",");
+			}
+			sb.append("\"");
+			sb.append(entry.getKey()); //TODO 需要转义 "'" 字符
+			sb.append("\":");
+			sb.append(entry.getValue()); //TODO 需要转义 "'" 字符
+		}
+		
+		sb.append("}");
+		
+		return sb.toString();
 	}
 	
 	private ComDataMgr(final String dbId, final long areaId) {
@@ -46,10 +65,9 @@ public class ComDataMgr<DataType> {
 		
 		load();
 
-		if (dbId.equals("UserInfo")) {
+		if (dbId.equals(UserInfo.class.getSimpleName())) {
 			// add a internel test account
-			UserInfo zleil = new UserInfo();
-			zleil.usrId = "zleil";
+			UserInfo zleil = new UserInfo("zleil");
 			zleil.nick = "zhanglei";
 			add(zleil.usrId, ((DataType)zleil));
 		}
