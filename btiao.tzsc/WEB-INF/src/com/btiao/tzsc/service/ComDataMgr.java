@@ -5,6 +5,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class ComDataMgr<DataType> {
+	static public interface IScan<DataType> {
+		boolean process(DataType d);
+	}
+	
 	static public synchronized <DataType> ComDataMgr<DataType> instance(String dbId, long areaId) {
 		String instId = dbId+"."+areaId;
 		
@@ -31,8 +35,27 @@ public class ComDataMgr<DataType> {
 		this.changed = true;
 	}
 	
+	public synchronized DataType remove(String key) {
+		return all.remove(key);
+	}
+	
 	public synchronized DataType get(String id) {
 		return this.all.get(id);
+	}
+	
+	public synchronized boolean exist(String id) {
+		return all.containsKey(id);
+	}
+	
+	public synchronized DataType scan(IScan<DataType> scan) {
+		for (Entry<String,DataType> entry : all.entrySet()) {
+			DataType v = entry.getValue();
+			if (scan.process(v)) {
+				return v;
+			}
+		}
+		
+		return null;
 	}
 	
 	public synchronized String getall() {
@@ -55,6 +78,10 @@ public class ComDataMgr<DataType> {
 		sb.append("}");
 		
 		return sb.toString();
+	}
+	
+	public synchronized int getTotal() {
+		return all.size();
 	}
 	
 	private ComDataMgr(final String dbId, final long areaId) {

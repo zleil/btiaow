@@ -110,7 +110,7 @@ public class WXServletManagMine extends HttpServlet {
 					response.sendRedirect("../webs/tzscdj.html");
 				}
 			} else if (act.equals("admin")) {
-				response.sendRedirect("../webs/admin.html");
+				response.sendRedirect("../webs/admin.jsp?areaId="+areaId);
 			} else if (act.equals("adminstat")) {
 				response.sendRedirect("../webs/adminstat.jsp");
 			} else {

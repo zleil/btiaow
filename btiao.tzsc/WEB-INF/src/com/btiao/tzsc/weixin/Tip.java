@@ -64,4 +64,6 @@ public class Tip {
 	public String notDengji = "亲，您还未的登记个人信息呦~\n\n登记后才能发布待交换信息~\n\n点击“更多” -> “登记摊位”，完成登记";
 	
 	public String dengjiAndNotPass = "亲，您登记的信息暂时还未被审核通过呦~\n\n我们正努力为您服务，稍等下...";
+	
+	public String homeIdHaveBeenUsed = "您登记的房间已经被登记过了，我们会尽快联系您进行审核确认...";
 }

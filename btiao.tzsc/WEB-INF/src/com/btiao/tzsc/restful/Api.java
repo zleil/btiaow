@@ -80,7 +80,7 @@ public class Api extends HttpServlet {
 			String actType = jso.getString("act");
 			
 			if (!SessionMgr.instance(areaId).isOnlineUser(usrId, token)) {
-				errorRsp(ErrCode.auth_failed, response);
+				errorRsp(ErrCode.auth_failed, null, response);
 				return;
 			}
 			
@@ -92,39 +92,73 @@ public class Api extends HttpServlet {
 				errcode= StateMgr.instance(areaId).delOneStateById(stateid);
 			} else if (actType.equals("dengji")) {
 				JSONObject uinfoJo = (JSONObject)jso.get("data");
-				UserInfo uinfo = new UserInfo(usrId);
+				final UserInfo uinfo = new UserInfo(usrId);
 				uinfo.telId = uinfoJo.getString("telId");
 				uinfo.homeId = uinfoJo.getString("homeId");
+				uinfo.dengjiTime = System.currentTimeMillis();
 				
-				ComDataMgr<UserInfo> dm = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId);
-				dm.add(uinfo.usrId, uinfo);
+				ComDataMgr<UserInfo> usrMgr = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), areaId);
+				UserInfo existUinfo = usrMgr.scan(new ComDataMgr.IScan<UserInfo>() {
+
+					@Override
+					public boolean process(UserInfo d) {
+						if (d.homeId.equals(uinfo.homeId)) {
+							return true;
+						}
+						return false;
+					}
+				});
+				if (existUinfo == null) {
+					uinfo.dengjiApproveTime = uinfo.dengjiTime;
+					usrMgr.add(uinfo.usrId, uinfo);
+					
+					//TODO 发送审核通过的信息
+				} else {
+					//1个homeId仅能被一个账号申请，此时需要管理员进行审核
+					ComDataMgr<UserInfo> dm = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId);
+					dm.add(uinfo.usrId, uinfo);
+					
+					//TODO 发送待审核的信息
+				}
 			} else if (actType.equals("getalldengji")) {
 				String usrs = ComDataMgr.<UserInfo>instance(MetaDataId.dengji,areaId).getall();
 				errorRsp(ErrCode.success, usrs, response);
+				return;
+			} else if (actType.equals("approvedengji")) {
+				JSONObject uinfoJo = (JSONObject)jso.get("data");
+				String usrIdToApprove = uinfoJo.getString("usrId");
+				UserInfo uinfoApproved = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId).remove(usrIdToApprove);
+				uinfoApproved.dengjiApproveTime = System.currentTimeMillis();
+				ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), areaId).add(usrIdToApprove, uinfoApproved);
 			} else {
 				errcode = ErrCode.unkown_act_of_api;
 			}
 			
-			errorRsp(errcode, response);
+			errorRsp(errcode, null, response);
 		} catch (Throwable e) {
 			MyLogger.getAccess().error("process restful api error!", e);
 			try {
-				errorRsp(ErrCode.internel_error, response);
+				errorRsp(ErrCode.internel_error, null, response);
 			} catch (Exception e1) {
 				MyLogger.getAccess().error(e1);
 			}
 		}
 	}
 	
-	private void errorRsp(int i, HttpServletResponse response) throws Exception {
-		errorRsp(i, null, response);
+	private void errorRsp(int i, String errdesc, HttpServletResponse response) throws Exception {
+		errorRsp(i, errdesc, null, response);
 	}
 	
-	private void errorRsp(int i, String dataStr, HttpServletResponse response) throws Exception {
+	private void errorRsp(int i, String errdesc, String dataStr, HttpServletResponse response) throws Exception {
 		response.setCharacterEncoding("UTF-8");
 		
 		OutputStream out = response.getOutputStream();
 		out.write(("{\"errcode\":"+i).getBytes());
+		if (errdesc != null) {
+			out.write(",\"errdesc\":\"".getBytes());
+			out.write(errdesc.getBytes());
+			out.write("\"".getBytes());
+		}
 		if (dataStr != null) {
 			out.write(",\"data\":".getBytes());
 			out.write(dataStr.getBytes());

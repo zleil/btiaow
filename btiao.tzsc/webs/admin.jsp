@@ -23,16 +23,24 @@
 		}
 	</style>
 </head>
-
+<%
+String areaStr = request.getParameter("areaId");
+long areaId = -1;
+try {
+	areaId = Long.parseLong(areaStr);
+} catch (Exception e) {
+	;
+}
+%>
 <body>
 <div data-role="page">
 	<div role="main" class="ui-content">
 		<div data-role="header" data-position="fixed">
-			<h1>共 <span id="total" style="font:bold"></span> 个用户待审批</h1>
+			<h1>共 <span id="total" style="font:bold"><%=ComDataMgr.instance(MetaDataId.dengji, areaId).getTotal()%></span> 个用户待审批</h1>
 		</div><!-- /header -->
 		
 		<ul data-role="listview" id="usrlist">
-		  <li><a href="#operatePg" onclick="setOpPanel('usrid')" data-rel="dialog"></a></li>
+		  
 		</ul>
 	</div><!-- /content -->
 
@@ -49,9 +57,13 @@
 		<a href="#" data-rel="back" onclick="approve();" class="ui-btn ui-corner-all">同意</a>
 	</div><!-- /content -->
 </div>
-<script type="txt/javascript">
+<script type="text/javascript">
 <%
-out.println("var usrs='"+ComDataMgr.instance("UserInfo", 65537).getall()+"';");
+if (areaId >= 0) {
+	out.println("admin.usrs=$.parseJSON('"+ComDataMgr.instance(MetaDataId.dengji, areaId).getall()+"');");
+} else {
+	out.println("admin.usrs={};");
+}
 %>
 </script>
 </body>
