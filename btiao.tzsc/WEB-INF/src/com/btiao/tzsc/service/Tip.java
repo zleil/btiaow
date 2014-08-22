@@ -1,4 +1,4 @@
-package com.btiao.tzsc.weixin;
+package com.btiao.tzsc.service;
 
 public class Tip {
 	static private Tip inst;

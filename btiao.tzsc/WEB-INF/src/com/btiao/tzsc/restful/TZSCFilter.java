@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.btiao.tzsc.service.MyLogger;
-import com.btiao.tzsc.weixin.Tip;
+import com.btiao.tzsc.service.Tip;
 
 public class TZSCFilter implements Filter {
 	

@@ -47,6 +47,11 @@ public class ComDataMgr<DataType> {
 		return all.containsKey(id);
 	}
 	
+	/**
+	 * 返回扫描中匹配的数据对象
+	 * @param scan
+	 * @return 找不到返回null
+	 */
 	public synchronized DataType scan(IScan<DataType> scan) {
 		for (Entry<String,DataType> entry : all.entrySet()) {
 			DataType v = entry.getValue();

@@ -11,6 +11,7 @@ import com.btiao.tzsc.service.ComDataMgr;
 import com.btiao.tzsc.service.GlobalParam;
 import com.btiao.tzsc.service.MetaDataId;
 import com.btiao.tzsc.service.MyLogger;
+import com.btiao.tzsc.service.Tip;
 import com.btiao.tzsc.service.UserInfo;
 import com.btiao.tzsc.service.WPState;
 import com.btiao.tzsc.service.StateMgr;

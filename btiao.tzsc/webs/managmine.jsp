@@ -1,4 +1,6 @@
 <%@ page import="com.btiao.tzsc.service.*"%>
+<%@ page import="com.btiao.tzsc.restful.*"%>
+<%@ page import="java.util.List"%>
 
 <%@ page contentType="text/html; charset=UTF-8"  language="java" %>
 
@@ -11,7 +13,7 @@
 	<link rel="stylesheet" href="jm/jquery.mobile-1.4.3.min.css" />
 	<script src="jm/jquery-2.1.1.min.js"></script>
 	<script src="jm/jquery.mobile-1.4.3.min.js"></script>
-	<script src="admin.js"></script>
+	<script src="managmine.js"></script>
 	<style type="text/css">
 		.tzscdj-selgrid{
 			font-size:1.2em;
@@ -24,19 +26,18 @@
 	</style>
 </head>
 <%
-String areaStr = request.getParameter("areaId");
-long areaId = -1;
-try {
-	areaId = Long.parseLong(areaStr);
-} catch (Exception e) {
-	;
+TZSCCookieInfo cinfo = Api.getCookieInfo(request);
+if (!cinfo.isValidSession()) {
+	String newUrl = "../webs/htmlconfirmtip.jsp?tip="+Tip.get().busy+"&hasyes=";
+	((HttpServletResponse)response).sendRedirect(newUrl);
 }
+List<WPState> states = StateMgr.instance(cinfo.areaId).getAllStateByUserName(cinfo.usrId);
 %>
 <body>
 <div data-role="page">
 	<div role="main" class="ui-content">
 		<div data-role="header" data-position="fixed">
-			<h1>共 <span id="total" style="font:bold"><%=ComDataMgr.instance(MetaDataId.dengji, areaId).getTotal()%></span> 个用户待审批</h1>
+			<h1>共 <span id="total" style="font:bold"><%=states.size()%></span> 个用户待审批</h1>
 		</div><!-- /header -->
 		
 		<ul data-role="listview" id="usrlist">
@@ -59,11 +60,19 @@ try {
 </div>
 <script type="text/javascript">
 <%
-if (areaId >= 0) {
-	out.println("admin.usrs=$.parseJSON('"+ComDataMgr.instance(MetaDataId.dengji, areaId).getall()+"');");
-} else {
-	out.println("admin.usrs={};");
+StringBuilder sb = new StringBuilder();
+sb.append("[");
+boolean first = true;
+for (WPState state : states) {
+	if (first) {
+		first = false;
+	} else {
+		sb.append(",");
+	}
+	sb.append(state.toString());
 }
+sb.append("]");
+out.println("managmine.states=$.parseJSON('"+sb.toString()+"');");
 %>
 </script>
 </body>

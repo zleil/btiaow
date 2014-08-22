@@ -1,3 +1,7 @@
+var managmine = {};
+managmine.states = {};
+managmine.usrId = "";
+
 function act_switched(stateid) {
 	var args = "{\"act\":\"stateChg\",data:{\"stateId\":\""+stateid+ "\"" +
 	"}}";

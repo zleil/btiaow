@@ -7,11 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.btiao.tzsc.weixin.Tip;
-import com.btiao.tzsc.weixin.WXApi;
-import com.btiao.tzsc.weixin.WXMsg;
-import com.btiao.tzsc.weixin.WXPutStateMgr;
-
 public class SessionMgr {
 	static public enum SessionState {
 		normal
@@ -120,6 +115,8 @@ public class SessionMgr {
 						
 						SessionMgr inst = SessionMgr.instance(areaId);
 						synchronized (inst) {
+							List<String> noSessionUsers = new ArrayList<String>();
+							
 							for (Entry<String,Map<String,Session>> entry : inst.users.entrySet()) {
 								Map<String,Session> sessions = entry.getValue();
 								String usrId = entry.getKey();
@@ -128,11 +125,18 @@ public class SessionMgr {
 								for (String token : tokens) {
 									Session s = sessions.get(token);
 									
-									long cur = System.currentTimeMillis();
 									if (timeout(s)) {
 										sessions.remove(token);
 									}
 								}
+								
+								if (sessions.isEmpty()) {
+									noSessionUsers.add(usrId);
+								}
+							}
+							
+							for (String usrId : noSessionUsers) {
+								inst.users.remove(usrId);
 							}
 						}
 					} catch (Throwable e) {

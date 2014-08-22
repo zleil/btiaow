@@ -91,14 +91,14 @@ public class WXServletManagMine extends HttpServlet {
 			String newUrl = "";
 			
 			if (act == null) {
-				newUrl = "../webs/managmine.jsp?areaId="+areaId;
+				newUrl = "../webs/managmine.jsp";
 			} else if (act != null && act.equals("dengji")) {
 				UserInfo reguinfo = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId).get(uinfo.openId);
 				if (reguinfo != null) {
 					MyLogger.get().info("querystring is :\n"+request.getQueryString());
 					String tip = URLEncoder.encode("本微信账号已登记了房屋"+reguinfo.homeId+"，请确认是否需要重新登记？", "UTF-8");
 					String yesUrl = URLEncoder.encode("tzscdj.html", "UTF-8");
-					newUrl = "../webs/htmlconfirmtip.jsp?tip="+tip+"&yesurl="+yesUrl;
+					newUrl = "../webs/htmlconfirmtip.jsp?tip="+tip+"&hasyes="+"&hasno="+"&yesurl="+yesUrl;
 				} else {
 					newUrl = "../webs/tzscdj.html";
 				}
