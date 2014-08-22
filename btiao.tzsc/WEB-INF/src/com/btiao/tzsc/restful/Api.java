@@ -31,6 +31,25 @@ import com.btiao.tzsc.service.Util;
  * @author zleil
  */
 public class Api extends HttpServlet {
+	static public TZSCCookieInfo getCookieInfo(HttpServletRequest request) {
+		TZSCCookieInfo ret = new TZSCCookieInfo();
+		
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+			String n = cookie.getName();
+			String v = cookie.getValue();
+			if (n.equals("usrId")) {
+				ret.usrId = v;
+			} else if (n.equals("accessToken")) {
+				ret.token = v;
+			} else if (n.equals("areaId")) {
+				ret.areaId = Long.parseLong(v);
+			}
+		}
+		
+		return ret;
+	}
+	
 	/**
 	 * 
 	 */
@@ -55,21 +74,12 @@ public class Api extends HttpServlet {
 			JSONObject jso = new JSONObject(args);
 			
 			long areaId = 0;
-			
 			String usrId = null,token = null;
 			
-			Cookie[] cookies = request.getCookies();
-			for (Cookie cookie : cookies) {
-				String n = cookie.getName();
-				String v = cookie.getValue();
-				if (n.equals("usrId")) {
-					usrId = v;
-				} else if (n.equals("accessToken")) {
-					token = v;
-				} else if (n.equals("areaId")) {
-					areaId = Long.parseLong(v);
-				}
-			}
+			TZSCCookieInfo cookieInfo = getCookieInfo(request);
+			areaId = cookieInfo.areaId;
+			usrId = cookieInfo.usrId;
+			token = cookieInfo.token;
 			
 			try {
 				areaId = jso.getLong("areaId");
@@ -79,7 +89,10 @@ public class Api extends HttpServlet {
 
 			String actType = jso.getString("act");
 			
-			if (!SessionMgr.instance(areaId).isOnlineUser(usrId, token)) {
+			MyLogger.get().info("api's base info:usrId="+usrId+",accessToken="+token+",areaId="+areaId);
+			
+			if (token == null || usrId == null || 
+				!SessionMgr.instance(areaId).isOnlineUser(usrId, token)) {
 				errorRsp(ErrCode.auth_failed, null, response);
 				return;
 			}
@@ -102,7 +115,7 @@ public class Api extends HttpServlet {
 
 					@Override
 					public boolean process(UserInfo d) {
-						if (d.homeId.equals(uinfo.homeId)) {
+						if (d.homeId != null && d.homeId.equals(uinfo.homeId)) {
 							return true;
 						}
 						return false;
@@ -153,16 +166,23 @@ public class Api extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		
 		OutputStream out = response.getOutputStream();
-		out.write(("{\"errcode\":"+i).getBytes());
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("{\"errcode\":"+i);
 		if (errdesc != null) {
-			out.write(",\"errdesc\":\"".getBytes());
-			out.write(errdesc.getBytes());
-			out.write("\"".getBytes());
+			sb.append(",\"errdesc\":\"");
+			sb.append(errdesc);
+			sb.append("\"");
 		}
 		if (dataStr != null) {
-			out.write(",\"data\":".getBytes());
-			out.write(dataStr.getBytes());
+			sb.append(",\"data\":");
+			sb.append(dataStr);
 		}
-		out.write("}".getBytes());
+		sb.append("}");
+		
+		String rspstr = sb.toString();
+		out.write(rspstr.getBytes());
+		
+		MyLogger.get().info("api rsp is:"+rspstr);
 	}
 }

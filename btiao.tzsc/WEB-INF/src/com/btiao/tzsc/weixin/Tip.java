@@ -11,36 +11,31 @@ public class Tip {
 	
 	private Tip() {}
 	
+	public String busy = "系统忙...";
 	
-	public String continuePutTip = "发送文字、图片，继续描述物品\n\n";
+	public String continuePutTip = "收到喽~\n\n发送文字、图片，继续描述物品\n\n或者点击“卖东西” -> 提交，立即发布";
 	
 	public String noPhoneNumDescErrorTip = "抱歉，还需您提供手机号码";
 	
 	public String welcomeStr = "欢迎访问便条网跳蚤市场～";
 	
 	public String notDescInPublish = "亲，请先提交物品描述，再点击“提交”哦";
-	
-	public String phoneNumFillHelpTip = "提示：发送'@13812345678'，提供您的手机号13812345678";
-	
-	public String noFirstTextDescError = "亲，得先用文字描述下物品呦";
-	
+
 	public String cancelSuccess = "取消成功";
 	
-	public String putSuccessTip = "您又多了件物品，候着邻居来买吧\n\n您当前的物品数是：";
+	public String putSuccessTip = "又多了件物品，真是令人激动啊~\n\n候着邻居来买吧\n\n您的当前物品总数：";
 	
 	public String delStateSuccess = "删除成功\n\n您当前的待交换物品数是：";
 	
 	public String delStateFailed = "您要删除的物品不存在\n\n您当前的待交换物品数是：";
-	
-	public String doOtherActWhenPutErrorTip = "您正在描述物品，请先取消或提交，再进行其他“搜索”之类的操作\n\n";
-	
+
 	public String noMoreDataTip = "没有更多的信息了～";
 	
 	public String hoursBefore = " 小时前";
 	public String minutesBefore = " 分钟前";
 	public String rightNow = "刚才发布";
 	
-	public String reachMaxSwitch = "亲，最多允许8个待交换物品呦~";
+	public String reachMaxSwitch = "亲，最多允许8个待交换物品呦~\n\n点击“更多” -> “我的物品”，将已成交物品、不想交换的物品标记下。";
 	
 	public String moreTip = "还有很多呢，继续 '找找看' 吧";
 	public String allReturnedTip = "就这么多了，总件数：";

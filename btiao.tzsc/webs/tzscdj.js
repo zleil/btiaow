@@ -119,10 +119,24 @@ SelDialog.prototype.onSelDialog = function(selWhat) {
 	return true;
 }
 
-function commonTip(tipStr, idSel) {
+function commonTip(tipStr, idSel, afterclose_func) {
 	$(idSel).text(tipStr);
-	$(idSel).popup({});
+	
+	if (typeof(afterclose_func) == "undefined") {
+		$(idSel).popup({afterclose:afterclose_func});
+	} else {
+		$(idSel).popup({});
+	}
+	
 	$(idSel).popup("open");
+}
+
+function closeWindowFunc() {
+	if (typeof(WeixinJSBridge) != "undefined") {
+		WeixinJSBridge.call("closeWindow");
+	} else {
+		window.close();
+	}
 }
 
 function dengji() {
@@ -159,19 +173,16 @@ function dengji() {
 			eval("var ret = " + msg);
 
 			if (ret.errcode == 0) {
-				var tip = $("#dengjiOKTip").popup({
-			    	  afterclose: function( event, ui ) {
-			    		  if (typeof(WeixinJSBridge) != "undefined") {
-			    			  WeixinJSBridge.call("closeWindow");
-			    		  } else {
-			    			  window.close();
-			    		  }
-			    	  }
-			    });
+				var tip = $("#dengjiOKTip").popup({afterclose: closeWindowFunc});
 			    tip.popup("open");
 			} else {
-				var tipStr = "服务忙，请稍后再登记：-）";
-				commonTip(tipStr, "#commonTip");
+				if (ret.errcode == 100001) {
+					var tipStr = "系统服务重启，请您重新从微信公共账号进入";
+					commonTip(tipStr, "#commonTip", closeWindowFunc);
+				} else {
+					var tipStr = "服务忙，请稍后再登记：-）";
+					commonTip(tipStr, "#commonTip");
+				}
 			}
 		}
 	});

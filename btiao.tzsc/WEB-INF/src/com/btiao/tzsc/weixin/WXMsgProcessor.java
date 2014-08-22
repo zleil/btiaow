@@ -50,7 +50,7 @@ public class WXMsgProcessor {
 		} else if (clickKey.equals("act_browse")) {
 			WXMsg retMsg = WXPutStateMgr.instance(areaId).more(userName);
 			if (retMsg == null) {
-				retMsg = WXPutStateMgr.instance(areaId).search(userName, "");
+				retMsg = WXPutStateMgr.instance(areaId).getall(userName);
 
 				if (retMsg != null) {
 					retMsg.createTime = System.currentTimeMillis();

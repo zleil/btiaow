@@ -13,7 +13,7 @@ public class MyLogger {
 	}
 	
 	static public Logger getAttackLog() {
-		return LogManager.getLogger("attack");
+		return LogManager.getLogger("tzsc.attack");
 	}
 	
 	static public Logger getSuggestion() {
@@ -21,10 +21,14 @@ public class MyLogger {
 	}
 	
 	static public Logger getAccess() {
-		return LogManager.getLogger("access");
+		return LogManager.getLogger("tzsc.access");
 	}
 	
 	static public Logger getUnknownAct() {
-		return LogManager.getLogger("unknownAct");
+		return LogManager.getLogger("tzsc.unknownAct");
+	}
+	
+	static public Logger getWXCur() {
+		return LogManager.getLogger("wxcur");
 	}
 }

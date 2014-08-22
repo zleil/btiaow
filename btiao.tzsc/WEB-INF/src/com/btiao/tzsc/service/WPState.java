@@ -33,7 +33,7 @@ public class WPState implements Serializable {
 		
 		@Override
 		public String toString() {
-			return "{t:"+t+",content:\""+content+"\"}";
+			return "{\"t\":"+t+",\"content\":\""+content+"\"}";
 		}
 	}
 	
@@ -65,6 +65,9 @@ public class WPState implements Serializable {
 	public long areaId; //小区名称
 	public String userId; //用户名
 	public long publishTime; //发布时间
+	public long switchedTime; //成交时间
+	public long cancelTime; //下架时间
+	
 	private List<Info> infos = new ArrayList<Info>(); //元信息描述
 	
 	public List<Info> getInfos() {
@@ -79,8 +82,13 @@ public class WPState implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{id:"+id+",areaId:"+areaId+",userId:\""+userId+"\""+
-				",publishTime:"+publishTime+",infos:[");
+		sb.append("{\"id\":"+id+
+				",\"areaId\":"+areaId+
+				",\"userId\":\""+userId+"\""+
+				",\"publishTime\":"+publishTime+
+				",\"switchedTime\":"+publishTime+
+				",\"cancelTime\":"+publishTime+
+				",infos:[");
 		for (Info info : infos) {
 			sb.append(info);
 		}

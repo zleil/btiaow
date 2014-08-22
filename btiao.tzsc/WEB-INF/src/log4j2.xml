@@ -42,6 +42,14 @@
         	<SizeBasedTriggeringPolicy size="10 MB"/>
       </Policies>  
     </RollingFile>
+    <RollingFile name="wxcur_appender" filename="logs/wxcur.log"
+    	filePattern="logs/$${date:yyyy-MM}/wxcur-%d{MM-dd-yyyy}-%i.log.gz">  
+      <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <Policies>
+        	<OnStartupTriggeringPolicy />
+        	<SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>  
+    </RollingFile>
     <Console name="STDOUT">
       <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
@@ -50,17 +58,20 @@
     <logger name="tzsc" level="debug">  
       <appender-ref ref="tzsc_appender"/>  
     </logger>
-    <logger name="attack" level="debug">  
+    <logger name="tzsc.attack" level="debug">  
       <appender-ref ref="attack_appender"/>
     </logger>
-    <logger name="access" level="debug">
+    <logger name="tzsc.access" level="debug">
       <appender-ref ref="access_appender"/>
     </logger>
-    <logger name="unknownAct" level="error">
+    <logger name="tzsc.unknownAct" level="error">
     	<appender-ref ref="unknownAct_appender"/>
     </logger>
     <logger name="suggestion" level="error">
     	<appender-ref ref="suggestion_appender"/>
+    </logger>
+    <logger name="wxcur" level="error">
+    	<appender-ref ref="wxcur_appender"/>
     </logger>
     <root level="debug">
     	<appender-ref ref="STDOUT"/>

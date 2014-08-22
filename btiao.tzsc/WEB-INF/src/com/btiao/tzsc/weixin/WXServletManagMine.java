@@ -87,35 +87,37 @@ public class WXServletManagMine extends HttpServlet {
 				}
 			}
 			
-			SessionMgr.instance(areaId).addSession(uinfo.openId, uinfo.accesToken);
-			
 			String act = request.getParameter("act");
-			
-			//可以增加一个机制
-			request.setAttribute("areaId", areaId);
-			setAccessToken(response, areaId, uinfo.openId, uinfo.accesToken);
-			
-			MyLogger.get().info("do a redirect!");
+			String newUrl = "";
 			
 			if (act == null) {
-				genManageMinePage(areaId, uinfo, out);
+				newUrl = "../webs/managmine.jsp?areaId="+areaId;
 			} else if (act != null && act.equals("dengji")) {
 				UserInfo reguinfo = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId).get(uinfo.openId);
 				if (reguinfo != null) {
 					MyLogger.get().info("querystring is :\n"+request.getQueryString());
 					String tip = URLEncoder.encode("本微信账号已登记了房屋"+reguinfo.homeId+"，请确认是否需要重新登记？", "UTF-8");
 					String yesUrl = URLEncoder.encode("tzscdj.html", "UTF-8");
-					response.sendRedirect("../webs/htmlconfirmtip.jsp?tip="+tip+"&yesurl="+yesUrl);
+					newUrl = "../webs/htmlconfirmtip.jsp?tip="+tip+"&yesurl="+yesUrl;
 				} else {
-					response.sendRedirect("../webs/tzscdj.html");
+					newUrl = "../webs/tzscdj.html";
 				}
 			} else if (act.equals("admin")) {
-				response.sendRedirect("../webs/admin.jsp?areaId="+areaId);
+				newUrl = "../webs/admin.jsp?areaId="+areaId;
 			} else if (act.equals("adminstat")) {
-				response.sendRedirect("../webs/adminstat.jsp");
+				newUrl = "../webs/adminstat.jsp";
 			} else {
 				MyLogger.getAttackLog().warn("process wx_managemine: unkown act="+act+"\nfrom="+request.getRemoteAddr());
 				return;
+			}
+			
+			setAccessToken(response, areaId, uinfo.openId, uinfo.accesToken);
+			SessionMgr.instance(areaId).addSession(uinfo.openId, uinfo.accesToken);
+			try {
+				redirect(newUrl, response);
+			} catch (Exception e) {
+				MyLogger.get().error("failed to do a redirect to:"+newUrl, e);
+				SessionMgr.instance(areaId).removeSession(uinfo.openId, uinfo.accesToken);
 			}
 		} catch (Throwable e) {
 			MyLogger.getAttackLog().warn("process wx_managemine _doGet failed!", e);
@@ -125,6 +127,11 @@ public class WXServletManagMine extends HttpServlet {
 				MyLogger.getAttackLog().warn(e1);
 			}
 		}
+	}
+	
+	private void redirect(String newUrl, HttpServletResponse response) throws Exception {
+		MyLogger.get().info("do a redirect to:"+newUrl);
+		response.sendRedirect(newUrl);
 	}
 	
 	private void setAccessToken(HttpServletResponse response, long areaId, String usrId, String token) {

@@ -172,15 +172,8 @@ public class WXPutStateMgr {
 		return Tip.get().putSuccessTip + total;
 	}
 	
-	public WXMsg search(String name, String text) {
-		if (this.curPuts.containsKey(name)) {
-			WXMsg.Text msg = new WXMsg.Text();
-			msg.content = Tip.get().doOtherActWhenPutErrorTip;
-			
-			return msg;
-		}
-		
-		List<WPState> allMatched = StateMgr.instance(areaId).searchState(text);
+	public WXMsg getall(String name) {		
+		List<WPState> allMatched = StateMgr.instance(areaId).searchState("");
 		PageView pv = new PageView(allMatched, 9);
 		
 		WXMsg.PicText ret = (PicText) pv.next();
