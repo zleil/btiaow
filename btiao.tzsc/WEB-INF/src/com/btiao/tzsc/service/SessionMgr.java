@@ -20,6 +20,10 @@ public class SessionMgr {
 			s = SessionState.normal;
 			lastAccessTime = System.currentTimeMillis();
 		}
+		
+		public String toString() {
+			return "{\"s\":\""+s+"\",\"lastAccessTime\":"+lastAccessTime+"}";
+		}
 	}
 	
 	static private Map<Long,SessionMgr> insts = new HashMap<Long,SessionMgr>();
@@ -28,7 +32,6 @@ public class SessionMgr {
 		SessionMgr inst = insts.get(areaId);
 		if (inst == null) {
 			inst = new SessionMgr(areaId);
-			inst.addSession("zleil", "zleil");
 			insts.put(areaId, inst);
 			return inst;
 		}
@@ -152,6 +155,9 @@ public class SessionMgr {
 		
 		sessionTimeoutThread.setName("sessionTimeoutThread");
 		sessionTimeoutThread.start();
+		
+		//增加pc测试用户zleil的会话信息
+		addSession("zleil", "zleil");
 	}
 	
 	//usrId-><token->Session>

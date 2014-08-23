@@ -116,6 +116,9 @@ public class WXPutStateMgr {
 		WPState.Info info = new WPState.Info(MsgType.text, text);
 		state.getInfos().add(info);
 		
+		//每次提交元描述信息后，这个时间都要更新下，这样timeoutDelCurState线程会重新计算超时时间
+		state.publishTime = System.currentTimeMillis();
+		
 		return Tip.get().continuePutTip;
 	}
 	
@@ -134,6 +137,9 @@ public class WXPutStateMgr {
 		
 		WPState.Info info = new WPState.Info(MsgType.pic, url);
 		state.getInfos().add(info);
+		
+		//每次提交元描述信息后，这个时间都要更新下，这样timeoutDelCurState线程会重新计算超时时间
+		state.publishTime = System.currentTimeMillis();
 		
 		return Tip.get().continuePutTip;
 	}
@@ -160,6 +166,8 @@ public class WXPutStateMgr {
 			return Tip.get().notDescInPublish;
 		}
 		
+		state.headFirst();
+		
 		ComDataMgr<UserInfo> uinfomgr = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), this.areaId);
 		UserInfo uinfo = uinfomgr.get(state.userId);
 		
@@ -173,7 +181,7 @@ public class WXPutStateMgr {
 		return Tip.get().putSuccessTip + total;
 	}
 	
-	public WXMsg getall(String name) {		
+	public synchronized WXMsg getall(String name) {		
 		List<WPState> allMatched = StateMgr.instance(areaId).searchState("");
 		PageView pv = new PageView(allMatched, 9);
 		
@@ -232,6 +240,7 @@ public class WXPutStateMgr {
 						synchronized (inst) {
 							List<String> timeoutUsrs = new ArrayList<String>();
 							
+							//处理提交待描述物品的缓存信息，超时后发送知会用户的消息
 							MyLogger.get().info("timeout for curPuts, areaId:"+areaId);
 							for (Entry<String,WPState> entry : inst.curPuts.entrySet()) {
 								String usrId = entry.getKey();
@@ -244,9 +253,11 @@ public class WXPutStateMgr {
 							
 							for (String usrId : timeoutUsrs) {
 								inst.curPuts.remove(usrId);
-								sendTimeoutMsg(usrId);
+								new WXApi().sendWXTxtMsg(usrId, Tip.get().curPublishTimeout);
 							}
 							
+							//处理随便查看的分页缓存信息的超时，超时后不发送知会用户的消息
+							timeoutUsrs.clear();
 							MyLogger.get().info("timeout for pageview, areaId:"+areaId);
 							for (Entry<String,PageView> entry : inst.pvs.entrySet()) {
 								String usrId = entry.getKey();
@@ -256,28 +267,10 @@ public class WXPutStateMgr {
 									timeoutUsrs.add(usrId);
 								}
 							}
-							
-							for (String usrId : timeoutUsrs) {
-								inst.pvs.remove(usrId);
-								sendTimeoutMsg(usrId);
-							}
 						}
 					} catch (Throwable e) {
 						MyLogger.get().error("get a error in timeoutDelCurState thread!", e);
 					}
-				}
-			}
-			
-			void sendTimeoutMsg(String usrId) {
-				WXMsg.Text msg = new WXMsg.Text();
-				msg.content = Tip.get().saleHelpStr;
-				msg.createTime = System.currentTimeMillis();
-				msg.toUserName = usrId;
-				
-				try {
-					new WXApi().sendWXMsg(msg);
-				} catch (Exception e) {
-					MyLogger.get().warn("failed to send timeout msg to user:" + usrId, e);
 				}
 			}
 			

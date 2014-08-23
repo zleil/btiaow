@@ -19,7 +19,7 @@ public class Tip {
 	
 	public String welcomeStr = "欢迎访问便条网跳蚤市场～";
 	
-	public String notDescInPublish = "亲，请先提交物品描述，再点击“提交”哦";
+	public String notDescInPublish = "朋友，请先提交物品描述，再点击“提交”哦";
 
 	public String cancelSuccess = "取消成功";
 	
@@ -35,7 +35,7 @@ public class Tip {
 	public String minutesBefore = " 分钟前";
 	public String rightNow = "刚才发布";
 	
-	public String reachMaxSwitch = "亲，最多允许8个待交换物品呦~\n\n点击“更多” -> “我的物品”，将已成交物品、不想交换的物品标记下。";
+	public String reachMaxSwitch = "朋友，最多允许8个待交换物品呦~\n\n点击“更多” -> “我的物品”，将已成交物品、不想交换的物品标记下。";
 	
 	public String moreTip = "还有很多呢，继续 '找找看' 吧";
 	public String allReturnedTip = "就这么多了，总件数：";
@@ -52,13 +52,15 @@ public class Tip {
 								"1.发送文件、图片描述您要卖的物品\n" + 
 								"2.点击“卖东西” -> “提交”";
 	
-	public String unknownClickAct = "亲，这个功能正在实现中哦，敬请等待:-)";
+	public String unknownClickAct = "朋友，这个功能正在实现中哦，敬请等待:-)";
 	
-	public String unSupportedMsgType = "亲，当前仅支持文本、图片消息哦~";
+	public String unSupportedMsgType = "朋友，当前仅支持文本、图片消息哦~";
 	
-	public String notDengji = "亲，您还未的登记个人信息呦~\n\n登记后才能发布待交换信息~\n\n点击“更多” -> “登记摊位”，完成登记";
+	public String notDengji = "朋友，您还未的登记个人信息呦~\n\n登记后才能发布待交换信息~\n\n点击“更多” -> “登记摊位”，完成登记";
 	
-	public String dengjiAndNotPass = "亲，您登记的信息暂时还未被审核通过呦~\n\n我们正努力为您服务，稍等下...";
+	public String dengjiAndNotPass = "朋友，您登记的信息暂时还未被审核通过呦~\n\n我们正努力为您服务，稍等下...";
 	
 	public String homeIdHaveBeenUsed = "您登记的房间已经被登记过了，我们会尽快联系您进行审核确认...";
+	
+	public String curPublishTimeout = "朋友，您需要在一定的时间内完成一件物品的发布呦，现在已经超时了~";
 }

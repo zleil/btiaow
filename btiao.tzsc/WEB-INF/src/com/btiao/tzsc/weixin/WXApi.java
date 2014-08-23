@@ -2,11 +2,9 @@ package com.btiao.tzsc.weixin;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -15,7 +13,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.btiao.tzsc.service.MyLogger;
 
 public class WXApi {
@@ -39,6 +36,19 @@ public class WXApi {
 //		
 //		api.getUserInfo("oQZIBj4Gbn__DoSZwcdKe3SKt4BE");
 		api.createMenu(65537, WXApi.class.getResource("menu.json").getPath());
+	}
+	
+	public void sendWXTxtMsg(String dstOpenId, String txt) {
+		WXMsg.Text msg = new WXMsg.Text();
+		msg.content = txt;
+		msg.createTime = System.currentTimeMillis();
+		msg.toUserName = dstOpenId;
+		
+		try {
+			new WXApi().sendWXMsg(msg);
+		} catch (Exception e) {
+			MyLogger.get().warn("failed to send timeout msg to user:" + dstOpenId+":"+txt, e);
+		}
 	}
 	
 	public int sendWXMsg(WXMsg msg) throws Exception {

@@ -71,7 +71,6 @@ public class WPState implements Serializable {
 	private List<Info> infos = new ArrayList<Info>(); //元信息描述
 	
 	public List<Info> getInfos() {
-		publishTime = System.currentTimeMillis();
 		return infos;
 	}
 	
@@ -86,10 +85,17 @@ public class WPState implements Serializable {
 				",\"areaId\":"+areaId+
 				",\"userId\":\""+userId+"\""+
 				",\"publishTime\":"+publishTime+
-				",\"switchedTime\":"+publishTime+
-				",\"cancelTime\":"+publishTime+
+				",\"switchedTime\":"+switchedTime+
+				",\"cancelTime\":"+cancelTime+
 				",infos:[");
+		
+		boolean first = true;
 		for (Info info : infos) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(",");
+			}
 			sb.append(info);
 		}
 		sb.append("]}");
@@ -102,6 +108,28 @@ public class WPState implements Serializable {
 		this.userId = name;
 	}
 	
+	public void headFirst() {
+		int idx = 0;
+		for (; idx<infos.size(); ++idx) {
+			if (infos.get(idx).t == Info.MsgType.text) {
+				break;
+			}
+		}
+		
+		if (idx > 0) {
+			List<Info> r = new ArrayList<Info>();
+			r.add(infos.get(idx));
+
+			for (int i=0; i<infos.size(); ++i) {
+				if (i == idx) continue;
+				
+				r.add(infos.get(i));
+			}
+			
+			infos = r;
+		}
+	}
+	
 	public String getPhoneNum() {
 		for (Info info : infos) {
 			if (info.t == Info.MsgType.phone) {
@@ -109,7 +137,7 @@ public class WPState implements Serializable {
 			}
 		}
 		
-		return "...";
+		return null;
 	}
 	
 	public String getFirstPicUrl() {

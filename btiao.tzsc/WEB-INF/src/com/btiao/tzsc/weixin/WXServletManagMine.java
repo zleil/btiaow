@@ -53,32 +53,9 @@ public class WXServletManagMine extends HttpServlet {
 			
 			WXUserInfo uinfo = new WXUserInfo();
 			if (code.equals("zleil")) {
-				//for pc test
-				
+				//for pc test，在SessionMgr对象中已内置zleil这个特殊用户
 				uinfo.openId = "zleil";
 				uinfo.accesToken = "zleil";
-				
-				List<WPState> states = StateMgr.instance(areaId).getAllStateByUserName("zleil");
-				if (states == null || states.size() == 0) {
-					WPState state = new WPState("zleil");
-					state.areaId = areaId;
-					WPState.Info info = new WPState.Info(WPState.Info.MsgType.text, "test tile");
-					state.getInfos().add(info);
-					WPState.Info info2 = new WPState.Info(WPState.Info.MsgType.phone, "@13812345678");
-					state.getInfos().add(info2);
-					WPState.Info info3 = new WPState.Info(WPState.Info.MsgType.pic, "http://");
-					state.getInfos().add(info3);
-					
-					StateMgr.instance(areaId).addState("zleil", state);
-					
-					WPState state2 = new WPState("zleil");
-					state2.areaId = areaId;
-					state2.getInfos().add(info);
-					state2.getInfos().add(info2);
-					state2.getInfos().add(info3);
-					
-					StateMgr.instance(areaId).addState("zleil", state2);
-				}
 			} else {
 				int retCode = new WXApi().getUserIdFromCode(code, uinfo);
 				if (retCode != 0) {
@@ -90,13 +67,21 @@ public class WXServletManagMine extends HttpServlet {
 			String act = request.getParameter("act");
 			String newUrl = "";
 			
-			if (act == null) {
+			if (act == null || act.equals("managmine")) {
 				newUrl = "../webs/managmine.jsp";
 			} else if (act != null && act.equals("dengji")) {
 				UserInfo reguinfo = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId).get(uinfo.openId);
+				UserInfo reguinfo2 = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), areaId).get(uinfo.openId);
 				if (reguinfo != null) {
+					if (reguinfo == null) reguinfo = reguinfo2;
 					MyLogger.get().info("querystring is :\n"+request.getQueryString());
-					String tip = URLEncoder.encode("本微信账号已登记了房屋"+reguinfo.homeId+"，请确认是否需要重新登记？", "UTF-8");
+					String tip = URLEncoder.encode("本微信账号正申请登记房屋"+reguinfo.homeId+"，请确认是否需要重新申请登记？", "UTF-8");
+					String yesUrl = URLEncoder.encode("tzscdj.html", "UTF-8");
+					newUrl = "../webs/htmlconfirmtip.jsp?tip="+tip+"&hasyes="+"&hasno="+"&yesurl="+yesUrl;
+				} else if (reguinfo2 != null) {
+					if (reguinfo == null) reguinfo = reguinfo2;
+					MyLogger.get().info("querystring is :\n"+request.getQueryString());
+					String tip = URLEncoder.encode("本微信账号已登记房屋"+reguinfo.homeId+"，并且已审核通过，请确认是否需要重新申请登记？", "UTF-8");
 					String yesUrl = URLEncoder.encode("tzscdj.html", "UTF-8");
 					newUrl = "../webs/htmlconfirmtip.jsp?tip="+tip+"&hasyes="+"&hasno="+"&yesurl="+yesUrl;
 				} else {

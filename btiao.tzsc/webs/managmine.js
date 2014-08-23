@@ -1,5 +1,5 @@
 var managmine = {};
-managmine.states = {};
+managmine.states = [];
 managmine.usrId = "";
 
 function act_switched(stateid) {
@@ -43,8 +43,13 @@ function act_canceled(stateid) {
 	});
 }
 
-function updateStateNum() {
-	var num = $("#stateNum").text();
-	--num;
-	$("#stateNum").text(num);
+function initStates() {
+	for (var i=0; i<managmine.states.length; ++i) {
+		var state = managemin.states[i];
+		
+	}
+}
+
+window.onload = function() {
+	initStates();
 }
