@@ -27,8 +27,8 @@
 	</div>
 	<div role="main" class="ui-content">
 		<%
-		boolean hasno = request.getParameter("hasno") == null;
-		boolean hasyes = request.getParameter("hasyes") == null;
+		boolean hasno = request.getParameter("hasno") != null;
+		boolean hasyes = request.getParameter("hasyes") != null;
 		%>
 		<a href="#" style="display:<%=hasno?"block":"none"%>" class="ui-btn ui-corner-all" id="no_bt">否</a>
 		<a href="#" style="display:<%=hasyes?"block":"none"%>" class="ui-btn ui-corner-all" id="yes_bt">是</a>
@@ -45,18 +45,22 @@ window.onload = function() {
 	out.print("var tip = '"+tip+"';");
 	
 	String yesurl=request.getParameter("yesurl");
-	//yesurl = URLDecoder.decode(yesurl, "utf-8");
-	out.print("var yesurl = '"+yesurl+"';");
+	if (yesurl != null && !yesurl.isEmpty()) {
+		yesurl = URLDecoder.decode(yesurl, "utf-8");
+		out.print("var yesurl = '"+yesurl+"';");
+	}
 	
 	String nourl=request.getParameter("nourl");
-	//yesurl = URLDecoder.decode(yesurl, "utf-8");
-	out.print("var nourl = '"+nourl+"';");
+	if (nourl != null && !nourl.isEmpty()) {
+		nourl = URLDecoder.decode(nourl, "utf-8");
+		out.print("var nourl = '"+nourl+"';");
+	}
 	%>
 	
 	$("#commonTip").text(tip);
 	
 	$("#no_bt").click(function(){
-		if (nourl == null) {
+		if (typeof(nourl) == "undefined") {
 			if (typeof(WeixinJSBridge) != "undefined") {
 				WeixinJSBridge.call("closeWindow");
 			} else {
@@ -68,7 +72,7 @@ window.onload = function() {
 	});
 	
 	$("#yes_bt").click(function(){
-		if (yesurl == null) {
+		if (typeof(yesurl) == "undefined") {
 			if (typeof(WeixinJSBridge) != "undefined") {
 				WeixinJSBridge.call("closeWindow");
 			} else {

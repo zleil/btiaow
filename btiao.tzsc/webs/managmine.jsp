@@ -1,13 +1,15 @@
 <%@ page import="com.btiao.tzsc.service.*"%>
 <%@ page import="com.btiao.tzsc.restful.*"%>
 <%@ page import="java.util.List"%>
+<%@ page import="java.net.URLDecoder"%>
+<%@ page import="java.net.URLEncoder"%>
 
 <%@ page contentType="text/html; charset=UTF-8"  language="java" %>
 
 <!DOCTYPE html> 
 <html>
 <head>
-	<title>便条网 - 跳蚤市场 - 管理平台</title>
+	<title>便条网 - 跳蚤市场 - 我的物品</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<link rel="stylesheet" href="jm/jquery.mobile-1.4.3.min.css" />
@@ -28,7 +30,7 @@
 <%
 TZSCCookieInfo cinfo = Api.getCookieInfo(request);
 if (!cinfo.isValidSession()) {
-	String newUrl = "../webs/htmlconfirmtip.jsp?tip="+Tip.get().busy+"&hasyes=";
+	String newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy,"UTF-8")+"&hasyes=";
 	((HttpServletResponse)response).sendRedirect(newUrl);
 }
 List<WPState> states = StateMgr.instance(cinfo.areaId).getAllStateByUserName(cinfo.usrId);
@@ -37,7 +39,7 @@ List<WPState> states = StateMgr.instance(cinfo.areaId).getAllStateByUserName(cin
 <div data-role="page">
 	<div role="main" class="ui-content">
 		<div data-role="header" data-position="fixed">
-			<h1>共 <span id="total" style="font:bold"><%=states.size()%></span> 个用户待审批</h1>
+			<h1>共 <span id="total" style="font:bold"><%=states.size()%></span> 个待交换物品</h1>
 		</div><!-- /header -->
 		
 		<ul data-role="listview" id="usrlist">
@@ -72,7 +74,7 @@ for (WPState state : states) {
 	sb.append(state.toString());
 }
 sb.append("]");
-out.println("managmine.states=$.parseJSON('"+sb.toString()+"');");
+out.println("managmine.states="+sb.toString()+";");
 %>
 </script>
 </body>
