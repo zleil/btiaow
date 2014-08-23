@@ -96,40 +96,22 @@ public class WXMsgProcessor {
 		//new WXApi().sendRspWXMsg(retMsg, out);
 	}
 	
-	private void processPicMsg(long areaId, WXMsg.Picture msg, OutputStream out) throws Exception {
-		String ret = WXPutStateMgr.instance(areaId).putPicUrlMsg(msg.fromUserName, msg.picUrl);
-		
-		WXMsg.Text retMsg = new WXMsg.Text();
-		retMsg.fromUserName = msg.toUserName;
-		retMsg.toUserName = msg.fromUserName;
-		retMsg.content = ret;
-		retMsg.msgId = msg.msgId;
-		retMsg.createTime = System.currentTimeMillis();
+	private void processPicMsg(long areaId, WXMsg.Picture reqWxMsg, OutputStream out) throws Exception {
+		String ret = WXPutStateMgr.instance(areaId).putPicUrlMsg(reqWxMsg.fromUserName, reqWxMsg.picUrl);
+		WXMsg retMsg = getTextMsg(reqWxMsg, ret);
 		
 		new WXApi().sendRspWXMsg(retMsg, out);
 	}
 	
 	private void processTextMsg(final WXMsg.Text reqWxMsg, OutputStream out) throws Exception  {
-		final String userName = reqWxMsg.fromUserName;
-		final String appId = reqWxMsg.toUserName;
-		
-		String ret = WXPutStateMgr.instance(areaId).putTextMsg(userName, reqWxMsg.content);
-		
-		WXMsg.Text retMsg = new WXMsg.Text();
-		retMsg.content = ret;
-		retMsg.fromUserName = appId;
-		retMsg.toUserName = userName;
-		retMsg.createTime = System.currentTimeMillis();
-		retMsg.msgId = reqWxMsg.msgId;
-		
-		//MyLogger.get().debug("processTextMsg response msg:\n"+retXML);
-		//out.write(retXML.getBytes());
+		String ret = WXPutStateMgr.instance(areaId).putTextMsg(reqWxMsg.fromUserName, reqWxMsg.content);
+		WXMsg retMsg = getTextMsg(reqWxMsg, ret);
 		new WXApi().sendRspWXMsg(retMsg, out);
 	}
 	
 	private WXMsg getTextMsg(WXMsg req, String txt) {
 		WXMsg.Text ret = new WXMsg.Text();
-		ret.content = Tip.get().saleHelpStr;
+		ret.content = txt;
 		ret.createTime = req.createTime;
 		ret.fromUserName = req.toUserName;
 		ret.msgId = req.msgId;

@@ -155,27 +155,30 @@ public class StateMgr {
 			}
 		});
 		
-		//增加pc测试用户zleil的物品信息
-		WPState state = new WPState("zleil");
-		state.areaId = areaId;
-		WPState.Info info = new WPState.Info(WPState.Info.MsgType.text, "test title");
-		state.getInfos().add(info);
-		WPState.Info info2 = new WPState.Info(WPState.Info.MsgType.phone, "13812345678");
-		state.getInfos().add(info2);
-		WPState.Info info3 = new WPState.Info(WPState.Info.MsgType.pic, "http://mmbiz.qpic.cn/mmbiz/oTkDYnjzyLSDU36dMoFn82Q5WunXZibINiboY41T6JiaicRmKo3odoWF0gzAXVOgyyoibIIzmg3PbF5sah4q1Euibyyg/0");
-		state.getInfos().add(info3);
+		if (getAllStateByUserName("zleil").size() == 0) {
 		
-		addState("zleil", state);
-		
-		WPState state2 = new WPState("zleil");
-		state2.areaId = areaId;
-		WPState.Info info4 = new WPState.Info(WPState.Info.MsgType.text, "test title2");
-		state.getInfos().add(info4);
-		state2.getInfos().add(info2);
-		state2.getInfos().add(info);
-		state2.getInfos().add(info3);
-		
-		addState("zleil", state2);
+			//增加pc测试用户zleil的物品信息
+			WPState state = new WPState("zleil");
+			state.areaId = areaId;
+			WPState.Info info = new WPState.Info(WPState.Info.MsgType.text, "test title");
+			state.getInfos().add(info);
+			WPState.Info info2 = new WPState.Info(WPState.Info.MsgType.phone, "13812345678");
+			state.getInfos().add(info2);
+			WPState.Info info3 = new WPState.Info(WPState.Info.MsgType.pic, "http://mmbiz.qpic.cn/mmbiz/oTkDYnjzyLSDU36dMoFn82Q5WunXZibINiboY41T6JiaicRmKo3odoWF0gzAXVOgyyoibIIzmg3PbF5sah4q1Euibyyg/0");
+			state.getInfos().add(info3);
+			
+			addState("zleil", state);
+			
+			WPState state2 = new WPState("zleil");
+			state2.areaId = areaId;
+			WPState.Info info4 = new WPState.Info(WPState.Info.MsgType.text, "test title2");
+			state.getInfos().add(info4);
+			state2.getInfos().add(info2);
+			state2.getInfos().add(info);
+			state2.getInfos().add(info3);
+			
+			addState("zleil", state2);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

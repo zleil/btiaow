@@ -37,15 +37,14 @@ List<WPState> states = StateMgr.instance(cinfo.areaId).getAllStateByUserName(cin
 %>
 <body>
 <div data-role="page">
+	<div data-role="header" data-position="fixed">
+		<h1>跳蚤市场 - 我的物品</h1>
+	</div><!-- /header -->
+	
 	<div role="main" class="ui-content">
-		<div data-role="header" data-position="fixed">
-			<h1>共 <span id="total" style="font:bold"><%=states.size()%></span> 个待交换物品</h1>
-		</div><!-- /header -->
-		
-		<ul data-role="listview" id="usrlist">
-		  
-		</ul>
-	</div><!-- /content -->
+		<p>朋友，您共有 <span id="total" style="font:bold"><%=states.size()%></span> 个待交换物品</p>
+		<div id="statesView"></div>
+	</div>
 
 	<div data-theme="a" data-role="footer" data-position="fixed">
 		<h4>@Copyright 便条科技有限公司.</h4>
@@ -53,13 +52,7 @@ List<WPState> states = StateMgr.instance(cinfo.areaId).getAllStateByUserName(cin
 </div>
 <div data-role="popup" id="commonTip">
 </div>
-<div data-role="page" id="operatePg">
-	<div role="main" class="ui-content">
-		<a href="#" class="ui-btn ui-corner-all" id="telId">电话：<span id="telDesc"></span></a>
-		<a href="#" data-rel="back" onclick="disagree();" class="ui-btn ui-corner-all">不同意</a>
-		<a href="#" data-rel="back" onclick="approve();" class="ui-btn ui-corner-all">同意</a>
-	</div><!-- /content -->
-</div>
+
 <script type="text/javascript">
 <%
 StringBuilder sb = new StringBuilder();

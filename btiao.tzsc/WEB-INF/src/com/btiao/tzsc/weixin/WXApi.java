@@ -64,9 +64,16 @@ public class WXApi {
 	}
 	
 	public void sendRspWXMsg(WXMsg msg, OutputStream out) throws Exception{
-//		String msgxml = WXMsgFactory.genXML(msg);
-//		out.write(msgxml.getBytes());
-//		MyLogger.get().info("sendWXMsg xml:\n"+msgxml);
+		WXMsg.Text rsp = new WXMsg.Text();
+		rsp.content = "";
+		rsp.createTime = msg.createTime;
+		rsp.fromUserName = msg.fromUserName;
+		rsp.toUserName = msg.toUserName;
+		rsp.msgId = msg.msgId;
+		
+		String msgxml = WXMsgFactory.genXML(rsp);
+		out.write(msgxml.getBytes());
+		MyLogger.get().info("sendWXMsg xml:\n"+msgxml);
 		//不知道为什么上述发送代码总是发布到用户端，直接使用下述代码发送
 		sendWXMsg(msg);
 	}
