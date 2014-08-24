@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -13,7 +14,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.btiao.tzsc.service.MyLogger;
+import com.btiao.tzsc.service.Tip;
 
 public class WXApi {
 	static public void main(String[] args) throws Exception {
@@ -24,18 +27,17 @@ public class WXApi {
 		WXApi api = new WXApi();
 //		api.sendWXMsg(msg);
 //		
-//		WXMsg.PicText pictxt = new WXMsg.PicText();
-//		pictxt.toUserName = "oQZIBj4Gbn__DoSZwcdKe3SKt4BE";
-//		WXMsg.PicText.Item item = new WXMsg.PicText.Item();
-//		item.title = "abc";
-//		item.desc = "desc";
-//		item.picUrl = "xx";
-//		item.url = "http://www.baidu.com";
-//		pictxt.items.add(item);
-//		api.sendWXMsg(pictxt);
+		WXMsg.PicText pictxt = new WXMsg.PicText();
+		pictxt.toUserName = "oQZIBj4Gbn__DoSZwcdKe3SKt4BE";
+		WXMsg.PicText.Item item = new WXMsg.PicText.Item();
+		item.desc = Tip.get().saleHelpStr;
+		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/helpall2.png";
+		item.title = "";
+		pictxt.items.add(item);
+		api.sendWXMsg(pictxt);
 //		
 //		api.getUserInfo("oQZIBj4Gbn__DoSZwcdKe3SKt4BE");
-		api.createMenu(65537, WXApi.class.getResource("menu.json").getPath());
+//		api.createMenu(65537, WXApi.class.getResource("menu.json").getPath());
 	}
 	
 	public void sendWXTxtMsg(String dstOpenId, String txt) {
@@ -50,7 +52,7 @@ public class WXApi {
 			MyLogger.get().warn("failed to send timeout msg to user:" + dstOpenId+":"+txt, e);
 		}
 	}
-	
+		
 	public int sendWXMsg(WXMsg msg) throws Exception {
 		String str = WXMsgFactory.genJsonStr(msg);
 		if (str.equals("")) {
@@ -127,13 +129,13 @@ public class WXApi {
 				return -1;
 			}
 			
-			JSONObject my = (JSONObject) ((JSONArray)(((JSONObject)buttonjso.get(2)).getJSONArray("sub_button"))).get(0);
+			JSONObject my = (JSONObject) ((JSONArray)(((JSONObject)buttonjso.get(0)).getJSONArray("sub_button"))).get(3);
 			String myredirectUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/"+areaId, "UTF-8");
 			String appid = WXApiSession.appId;
 			String myurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri="+myredirectUrl+"&response_type=code&scope=snsapi_base#wechat_redirect";
 			my.put("url", myurl);
 			
-			JSONObject dengji = (JSONObject) ((JSONArray)(((JSONObject)buttonjso.get(2)).getJSONArray("sub_button"))).get(1);
+			JSONObject dengji = (JSONObject) ((JSONArray)(((JSONObject)buttonjso.get(0)).getJSONArray("sub_button"))).get(2);
 			String dengjiRedirectUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/"+areaId+"?act=dengji", "UTF-8");
 			String dengjiUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appid+"&redirect_uri="+dengjiRedirectUrl+"&response_type=code&scope=snsapi_base#wechat_redirect";
 			dengji.put("url", dengjiUrl);

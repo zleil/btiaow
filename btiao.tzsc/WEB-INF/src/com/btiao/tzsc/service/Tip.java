@@ -37,8 +37,8 @@ public class Tip {
 	
 	public String reachMaxSwitch = "朋友，最多允许8个待交换物品呦~\n\n点击“更多” -> “我的物品”，将已成交物品、不想交换的物品标记下。";
 	
-	public String moreTip = "还有很多呢，继续 '找找看' 吧";
-	public String allReturnedTip = "就这么多了，总件数：";
+	public String moreTip = "还有很多呢，继续 '淘' 吧";
+	public String allReturnedTip = "以上是全部待卖物品，总件数：";
 	
 	public String thanksSuggestion = "感谢您提供宝贵的建议。";
 	
@@ -49,8 +49,8 @@ public class Tip {
 	public String tzscTitle = "便条网 - 跳蚤市场";
 	
 	public String saleHelpStr = "发布一件物品，仅需两步:\n" +
-								"1.发送文件、图片描述您要卖的物品\n" + 
-								"2.点击“卖东西” -> “提交”";
+								"1.发送物品的文字、图片信息到本订阅号\n" + 
+								"2.点击“卖” -> “提交”";
 	
 	public String unknownClickAct = "朋友，这个功能正在实现中哦，敬请等待:-)";
 	

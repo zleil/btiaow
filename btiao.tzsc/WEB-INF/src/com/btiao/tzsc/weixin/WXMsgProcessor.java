@@ -120,5 +120,23 @@ public class WXMsgProcessor {
 		return ret;
 	}
 	
+	static public WXMsg getHelpMsg(WXMsg req) {
+		WXMsg.PicText ret = new WXMsg.PicText();
+		WXMsg.PicText.Item item = new WXMsg.PicText.Item();
+		
+		item.desc = Tip.get().saleHelpStr;
+		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/helpall2.png";
+		item.title = "";
+
+		ret.items.add(item);
+		
+		ret.createTime = req.createTime;
+		ret.fromUserName = req.toUserName;
+		ret.toUserName = req.fromUserName;
+		ret.msgId = req.msgId;
+		
+		return ret;
+	}
+	
 	private final long areaId;
 }

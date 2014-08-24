@@ -1,7 +1,7 @@
  {
        "button":[
        {
-          "name":"卖东西", 
+          "name":"卖", 
           "sub_button":[
           {
           	"type":"click",
@@ -14,31 +14,26 @@
           	"key":"act_publish"
           },
           {
-          	"type":"click",
-          	"name":"帮助",
-          	"key":"act_salehelp"
-          }
-          ]
-      },
-      {	
-          "type":"click",
-          "name":"随便看",
-          "key":"act_browse"
-      },
-      {
-          "name":"更多",
-          "sub_button":[
-          {	
-	          "type":"view",
-	          "name":"我的物品",
+			  "type":"view",
+	          "name":"卖主登记",
 	          "url":""
           },
           {
-			  "type":"view",
-	          "name":"摊位申请",
+	          "type":"view",
+	          "name":"我的物品",
 	          "url":""
           }
           ]
+      },
+      {
+          "type":"click",
+          "name":"淘",
+          "key":"act_browse"
+      },
+      {
+          	"type":"click",
+          	"name":"帮助",
+          	"key":"act_salehelp"
       }
       ]
 }
