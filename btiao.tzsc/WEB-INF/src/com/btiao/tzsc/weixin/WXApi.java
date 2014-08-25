@@ -31,8 +31,8 @@ public class WXApi {
 		pictxt.toUserName = "oQZIBj4Gbn__DoSZwcdKe3SKt4BE";
 		WXMsg.PicText.Item item = new WXMsg.PicText.Item();
 		item.desc = Tip.get().saleHelpStr;
-		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/helpall2.png";
-		item.title = "";
+		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/help.png";
+		item.title = "按几下左下角按钮，看看有啥不一样？";
 		pictxt.items.add(item);
 		api.sendWXMsg(pictxt);
 //		

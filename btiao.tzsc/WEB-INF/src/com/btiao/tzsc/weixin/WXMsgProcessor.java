@@ -28,9 +28,7 @@ public class WXMsgProcessor {
 			processPicMsg(areaId, (WXMsg.Picture) reqWxMsg, rsp.getOutputStream());
 		} else if (reqWxMsg instanceof WXMsg.SubEvent) {
 			MyLogger.getAccess().info("get a subevent:"+((WXMsg.SubEvent)reqWxMsg).event);
-			WXMsg.Text helpMsg = (Text) getTextMsg(reqWxMsg, Tip.get().saleHelpStr);
-			helpMsg.content = Tip.get().welcomeStr + "\n\n" + helpMsg.content;
-			//rsp.getOutputStream().write(WXMsgFactory.genXML(helpMsg).getBytes());
+			WXMsg helpMsg = getHelpMsg(reqWxMsg);
 			new WXApi().sendRspWXMsg(helpMsg, rsp.getOutputStream());
 		} else if (reqWxMsg instanceof WXMsg.Click) {
 			processClickMsg(reqWxMsg, rsp.getOutputStream());
@@ -78,7 +76,9 @@ public class WXMsgProcessor {
 				return;
 			}
 		} else if (clickKey.equals("act_salehelp")) {
-			ret = Tip.get().saleHelpStr;
+			WXMsg helpMsg = getHelpMsg(reqWxMsg);
+			new WXApi().sendWXMsg(helpMsg);
+			return;
 		} else {
 			ret = Tip.get().unknownClickAct;
 			MyLogger.getAttackLog().warn("receive a unknown click act:"+clickKey);
@@ -125,8 +125,8 @@ public class WXMsgProcessor {
 		WXMsg.PicText.Item item = new WXMsg.PicText.Item();
 		
 		item.desc = Tip.get().saleHelpStr;
-		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/helpall2.png";
-		item.title = "";
+		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/help.png";
+		item.title = "试试看：按几下左下角按钮，菜单界面、输入界面切换了吧";
 
 		ret.items.add(item);
 		
