@@ -1,5 +1,7 @@
 package com.btiao.tzsc.weixin;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ public class WXPutStateMgr {
 		}
 		
 		public WXMsg next() {
-			return next(false);
+			return next(true);
 		}
 		
 		public WXMsg next(boolean addSeq) {
@@ -49,7 +51,7 @@ public class WXPutStateMgr {
 
 				for (WPState.Info info : state.getInfos()) {
 					if (item.title == null && info.t == WPState.Info.MsgType.text) {
-						item.title = (addSeq ? ("["+(idx+1)+"]") : "") + info.content;
+						item.title = (addSeq ? ("【"+(idx+1)+"】") : "") + info.content;
 					}
 					if (item.picUrl == null && info.t == WPState.Info.MsgType.pic) {
 						item.picUrl = info.content;
@@ -58,7 +60,13 @@ public class WXPutStateMgr {
 						break;
 					}
 					
-					item.url = WXServletDispDetail.dispDetailURI+state.areaId+"?stateId=" + state.id; 
+					String goUrl = null;
+					try {
+						goUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/" + state.areaId + "?act=dispstate&stateId="+state.id, "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						MyLogger.get().error(e);
+					}
+					item.url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+WXApiSession.appId+"&redirect_uri="+goUrl+"&response_type=code&scope=snsapi_base#wechat_redirect";
 				}
 				
 				if (item.picUrl == null && item.title == null) {

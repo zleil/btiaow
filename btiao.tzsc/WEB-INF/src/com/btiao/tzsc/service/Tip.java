@@ -19,7 +19,7 @@ public class Tip {
 	
 	public String welcomeStr = "欢迎访问便条网跳蚤市场～";
 	
-	public String notDescInPublish = "朋友，请先提交物品描述，再点击“提交”哦";
+	public String notDescInPublish = "朋友，请先提交物品描述，再点击“提交”哦~\n\n详见“帮助”";
 
 	public String cancelSuccess = "取消成功";
 	
@@ -49,8 +49,10 @@ public class Tip {
 	public String tzscTitle = "便条网 - 跳蚤市场";
 	
 	public String saleHelpStr = "发布一件物品，仅需两步:\n" +
-								"1.发送物品的文字、图片信息到本订阅号\n" + 
+								"1.发送物品的“文字、图片”信息到本订阅号\n" + 
 								"2.点击“卖” -> “提交”";
+	
+	public String helpPicTitle = "试试看：左下角按钮，多按几次，知道在哪发送“文字、图片”了吧 :-）";
 	
 	public String unknownClickAct = "朋友，这个功能正在实现中哦，敬请等待:-)";
 	

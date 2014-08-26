@@ -1,9 +1,7 @@
 package com.btiao.tzsc.weixin;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URLEncoder;
-import java.util.List;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +10,7 @@ import com.btiao.tzsc.service.ComDataMgr;
 import com.btiao.tzsc.service.MetaDataId;
 import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.service.SessionMgr;
-import com.btiao.tzsc.service.WPState;
-import com.btiao.tzsc.service.StateMgr;
+import com.btiao.tzsc.service.Tip;
 import com.btiao.tzsc.service.UserInfo;
 
 /**
@@ -43,13 +40,11 @@ public class WXServletManagMine extends HttpServlet {
 			return;
 		}
 		
-		PrintWriter out;
 		try {
 			String areaIdStr = getAreaId(request.getRequestURI());
 			long areaId = Long.parseLong(areaIdStr);
 			
 			response.setCharacterEncoding("UTF-8");
-			out = response.getWriter();
 			
 			WXUserInfo uinfo = new WXUserInfo();
 			if (code.equals("zleil")) {
@@ -73,7 +68,6 @@ public class WXServletManagMine extends HttpServlet {
 				UserInfo reguinfo = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId).get(uinfo.openId);
 				UserInfo reguinfo2 = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), areaId).get(uinfo.openId);
 				if (reguinfo != null) {
-					if (reguinfo == null) reguinfo = reguinfo2;
 					MyLogger.get().info("querystring is :\n"+request.getQueryString());
 					String tip = URLEncoder.encode("本微信账号正申请登记房屋"+reguinfo.homeId+"，请确认是否需要重新申请登记？", "UTF-8");
 					String yesUrl = URLEncoder.encode("tzscdj.html", "UTF-8");
@@ -91,6 +85,13 @@ public class WXServletManagMine extends HttpServlet {
 				newUrl = "../webs/admin.jsp?areaId="+areaId;
 			} else if (act.equals("adminstat")) {
 				newUrl = "../webs/adminstat.jsp";
+			} else if (act.equals("dispstate")) {
+				String stateId = request.getParameter("stateId");
+				if (stateId != null) {
+					newUrl = "../webs/dispstate.jsp?stateId="+stateId;
+				} else {
+					newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy,"UTF-8")+"&hasyes=";
+				}
 			} else {
 				MyLogger.getAttackLog().warn("process wx_managemine: unkown act="+act+"\nfrom="+request.getRemoteAddr());
 				return;
@@ -141,44 +142,6 @@ public class WXServletManagMine extends HttpServlet {
 		cookie3.setDomain(domain);
 		cookie3.setPath(path);
 		response.addCookie(cookie3);
-	}
-	
-	private void genManageMinePage(long areaId, WXUserInfo uinfo, PrintWriter out) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<!DOCTYPE HTML>");
-		sb.append("<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\">");
-		sb.append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,initial-scale=1,maximum-scale=1,user-scalable=no\">");
-		sb.append("<link rel=\"stylesheet\" href=\"../webs/a.css\" media=\"all\">");
-		
-		sb.append("<script type=\"text/javascript\" src=\"../webs/jquery.js\"></script>");
-		sb.append("<script type=\"text/javascript\" src=\"../webs/managmine.js\"></script>");
-		
-		sb.append("<script type=\"text/javascript\">");
-		sb.append("var uid=\""+uinfo.openId+"\";");
-		sb.append("var areaId="+areaId+";");
-		sb.append("var token=\""+uinfo.accesToken+"\";");
-		sb.append("</script>");
-		
-		List<WPState> states = StateMgr.instance(areaId).getAllStateByUserName(uinfo.openId);
-		
-		sb.append("<p>物品数：<span id=\"stateNum\">"+states.size()+"</span></p>");
-		
-		for (WPState state : states) {
-			sb.append("<div class=\"perState\" id=\"state_"+state.id+"\">");
-			sb.append("<div><div class=\"perSateTitle\">"+state.getInfos().get(0).content+"</div>");
-			String picurl = state.getFirstPicUrl();
-			if (picurl != null && !picurl.equals("")) {
-				String stateUrl = WXServletDispDetail.dispDetailURI+state.areaId+"?stateId=" + state.id;
-				sb.append("<div class=\"perStatePic\"><a href=\""+stateUrl+"\"> <img src=\""+picurl+"\"></img></a></div>");
-			}
-			sb.append("</div><div class=\"btns\">");
-			sb.append("<button class=\"switched\" onclick=\"act_switched("+state.id+")\">已成交</button>");
-			sb.append("<button class=\"cancel\" onclick=\"act_canceled("+state.id+")\">不卖了</button>");
-			sb.append("</div>");
-			sb.append("</div>");
-		}
-		
-		out.write(sb.toString());
 	}
 	
 	private String getAreaId(String uri) {

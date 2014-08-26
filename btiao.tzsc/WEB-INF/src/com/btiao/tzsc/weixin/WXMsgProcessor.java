@@ -125,8 +125,8 @@ public class WXMsgProcessor {
 		WXMsg.PicText.Item item = new WXMsg.PicText.Item();
 		
 		item.desc = Tip.get().saleHelpStr;
-		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/help.png";
-		item.title = "试试看：按几下左下角按钮，菜单界面、输入界面切换了吧";
+		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/helpx.png";
+		item.title = Tip.get().helpPicTitle;
 
 		ret.items.add(item);
 		

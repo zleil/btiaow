@@ -2,6 +2,7 @@ package com.btiao.tzsc.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,16 +22,65 @@ public class StateMgr {
 		
 		return inst;
 	}
+
+	static public void main(String[] args) throws Exception {
+		StateMgr inst = StateMgr.instance(0);
+		WPState wp1 = new WPState(""); Thread.sleep(1000*2);
+		WPState wp2 = new WPState(""); //Thread.sleep(1000*2);
+		WPState wp3 = new WPState(""); //Thread.sleep(1000*2);
+		WPState wp4 = new WPState(""); Thread.sleep(1000*2);
+		inst.addState("abc", wp1);
+		inst.addState("abc", wp2);
+		inst.addState("abc", wp3);
+		inst.addState("abce", wp4);
+		
+		List<WPState> wps = inst.searchState("");
+		System.out.println(wps);
+	}
 	
 	public synchronized List<WPState> searchState(String text) {
 		//TODO implements search action
 		
-		List<WPState> ret = new ArrayList<WPState>();
+		LinkedList<WPState> r = new LinkedList<WPState>();
 		for (List<WPState> sts : all.values()) {
-			ret.addAll(sts);
+			sortWPList(r, sts);
 		}
 		
-		return ret;
+		return r;
+	}
+	
+	private void sortWPList(LinkedList<WPState> r, List<WPState> wps) {
+		for (WPState s : wps) {
+			if (r.size() == 0) {
+				r.add(s);
+				continue;
+			}
+			
+			int left = 0, right = r.size()-1;
+			do {					
+				int midle = (left + right)/2;
+				if (midle == left) {
+					if (r.get(left).publishTime < s.publishTime) {
+						r.add(left, s);
+						break;
+					} else {
+						if (r.get(right).publishTime < s.publishTime) {
+							r.add(right, s);
+							break;
+						} else {
+							r.add(right+1, s);
+							break;
+						}
+					}
+				} else {
+					if (r.get(midle).publishTime < s.publishTime) {
+						right = midle;
+					} else {
+						left = midle;
+					}
+				}
+			} while (true);
+		}
 	}
 	
 	public synchronized WPState getState(long stateId) {
@@ -59,7 +109,7 @@ public class StateMgr {
 			states = new ArrayList<WPState>();
 			all.put(userName, states);
 		}
-		states.add(state);
+		states.add(0, state);
 		stateId2State.put(state.id, state);
 		
 		isChanged = true;
@@ -121,10 +171,6 @@ public class StateMgr {
 	
 	public synchronized void setUnchanged() {
 		isChanged = false;
-	}
-	
-	static public void main(String[] args) {
-		StateMgr.instance(0).addState("abc", new WPState(""));
 	}
 	
 	private StateMgr(final long areaId) {

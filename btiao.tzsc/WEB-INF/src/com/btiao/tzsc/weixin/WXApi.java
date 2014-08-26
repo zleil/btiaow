@@ -28,11 +28,11 @@ public class WXApi {
 //		api.sendWXMsg(msg);
 //		
 		WXMsg.PicText pictxt = new WXMsg.PicText();
-		pictxt.toUserName = "oQZIBj4Gbn__DoSZwcdKe3SKt4BE";
+		pictxt.toUserName = "oQZIBjwH3C-d_hrBmCBvGawNCriY";
 		WXMsg.PicText.Item item = new WXMsg.PicText.Item();
 		item.desc = Tip.get().saleHelpStr;
-		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/help.png";
-		item.title = "按几下左下角按钮，看看有啥不一样？";
+		item.picUrl = "http://"+WXApiSession.serverip+"/btiao/tzsc/webs/tzscimg/helpx.png";
+		item.title = Tip.get().helpPicTitle;
 		pictxt.items.add(item);
 		api.sendWXMsg(pictxt);
 //		

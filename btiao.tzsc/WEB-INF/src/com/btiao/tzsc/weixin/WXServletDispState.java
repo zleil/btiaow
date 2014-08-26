@@ -2,6 +2,7 @@ package com.btiao.tzsc.weixin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -14,14 +15,14 @@ import com.btiao.tzsc.service.Tip;
 import com.btiao.tzsc.service.WPState;
 import com.btiao.tzsc.service.StateMgr;
 
-public class WXServletDispDetail extends HttpServlet {
+public class WXServletDispState extends HttpServlet {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8378786285598298529L;
 	
-	public static String dispDetailURI = "http://"+WXApiSession.serverip+"/btiao/tzsc/wx_dispDetail/";
+	public static String dispStateURI = "http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/";
 
 	@Override
 	public void doGet(HttpServletRequest request,
@@ -29,9 +30,9 @@ public class WXServletDispDetail extends HttpServlet {
 		try {
 			_doGet(request, response);
 			
-			MyLogger.getAccess().info("do wx dispDetail end");
+			MyLogger.getAccess().info("do wx dispstate end");
 		} catch (Throwable e) {
-			MyLogger.getAccess().error("process wx_dispdetail error!", e);
+			MyLogger.getAccess().error("process wx_dispstate error!", e);
 		}
 	}
 
@@ -47,7 +48,7 @@ public class WXServletDispDetail extends HttpServlet {
 			String areaIdStr = getAreaId(request.getRequestURI());
 			long areaId = Long.parseLong(areaIdStr);
 			
-			MyLogger.getAccess().info("do wx dispDetail: areaId=" + areaIdStr + ",src-ip=" + request.getRemoteAddr());
+			MyLogger.getAccess().info("do wx dispstate: areaId=" + areaIdStr + ",src-ip=" + request.getRemoteAddr());
 			
 			long stateId = Long.parseLong(stateIdStr);
 			
@@ -59,7 +60,7 @@ public class WXServletDispDetail extends HttpServlet {
 			
 			display(areaId, stateId, out);
 		} catch (IOException e) {
-			MyLogger.get().warn("process wx_dispdetail _doGet failed!", e);
+			MyLogger.get().warn("process wx_dispstate _doGet failed!", e);
 		}
 	}
 	
