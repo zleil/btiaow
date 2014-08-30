@@ -2,11 +2,14 @@ package com.btiao.tzsc.weixin;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.btiao.tzsc.service.ComDataMgr;
+import com.btiao.tzsc.service.GlobalParam;
 import com.btiao.tzsc.service.MetaDataId;
 import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.service.SessionMgr;
@@ -28,7 +31,7 @@ public class WXServletManagMine extends HttpServlet {
 	private static final long serialVersionUID = 7483127017720502610L;
 	
 	static public void main(String[] args) throws Exception {
-		String tip = URLEncoder.encode("本微信账号已登记了房屋7#2507，请确认是否需要重新登记", "UTF-8");
+		String tip = URLEncoder.encode("本微信账号已登记了房屋7#2507，请确认是否需要重新登记？", "UTF-8");
 		System.out.println(tip);
 	}
 	
@@ -37,6 +40,16 @@ public class WXServletManagMine extends HttpServlet {
 			HttpServletResponse response) {	
 		String code = request.getParameter("code");
 		if (code == null) {
+			MyLogger.get().info("querystring is :\n"+request.getQueryString());
+			String tip = "";
+			try {
+				tip = URLEncoder.encode("朋友，便条网->跳蚤市场 当前仅支持微信认证哦，请勾选“同意使用基本资料登陆此应用”，然后选择“允许”~", "UTF-8");
+				String newUrl = "../webs/htmlconfirmtip.jsp?tip="+tip+"&hasyes=";
+				redirect(newUrl, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			return;
 		}
 		
@@ -88,7 +101,7 @@ public class WXServletManagMine extends HttpServlet {
 			} else if (act.equals("dispstate")) {
 				String stateId = request.getParameter("stateId");
 				if (stateId != null) {
-					newUrl = "../webs/dispstate.jsp?stateId="+stateId;
+					newUrl = "../webs/dispstate.jsp?stateId="+stateId+"&areaId="+areaId;
 				} else {
 					newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy,"UTF-8")+"&hasyes=";
 				}
@@ -122,7 +135,7 @@ public class WXServletManagMine extends HttpServlet {
 	
 	private void setAccessToken(HttpServletResponse response, long areaId, String usrId, String token) {
 		int timeout = 3600;
-		String domain = "182.92.81.56";
+		String domain = GlobalParam.btw_domain;
 		String path = "/";
 		
 		Cookie cookie = new Cookie("accessToken", token);
@@ -142,6 +155,15 @@ public class WXServletManagMine extends HttpServlet {
 		cookie3.setDomain(domain);
 		cookie3.setPath(path);
 		response.addCookie(cookie3);
+		
+		UserInfo reguinfo = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), areaId).get(usrId);
+		if (reguinfo != null) {
+			Cookie cookie4 = new Cookie("homeId", reguinfo.homeId);
+			cookie4.setMaxAge(timeout);
+			cookie4.setDomain(domain);
+			cookie4.setPath(path);
+			response.addCookie(cookie4);
+		}
 	}
 	
 	private String getAreaId(String uri) {

@@ -17,13 +17,11 @@
 	<script src="jm/jquery.mobile-1.4.3.min.js"></script>
 	<script src="managmine.js"></script>
 	<style type="text/css">
-		.tzscdj-selgrid{
-			font-size:1.2em;
-			line-height:2.6em;
-			text-align:center;
+		.image{
+		text-align:center;
 		}
-		#selTelId{
-			margin-bottom:1em;
+		img{
+		width:100%;
 		}
 	</style>
 </head>
@@ -37,17 +35,16 @@ List<WPState> states = StateMgr.instance(cinfo.areaId).getAllStateByUserName(cin
 %>
 <body>
 <div data-role="page">
-	<div data-role="header" data-position="fixed">
-		<h1>跳蚤市场 - 我的物品</h1>
+	<div data-role="header">
+		<h2>我的物品</h2>
 	</div><!-- /header -->
-	
 	<div role="main" class="ui-content">
 		<p>朋友，您共有 <span id="total" style="font:bold"><%=states.size()%></span> 个待交换物品</p>
 		<div id="statesView"></div>
 	</div>
 
 	<div data-theme="a" data-role="footer" data-position="fixed">
-		<h4>@Copyright 便条科技有限公司.</h4>
+		<h4>©2014 便条科技有限公司</h4>
 	</div><!-- /footer -->
 </div>
 <div data-role="popup" id="commonTip">

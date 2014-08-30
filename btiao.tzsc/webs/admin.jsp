@@ -45,7 +45,7 @@ try {
 	</div><!-- /content -->
 
 	<div data-theme="a" data-role="footer" data-position="fixed">
-		<h4>@Copyright 便条科技有限公司.</h4>
+		<h4>©2014 便条科技有限公司</h4>
 	</div><!-- /footer -->
 </div>
 <div data-role="popup" id="commonTip">

@@ -62,7 +62,7 @@ public class WXPutStateMgr {
 					
 					String goUrl = null;
 					try {
-						goUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/" + state.areaId + "?act=dispstate&stateId="+state.id, "UTF-8");
+						goUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/" + state.areaId + "?act=dispstate&stateId="+state.id+"&areaId="+state.areaId, "UTF-8");
 					} catch (UnsupportedEncodingException e) {
 						MyLogger.get().error(e);
 					}
@@ -201,19 +201,25 @@ public class WXPutStateMgr {
 				
 				if (pv.isEnd()) {
 					pvs.remove(name);
-					
-					WXMsg.PicText.Item item = new WXMsg.PicText.Item();
-					item.title = Tip.get().allReturnedTip + pv.getTotal();
-					ret.items.add(item);
-				} else {
-					WXMsg.PicText.Item item = new WXMsg.PicText.Item();
-					item.title = Tip.get().moreTip;
-					ret.items.add(item);
 				}
+				
+				insertLastItemTip(ret, pv);
 			}
 		}
 		
 		return ret;
+	}
+	
+	private void insertLastItemTip(WXMsg.PicText msg, PageView pv) {
+		if (pv.isEnd()) {
+			WXMsg.PicText.Item item = new WXMsg.PicText.Item();
+			item.title = Tip.get().allReturnedTip + pv.getTotal();
+			msg.items.add(item);
+		} else {
+			WXMsg.PicText.Item item = new WXMsg.PicText.Item();
+			item.title = Tip.get().moreTip;
+			msg.items.add(item);
+		}
 	}
 	
 	public WXMsg more(String name) {
@@ -228,6 +234,8 @@ public class WXPutStateMgr {
 			if (pv.isEnd()) {
 				pvs.remove(name);
 			}
+			
+			insertLastItemTip((PicText)ret, pv);
 			
 			return ret;
 		}

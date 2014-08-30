@@ -87,7 +87,7 @@ public class WPState implements Serializable {
 				",\"publishTime\":"+publishTime+
 				",\"switchedTime\":"+switchedTime+
 				",\"cancelTime\":"+cancelTime+
-				",infos:[");
+				",\"infos\":[");
 		
 		boolean first = true;
 		for (Info info : infos) {

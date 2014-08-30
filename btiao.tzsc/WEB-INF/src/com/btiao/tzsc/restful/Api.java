@@ -35,7 +35,7 @@ public class Api extends HttpServlet {
 		TZSCCookieInfo ret = new TZSCCookieInfo();
 		
 		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
+		if (cookies != null) for (Cookie cookie : cookies) {
 			String n = cookie.getName();
 			String v = cookie.getValue();
 			if (n.equals("usrId")) {

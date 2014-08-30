@@ -1,6 +1,8 @@
 package com.btiao.tzsc.service;
 
 public class GlobalParam {
+	static public final String btw_domain = "182.92.81.56";
+	
 	/**
 	 * 系统升级、打补丁时用。<br>
 	 * 系统维护前，先设置次标志为true，然后通过过滤器确保服务器不处理任何外部请求。<br>

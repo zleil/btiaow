@@ -9,6 +9,10 @@ function subStatesNum() {
 }
 
 function act_switched(stateid) {
+	if (!confirm("朋友，你确认此物品已经成交了吗？")) {
+		return;
+	}
+	
 	var args = "{\"act\":\"stateChange\",data:{\"stateid\":"+stateid+"}}";
 	
 	$.ajax({
@@ -27,6 +31,10 @@ function act_switched(stateid) {
 }
 
 function act_canceled(stateid) {
+	if (!confirm("朋友，你确认不卖此物品了吗？")) {
+		return;
+	}
+	
 	var args = "{\"act\":\"stateChange\",data:{\"stateid\":"+stateid+"}}";
 	$.ajax({
 		type: "POST",
@@ -53,10 +61,16 @@ function initStates() {
 
 		var one = '<div class="mystate" data-role="collapsible" id="'+getStateElmId(state.id)+'">' +
 			'<h3>'+state.infos[0].content+'</h3>' +
-			'<p>'+state.infos[0].content+'</p>' +
 			'<a href="#" class="ui-btn ui-corner-all" onclick="act_switched('+state.id+')">已成交</a>' +
-			'<a href="#" class="ui-btn ui-corner-all" onclick="act_canceled('+state.id+')">不交易了</a>' +
-			'</div>';
+			'<a href="#" class="ui-btn ui-corner-all" onclick="act_canceled('+state.id+')">不交易了</a>';
+		for (var j=0; j<state.infos.length; ++j) {
+			if (state.infos[j].t == 1) {
+				one += '<p>'+state.infos[0].content+'</p>';
+			} else if (state.infos[j].t == 2) {
+				one += '<div class="image"><img src="' + state.infos[j].content + '"></div>';
+			}
+		}
+		one += '</div>';
 		$("#statesView").append(one);
 	}
 	

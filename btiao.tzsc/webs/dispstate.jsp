@@ -11,7 +11,7 @@
 <!DOCTYPE html> 
 <html>
 <head>
-	<title>便条网 - 跳蚤市场 - 我的物品</title>
+	<title>便条网 - 跳蚤市场 - 物品信息</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<link rel="stylesheet" href="jm/jquery.mobile-1.4.3.min.css" />
@@ -20,23 +20,121 @@
 	<script src="jm/jquery.mobile-1.4.3.min.js"></script>
 	<script src="dispstate.js"></script>
 	<style type="text/css">
-		.tzscdj-selgrid{
-			font-size:1.2em;
-			line-height:2.6em;
-			text-align:center;
-		}
-		#selTelId{
-			margin-bottom:1em;
-		}
+@font-face {
+  font-family: "FontAwesome";
+  src: url("font/fontawesome-webfont.eot") format("embedded-opentype");
+  src: url("font/fontawesome-webfont.eot") format("embedded-opentype"), url('font/fontawesome-webfont.woff') format('woff'), url('font/fontawesome-webfont.ttf') format('truetype'), url('font/fontawesome-webfont.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+p{
+color:blue;
+font-weight:700;
+}
+.line{
+margin:1em 0 1em 0;
+height:0.1em;
+background-color:#cfcfcf;
+width:100%;
+}
+.pos,.fabuTime,.wpowner{
+font-size:0.8em;
+font-weight:bold;
+color:#7f7f7f;
+}
+.pos{
+margin:0.2em 0 1em 0;
+padding:0 0 0 0;
+}
+.fabuTime{
+margin:0.2em 0 0.2em 0;
+padding:0 0 0 0;
+}
+.wpowner{
+margin:0.2em 0 0.2em 0;
+padding:0 0 0 0;
+}
+.image{
+text-align:center;
+}
+img{
+width:100%;
+}
+.fabuTime{
+border:solid 0 0 2px 0 #808080;
+}
+.bottom{
+background-color:#f0f0f0;
+width:100%;
+height:0.5em;
+position:fixed;
+bottom:0em;
+}
+.tel:before{
+content:"\f095";
+font-family: FontAwesome;
+left:5px;
+position:absolute;
+}
+.tel{
+color:white;
+background-color:#ea5946;
+background-image:none;
+vertical-align:baseline;
+text-decoration:none;
+-webkit-border-radius:5px;
+background-repeat: repeat;
+text-align:center;
+margin:0.2em 0 0.2em 0;
+padding:0.2em 0 0.2em 0;
+position:fixed;
+bottom:0;
+left:0;
+display:block;
+width:100%;
+font-size:1.5em;
+}
+.note{
+color:red;
+margin:1em 0 1em 0;
+font-size:0.8em;
+}
+.copyright{
+margin:0 0 2em 0;
+text-align:center;
+background-color:#f0f0f0;
+padding:1em 0 1em 0;
+font-size:0.8em;
+color:#5f5f5f;
+}
 	</style>
 </head>
 <script type="text/javascript">
+var dispdetail = {};
+dispdetail.state = {};
+
 <%
+long areaIdFromQueryStr = 0;
 TZSCCookieInfo cinfo = Api.getCookieInfo(request);
 if (!cinfo.isValidSession()) {
-	String newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy,"UTF-8")+"&hasyes=";
-	((HttpServletResponse)response).sendRedirect(newUrl);
-	return;
+	String areaIdStrFromQueryStr = request.getParameter("areaId");
+	if (areaIdStrFromQueryStr != null) {
+		try {
+			areaIdFromQueryStr = Long.parseLong(areaIdStrFromQueryStr);
+		} catch (Exception e) {
+			MyLogger.getAttackLog().warn("unkown access to dispstate.jsp, from:"+request.getRemoteAddr()+request.getQueryString());
+			String newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy+1,"UTF-8")+"&hasyes=";
+			((HttpServletResponse)response).sendRedirect(newUrl);
+			return;
+		}
+	}
+	
+	if (areaIdFromQueryStr == 0) {
+		MyLogger.getAttackLog().warn("unkown access to dispstate.jsp, from:"+request.getRemoteAddr()+request.getQueryString());
+		String newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy+2,"UTF-8")+"&hasyes=";
+		((HttpServletResponse)response).sendRedirect(newUrl);
+		return;
+	}
 }
 
 long stateId = 0;
@@ -44,21 +142,34 @@ String stateIdStr = request.getParameter("stateId");
 try {
 	stateId = Long.parseLong(stateIdStr);
 } catch (Exception e) {
+	MyLogger.getAttackLog().warn("unkown access to dispstate.jsp, from:"+request.getRemoteAddr()+request.getQueryString());
+	
 	String newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy,"UTF-8")+"&hasyes=";
 	((HttpServletResponse)response).sendRedirect(newUrl);
 	return;
 }
-WPState state = StateMgr.instance(cinfo.areaId).getState(stateId);
+
+long areaId = cinfo.areaId;
+if (areaIdFromQueryStr > 0) {
+	areaId = areaIdFromQueryStr;
+}
+
+WPState state = StateMgr.instance(areaId).getState(stateId);
 if (state == null) {
-	String newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy,"UTF-8")+"&hasyes=";
+	MyLogger.getAttackLog().warn("unkown access to dispstate.jsp, from:"+request.getRemoteAddr()+request.getQueryString());
+	
+	String newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy+4,"UTF-8")+"&hasyes=";
 	((HttpServletResponse)response).sendRedirect(newUrl);
 	return;
 }
-out.println("var dispdetail.state="+StateMgr.instance(cinfo.areaId).getState(stateId)+";");
+out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";");
 %>
 </script>
 <body>
 <div data-role="page">	
+	<div data-role="header">
+		<h2>物品信息</h2>
+	</div><!-- /header -->
 	<div role="main" class="ui-content">
 		<%
 		String timeStr = "";
@@ -80,11 +191,47 @@ out.println("var dispdetail.state="+StateMgr.instance(cinfo.areaId).getState(sta
 			timeStr = formatter.format(date);
 		}
 		
-		out.print("<p class=\"pos\">当前位置：便条网 -> "+AreaMgr.instance().getArea(state.areaId).desc+" -> 跳蚤市场</p>");
+		UserInfo uinfoWpOwner = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(state.userId);
+		UserInfo uinfo = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(state.userId);
+		
+		out.print("<p class=\"wpowner\">卖主认证级别：");
+		if (uinfoWpOwner.wuyeAuth) {
+			out.print("<span style=\"color:green\">物业认证</span>");
+		} else if (uinfoWpOwner.doorNumPicAuth) {
+			out.print("<span style=\"color:green\">门牌认证</span>");
+		} else {
+			out.print("<span>普通认证</span>");
+		}
+		
+		out.print("</p>");
+		
+		//经过门牌认证的用户，才能查看物品主人的门牌信息
+		if ((uinfoWpOwner.doorNumPicAuth && (uinfo != null && uinfo.doorNumPicAuth)) ||
+			(uinfoWpOwner.wuyeAuth && (uinfo != null && uinfo.wuyeAuth)) ) {
+			out.print("<p class=\"wpowner\">卖主的门牌号：");
+			out.print(uinfoWpOwner.homeId);
+			out.print("</p>");
+			out.print("<div class=\"line\">&nbsp;</div>");
+		} else {
+			out.print("<p class=\"wpowner\">卖主的门牌号：");
+			
+			String reason = "需注册";
+			if (uinfoWpOwner.wuyeAuth) {
+				reason = "需完成物业认证";
+			} else if (uinfoWpOwner.doorNumPicAuth) {
+				reason = "需完成门牌认证";
+			}
+			out.print(reason+"，才能查看，<a href=\"tzscdj.html\" style=\"font:black\">我去!</a>");
+			out.print("</p>");
+		}
 		
 		out.print("<p class=\"fabuTime\">发布时间：");
 		out.print(timeStr);
 		out.print("</p>");
+		
+		out.print("<p class=\"pos\">发布地点：便条网 -> "+AreaMgr.instance().getArea(state.areaId).desc+" - 跳蚤市场</p>");
+		
+		
 		out.print("<div class=\"line\">&nbsp;</div>");
 		
 		String title = state.getInfos().get(0).content;
@@ -113,8 +260,11 @@ out.println("var dispdetail.state="+StateMgr.instance(cinfo.areaId).getState(sta
 		}
 		%>
 		<p class="note">免责声明：小伙伴们，在交易前请认真核对好物品信息与价格，便条网仅负责给买卖双方搭建一个信息传递的桥梁，我们不清楚物品质量与价格是否符合~</p>
-		<p class="copyright">@Copyright 便条科技有限公司</p>
+		<!-- <p class="copyright">©2014 便条科技有限公司</p> -->
 	</div>
+	<div data-theme="a" data-role="footer" data-position="fixed">
+		<h4>©2014 便条科技有限公司</h4>
+	</div><!-- /footer -->
 </div>
 <div data-role="popup" id="commonTip">
 </div>

@@ -45,6 +45,9 @@ public class WXMsgProcessor {
 		String ret = null;
 		
 		if (clickKey.equals("act_publish")) {
+			try {
+				Thread.sleep(2*1000);
+			} catch (Exception e) {}
 			ret = WXPutStateMgr.instance(areaId).endPut(userName);
 		} else if (clickKey.equals("act_cancelpub")) {
 			ret = WXPutStateMgr.instance(areaId).cancelPut(userName);
