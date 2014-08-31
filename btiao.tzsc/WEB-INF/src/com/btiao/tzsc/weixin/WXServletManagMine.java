@@ -39,7 +39,7 @@ public class WXServletManagMine extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request,
 			HttpServletResponse response) {
-		Util.logAccess("weixin-to-web", request);
+		Util.logAccess(request, "weixin-to-web");
 		
 		String code = request.getParameter("code");
 		if (code == null) {

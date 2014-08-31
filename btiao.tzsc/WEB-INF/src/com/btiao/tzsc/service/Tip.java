@@ -31,6 +31,7 @@ public class Tip {
 
 	public String noMoreDataTip = "没有更多的信息了～";
 	
+	public String daysBefore = " 天前";
 	public String hoursBefore = " 小时前";
 	public String minutesBefore = " 分钟前";
 	public String rightNow = "刚才发布";

@@ -9,7 +9,7 @@
 
 <H3>ComDataMgr.instance("UserInfo", 65537):</H3>
 <p>
-<%=ComDataMgr.instance("UserInfo", 65537)%>
+<%=ComDataMgr.instance("UserInfo", 65537).getall()%>
 </p>
 
 <H3>StateMgr.instance(65537):</H3>

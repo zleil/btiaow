@@ -22,7 +22,7 @@ public class WXServletAction extends HttpServlet {
 	public void doPost(HttpServletRequest request,
 			HttpServletResponse response) {
 		try {
-			Util.logAccess("weixin-cmd-process", request);
+			Util.logAccess(request, "weixin-cmd-process");
 			
 			if (!isValidReq(request)) {
 				MyLogger.getAttackLog().warn("weixin-cmd-process: found a invalid request!!!");
@@ -75,7 +75,9 @@ public class WXServletAction extends HttpServlet {
 	}
 
 	public void _doGet(HttpServletRequest request,
-			HttpServletResponse response) {		
+			HttpServletResponse response) {
+		Util.logAccess(request, "check-fromweixin");
+		
 		String echostr = request.getParameter("echostr");
 		PrintWriter out;
 		try {

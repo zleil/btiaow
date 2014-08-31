@@ -93,6 +93,10 @@ left:0;
 display:block;
 width:100%;
 font-size:1.5em;
+z-index:100;
+}
+#footfake{
+height:2.5em;
 }
 .note{
 color:red;
@@ -185,6 +189,8 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 			
 		} else if (hours < 24) {
 			timeStr = "" + (int)hours + Tip.get().hoursBefore;
+		} else if (hours < 24*30) {
+			timeStr = "" + (int)(hours/24) + Tip.get().daysBefore;
 		} else {
 			Date date = new Date(state.publishTime);
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -206,12 +212,12 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 		out.print("</p>");
 		
 		//经过门牌认证的用户，才能查看物品主人的门牌信息
-		if ((uinfoWpOwner.doorNumPicAuth && (uinfo != null && uinfo.doorNumPicAuth)) ||
-			(uinfoWpOwner.wuyeAuth && (uinfo != null && uinfo.wuyeAuth)) ) {
+		if ((uinfoWpOwner.wuyeAuth && (uinfo != null && uinfo.wuyeAuth)) ||
+			(!uinfoWpOwner.wuyeAuth && uinfoWpOwner.doorNumPicAuth && (uinfo != null && (uinfo.doorNumPicAuth || uinfo.wuyeAuth))) ||
+			(!uinfoWpOwner.wuyeAuth && !uinfoWpOwner.doorNumPicAuth && uinfo != null)) {
 			out.print("<p class=\"wpowner\">卖主的门牌号：");
 			out.print(uinfoWpOwner.homeId);
 			out.print("</p>");
-			out.print("<div class=\"line\">&nbsp;</div>");
 		} else {
 			out.print("<p class=\"wpowner\">卖主的门牌号：");
 			
@@ -259,12 +265,17 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 			}
 		}
 		%>
-		<p class="note">免责声明：小伙伴们，在交易前请认真核对好物品信息与价格，便条网仅负责给买卖双方搭建一个信息传递的桥梁，我们不清楚物品质量与价格是否符合~</p>
+		<p class="note">温馨提醒：小伙伴们，在交易前请认真核对好物品信息与价格，便条网仅负责给买卖双方搭建一个信息传递的桥梁，我们不清楚物品质量与价格是否符合~</p>
+		<p class="note">当前认证分三种：普通认证、门牌认证、物业认证</p>
+		<p class="note">普通认证：在便条网成功登记门牌、手机信息</p>
+		<p class="note">门牌认证：在便条网成功登记，并拍下自己的门的照片，门上的门牌号要与登记时一致</p>
+		<p class="note">物业认证：在便条网成功登记，手机号与物业中登记的一致</p>
 		<!-- <p class="copyright">©2014 便条科技有限公司</p> -->
 	</div>
-	<div data-theme="a" data-role="footer" data-position="fixed" data-visible-on-page-show="false">
+	<div data-theme="a" data-role="footer">
 		<h4>©2014 便条科技有限公司</h4>
 	</div><!-- /footer -->
+	<div id="footfake"><img/></div>
 </div>
 <div data-role="popup" id="commonTip">
 </div>

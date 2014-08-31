@@ -33,7 +33,7 @@ public class Util {
 		return str;
 	}
 	
-	static public void logAccess(String accessDesc, HttpServletRequest request) {
+	static public void logAccess(HttpServletRequest request, String accessDesc, String ... args) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n");
 		sb.append("desc[");
@@ -43,8 +43,18 @@ public class Util {
 		sb.append(":");
 		sb.append(request.getRemotePort());
 		sb.append("]\turl[");
-		sb.append(request.getRequestURL());
+		sb.append(request.getRequestURI());
 		sb.append("]");
+		if (args != null) {
+			sb.append("\targs[");
+			for (int i=0; i<args.length; ++i) {
+				if (i != 0) {
+					sb.append(",");
+				}
+				sb.append(args[i]);
+			}
+			sb.append("]");
+		}
 		MyLogger.getAccess().warn(sb.toString());
 	}
 }
