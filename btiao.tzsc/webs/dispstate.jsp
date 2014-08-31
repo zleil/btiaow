@@ -269,7 +269,7 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 		<p class="note">当前认证分三种：普通认证、门牌认证、物业认证</p>
 		<p class="note">普通认证：在便条网成功登记门牌、手机信息</p>
 		<p class="note">门牌认证：在便条网成功登记，并拍下自己的门的照片，门上的门牌号要与登记时一致</p>
-		<p class="note">物业认证：在便条网成功登记，手机号与物业中登记的一致</p>
+		<p class="note">物业认证：在便条网成功登记，门牌号、手机号与物业中登记的一致</p>
 		<!-- <p class="copyright">©2014 便条科技有限公司</p> -->
 	</div>
 	<div data-theme="a" data-role="footer">
