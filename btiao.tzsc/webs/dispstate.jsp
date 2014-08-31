@@ -262,7 +262,7 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 		<p class="note">免责声明：小伙伴们，在交易前请认真核对好物品信息与价格，便条网仅负责给买卖双方搭建一个信息传递的桥梁，我们不清楚物品质量与价格是否符合~</p>
 		<!-- <p class="copyright">©2014 便条科技有限公司</p> -->
 	</div>
-	<div data-theme="a" data-role="footer" data-position="fixed">
+	<div data-theme="a" data-role="footer" data-position="fixed" data-visible-on-page-show="false">
 		<h4>©2014 便条科技有限公司</h4>
 	</div><!-- /footer -->
 </div>

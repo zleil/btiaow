@@ -60,7 +60,7 @@ public class Api extends HttpServlet {
 			HttpServletResponse response) {
 		try {
 			
-			MyLogger.getAccess().info("do api, src-ip=" + request.getRemoteAddr());
+			Util.logAccess("web-api", request);
 			
 			InputStream bf = request.getInputStream();
 			int size = request.getContentLength();

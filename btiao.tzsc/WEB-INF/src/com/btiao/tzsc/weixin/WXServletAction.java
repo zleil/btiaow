@@ -22,19 +22,18 @@ public class WXServletAction extends HttpServlet {
 	public void doPost(HttpServletRequest request,
 			HttpServletResponse response) {
 		try {
-			String areaId = getAreaId(request.getRequestURI());
-			MyLogger.getAccess().info("do wxpost: areaId=" + areaId + ",src-ip=" + request.getRemoteAddr());
+			Util.logAccess("weixin-cmd-process", request);
 			
 			if (!isValidReq(request)) {
-				MyLogger.getAttackLog().warn("found a invalid request!!!");
+				MyLogger.getAttackLog().warn("weixin-cmd-process: found a invalid request!!!");
 				return;
 			}
 			
 			_doPost(request, response);
 			
-			MyLogger.getAccess().info("end wxpost");
+			MyLogger.get().info("weixin-cmd-process: end");
 		} catch (Throwable e) {
-			MyLogger.getAccess().error("process wx post error!", e);
+			MyLogger.get().error("weixin-cmd-process: error", e);
 		}
 	}
 	
@@ -61,7 +60,7 @@ public class WXServletAction extends HttpServlet {
 				MyLogger.get().warn("can't parse wxmsg");
 			}
 		} catch (Exception e) {
-			MyLogger.get().error("process wx post error!\n"+xmlStr, e);
+			MyLogger.get().error("weixin-cmd-process: error!\n"+xmlStr, e);
 		}
 	}
 	

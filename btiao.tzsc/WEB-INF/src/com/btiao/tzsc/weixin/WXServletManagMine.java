@@ -15,6 +15,7 @@ import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.service.SessionMgr;
 import com.btiao.tzsc.service.Tip;
 import com.btiao.tzsc.service.UserInfo;
+import com.btiao.tzsc.service.Util;
 
 /**
  * http://182.92.81.56/btiao/tzsc/wx_managemine/65537?code=zleil&act=xxx
@@ -37,7 +38,9 @@ public class WXServletManagMine extends HttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest request,
-			HttpServletResponse response) {	
+			HttpServletResponse response) {
+		Util.logAccess("weixin-to-web", request);
+		
 		String code = request.getParameter("code");
 		if (code == null) {
 			MyLogger.get().info("querystring is :\n"+request.getQueryString());
