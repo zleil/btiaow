@@ -1,6 +1,7 @@
 package com.btiao.tzsc.restful;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.service.Tip;
+import com.btiao.tzsc.service.Util;
 
 public class TZSCFilter implements Filter {
 	
-	private List<String> noCheckUrls;  
+	private List<String> noCheckUrls = new ArrayList<String>();  
 
     @Override  
     public void destroy() {  
@@ -29,7 +31,9 @@ public class TZSCFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,  
         ServletException {
     	
-    	MyLogger.get().warn("do a filter");
+    	Util.logAccess((HttpServletRequest)request, "do-filter");
+    	
+    	String busyUrlEncode = URLEncoder.encode(Tip.get().busy, "UTF-8");
     	try {
     		HttpServletRequest httpRequest = (HttpServletRequest)request;  
             HttpServletResponse httpResponse = (HttpServletResponse)response;
@@ -37,24 +41,24 @@ public class TZSCFilter implements Filter {
     		String uri = httpRequest.getRequestURI();
     		for (String nocheckurl : noCheckUrls) {
     			if (uri.contains(nocheckurl)) {
-    				MyLogger.get().error("here: get a nochecurl:"+nocheckurl+":uri="+uri);
+    				MyLogger.get().info("here: get a nochecurl:"+nocheckurl+":uri="+uri);
     				chain.doFilter(request, response);
     				return;
     			}
     		}
     		
     		if (fromValidSession(httpRequest)) {
-    			MyLogger.get().error("from a valid session");
+    			MyLogger.get().info("from a valid session:uri="+uri);
     			chain.doFilter(request, response);
     			return;
     		} else {
-    			MyLogger.get().error("from a invalid session");
-    			String newUrl = "../webs/htmlconfirmtip.jsp?tip="+Tip.get().busy+"&hasyes=";
+    			MyLogger.get().info("from a invalid session");
+    			String newUrl = "../webs/htmlconfirmtip.jsp?tip="+busyUrlEncode+"&hasyes=";
     			httpResponse.sendRedirect(newUrl);
     		}
     	} catch (Throwable e) {
     		MyLogger.getAttackLog().error("do filter failed!", e);
-    		String newUrl = "../webs/htmlconfirmtip.jsp?tip="+Tip.get().busy+"&hasyes=";
+    		String newUrl = "../webs/htmlconfirmtip.jsp?tip="+busyUrlEncode+"&hasyes=";
 			((HttpServletResponse)response).sendRedirect(newUrl);
     	}
     }  
@@ -62,22 +66,21 @@ public class TZSCFilter implements Filter {
     @Override  
     public void init(FilterConfig config) throws ServletException {   
         String urlsStr = config.getInitParameter("noCheckUrls");
-        MyLogger.get().error("noCheckUrls="+urlsStr);
+        MyLogger.get().info("noCheckUrls="+urlsStr);
         
-        String[] splits = urlsStr.split("|");
+        String[] splits = urlsStr.split("\\|");
         if (splits == null) {
         	noCheckUrls.add(urlsStr);
         	return;
         }
         
-        MyLogger.get().error("l:"+noCheckUrls.size());
-        
         for (String split : splits) {
-        	if (split.matches("/^\\s*$/")) continue;
+        	if (split.matches("/^\\s+$/")) continue;
         	if (split.matches("/^|$/")) continue;
         	
-        	MyLogger.get().error("noCheckUrls:add one:"+split.trim());
-        	noCheckUrls.add(split.trim());
+        	split = split.trim();
+        	MyLogger.get().info("noCheckUrls:add one:"+split);
+        	noCheckUrls.add(split);
         }
     }
     
