@@ -30,12 +30,6 @@
       <url-pattern>/wx_act/*</url-pattern>
    </servlet-mapping>
    
-   <!-- Catch all requests -->
-   <servlet-mapping>
-      <servlet-name>wx_dispDetail</servlet-name>
-      <url-pattern>/wx_dispDetail/*</url-pattern>
-   </servlet-mapping>
-   
    <servlet-mapping>
       <servlet-name>wx_managemine</servlet-name>
       <url-pattern>/wx_managemine/*</url-pattern>
