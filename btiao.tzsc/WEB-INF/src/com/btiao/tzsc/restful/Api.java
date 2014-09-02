@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import com.btiao.tzsc.service.ComDataMgr;
 import com.btiao.tzsc.service.ErrCode;
+import com.btiao.tzsc.service.GlobalParam;
 import com.btiao.tzsc.service.MetaDataId;
 import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.service.SessionMgr;
@@ -92,13 +93,18 @@ public class Api extends HttpServlet {
 			MyLogger.get().info("api's base info:usrId="+usrId+",accessToken="+token+",areaId="+areaId);
 			
 			if (token == null || usrId == null || 
-				!SessionMgr.instance(areaId).isOnlineUser(usrId, token)) {
+				(SessionMgr.instance(areaId)!= null && !SessionMgr.instance(areaId).isOnlineUser(usrId, token))) {
 				errorRsp(ErrCode.auth_failed, null, response);
 				return;
 			}
 			
 			int errcode = ErrCode.success;
 			
+			if (actType.equals("blockAllInput")) {
+				GlobalParam.blockAllInput = true;
+				errorRsp(0, "", response);
+				return;
+			}
 			if (actType.equals("stateChange")) {
 				JSONObject argJso = (JSONObject)jso.get("data");
 				long stateid = argJso.getLong("stateid");
@@ -169,11 +175,10 @@ public class Api extends HttpServlet {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("{\"errcode\":"+i);
-		if (errdesc != null) {
-			sb.append(",\"errdesc\":\"");
-			sb.append(errdesc);
-			sb.append("\"");
-		}
+		sb.append(",\"errdesc\":\"");
+		sb.append(errdesc != null ? errdesc : "");
+		sb.append("\"");
+		
 		if (dataStr != null) {
 			sb.append(",\"data\":");
 			sb.append(dataStr);

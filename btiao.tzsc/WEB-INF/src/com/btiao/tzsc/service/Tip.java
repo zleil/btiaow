@@ -11,6 +11,8 @@ public class Tip {
 	
 	private Tip() {}
 	
+	public String systemUpgrade = "系统升级中，请稍等10分钟";
+	
 	public String busy = "系统忙...";
 	
 	public String continuePutTip = "收到喽~\n\n发送文字、图片，继续描述物品\n\n或者点击“卖东西” -> 提交，立即发布";

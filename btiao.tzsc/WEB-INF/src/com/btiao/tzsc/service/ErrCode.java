@@ -8,4 +8,5 @@ public class ErrCode {
 	static public int auth_failed = 100001;
 	static public int unkown_act_of_api = 100002;
 	static public int homeIdHaveBeenUsed = 100003;
+	static public int systemUpgrade = 100004;
 }

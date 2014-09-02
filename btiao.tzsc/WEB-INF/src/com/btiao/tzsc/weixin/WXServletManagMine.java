@@ -66,7 +66,10 @@ public class WXServletManagMine extends HttpServlet {
 			if (code.equals("zleil")) {
 				//for pc test，在SessionMgr对象中已内置zleil这个特殊用户
 				uinfo.openId = "zleil";
-				uinfo.accesToken = "zleil";
+				uinfo.accesToken = request.getParameter("t");
+				if (uinfo.accesToken == null) {
+					uinfo.accesToken = "";
+				}
 			} else {
 				int retCode = new WXApi().getUserIdFromCode(code, uinfo);
 				if (retCode != 0) {

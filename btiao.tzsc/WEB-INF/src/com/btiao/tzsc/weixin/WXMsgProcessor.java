@@ -4,6 +4,7 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.btiao.tzsc.service.GlobalParam;
 import com.btiao.tzsc.service.MyLogger;
 import com.btiao.tzsc.service.Tip;
 import com.btiao.tzsc.weixin.WXMsg.Text;
@@ -19,6 +20,12 @@ public class WXMsgProcessor {
 		if (reqWxMsg == null) {
 			WXMsg unSupportedMsg = getTextMsg(reqWxMsg, Tip.get().unSupportedMsgType);
 			rsp.getOutputStream().write(WXMsgFactory.genXML(unSupportedMsg).getBytes());
+			return;
+		}
+		
+		//当系统处于升级中时，提示给客户。
+		if (GlobalParam.blockAllInput) {
+			new WXApi().sendWXTxtMsg(reqWxMsg.fromUserName, Tip.get().systemUpgrade);
 			return;
 		}
 		

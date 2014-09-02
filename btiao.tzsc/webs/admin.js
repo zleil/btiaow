@@ -26,5 +26,26 @@ function initUsrs() {
 
 window.onload = function() {
 	initUsrs();
+	
+	$("#stopAllInput").click(function(){
+		var r = confirm("yes or no");
+		if (r) {
+			var args = "{\"act\":\"stopAllInput\",data:{}";
+			$.ajax({
+				type: "POST",
+				data: args,
+				url:"../api",
+				success: function(msg) {
+					eval("var ret = " + msg);
+	
+					if (ret.errcode == 0) {
+						alert("成功");
+					} else {
+						alert("erro="+ret.errcode+",msg="+ret.errdesc);
+					}
+				}
+			});
+		}
+	});
 }
 

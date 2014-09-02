@@ -30,7 +30,7 @@ public class SessionMgr {
 	
 	static public synchronized SessionMgr instance(long areaId) {
 		SessionMgr inst = insts.get(areaId);
-		if (inst == null) {
+		if (inst == null && AreaMgr.instance().getArea(areaId) != null) {
 			inst = new SessionMgr(areaId);
 			insts.put(areaId, inst);
 			return inst;
@@ -117,6 +117,9 @@ public class SessionMgr {
 						Thread.sleep(GlobalParam.session_circle);
 						
 						SessionMgr inst = SessionMgr.instance(areaId);
+						MyLogger.get().info("sessionTimeout process once:areaId="+areaId+",session inst="+inst);
+						if (inst == null) continue;
+						
 						synchronized (inst) {
 							List<String> noSessionUsers = new ArrayList<String>();
 							
@@ -157,7 +160,7 @@ public class SessionMgr {
 		sessionTimeoutThread.start();
 		
 		//增加pc测试用户zleil的会话信息
-		addSession("zleil", "zleil");
+		addSession("zleil", "oQZIBj4Gbn__DoSZwcdKe3SKt4BE");
 	}
 	
 	//usrId-><token->Session>

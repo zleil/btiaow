@@ -1,5 +1,7 @@
 <%@ page import="com.btiao.tzsc.service.*"%>
-
+<%@ page import="com.btiao.tzsc.restful.*"%>
+<%@ page import="java.net.URLEncoder"%>
+<%@ page import="java.util.List"%>
 <%@ page contentType="text/html; charset=UTF-8"  language="java" %>
 
 <!DOCTYPE html> 
@@ -31,6 +33,11 @@ try {
 } catch (Exception e) {
 	;
 }
+TZSCCookieInfo cinfo = Api.getCookieInfo(request);
+if (areaId < 0 ||!cinfo.isValidSession()) {
+	String newUrl = "../webs/htmlconfirmtip.jsp?tip="+URLEncoder.encode(Tip.get().busy,"UTF-8")+"&hasyes=";
+	((HttpServletResponse)response).sendRedirect(newUrl);
+}
 %>
 <body>
 <div data-role="page">
@@ -39,9 +46,10 @@ try {
 			<h1>共 <span id="total" style="font:bold"><%=ComDataMgr.instance(MetaDataId.dengji, areaId).getTotal()%></span> 个用户待审批</h1>
 		</div><!-- /header -->
 		
-		<ul data-role="listview" id="usrlist">
-		  
-		</ul>
+		<ul data-role="listview" id="usrlist"></ul>
+		
+		<a href="#" class="ui-btn ui-corner-all" id="stopAllInput">停止服务，准备升级</a>
+		
 	</div><!-- /content -->
 
 	<div data-theme="a" data-role="footer" data-position="fixed">

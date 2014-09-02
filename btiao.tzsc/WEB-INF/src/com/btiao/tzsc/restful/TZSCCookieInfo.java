@@ -8,10 +8,11 @@ public class TZSCCookieInfo {
 	public long areaId = 0;
 	
 	public boolean isValidSession() {
-		if (usrId == null || token == null || areaId == 0) {
+		if (usrId == null || token == null || areaId <= 0) {
 			return false;
 		}
 		
-		return SessionMgr.instance(areaId).isOnlineUser(usrId, token);
+		return SessionMgr.instance(areaId) != null &&
+			SessionMgr.instance(areaId).isOnlineUser(usrId, token);
 	}
 }
