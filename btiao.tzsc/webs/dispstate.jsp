@@ -15,10 +15,8 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<link rel="stylesheet" href="jm/jquery.mobile-1.4.3.min.css" />
-	<link rel="stylesheet" href="dispstate.css" />
 	<script src="jm/jquery-2.1.1.min.js"></script>
 	<script src="jm/jquery.mobile-1.4.3.min.js"></script>
-	<script src="dispstate.js"></script>
 	<style type="text/css">
 @font-face {
   font-family: "FontAwesome";
@@ -198,7 +196,7 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 		}
 		
 		UserInfo uinfoWpOwner = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(state.userId);
-		UserInfo uinfo = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(state.userId);
+		UserInfo uinfo = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(cinfo.usrId);
 		
 		out.print("<p class=\"wpowner\">卖主认证级别：");
 		if (uinfoWpOwner.wuyeAuth) {
@@ -221,13 +219,13 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 		} else {
 			out.print("<p class=\"wpowner\">卖主的门牌号：");
 			
-			String reason = "需注册";
+			String reason = "需关注微信号";
 			if (uinfoWpOwner.wuyeAuth) {
 				reason = "需完成物业认证";
 			} else if (uinfoWpOwner.doorNumPicAuth) {
 				reason = "需完成门牌认证";
 			}
-			out.print(reason+"，才能查看，<a href=\"tzscdj.html\" style=\"font:black\">我去!</a>");
+			out.print(reason+"，才能查看，<a href=\"tzscdj.html\" target=\"_blank\" style=\"font:black\">我去注册!</a>");
 			out.print("</p>");
 		}
 		

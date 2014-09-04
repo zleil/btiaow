@@ -1,4 +1,0 @@
-var dispdetail = {};
-dispdetail.state = {};
-
-

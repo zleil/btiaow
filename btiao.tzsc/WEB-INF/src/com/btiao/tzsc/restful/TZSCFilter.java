@@ -80,6 +80,7 @@ public class TZSCFilter implements Filter {
     			
     			MyLogger.get().info("from a invalid session");
     			String newUrl = "../webs/htmlconfirmtip.jsp?tip="+busyUrlEncode+"&hasyes=";
+    			
     			httpResponse.sendRedirect(newUrl);
     		}
     	} catch (Throwable e) {
@@ -193,8 +194,11 @@ class Attacker{
 	}
 	
 	private boolean isTooLongAttack() {
-		return (this.lastAttackTime - this.firstAttackTime > TOO_LONG_ATTACK_TIME) ||
-				((this.attackTimes*1000)/(this.lastAttackTime-this.firstAttackTime) > ATTACK_TIMES_PER_SECOND);
+		long interval = this.lastAttackTime - this.firstAttackTime;
+		if (interval == 0) return false;
+		
+		return (interval > TOO_LONG_ATTACK_TIME) ||
+				((this.attackTimes*1000)/interval > ATTACK_TIMES_PER_SECOND);
 	}
 	
 	public String src;

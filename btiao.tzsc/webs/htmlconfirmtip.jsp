@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%
 //url: .jsp?tip=xxx[&hasyes=][&hasno=][&yesurl=xxx][&nourl=xxx]
 //withoutNoBt参数表示是否不用“否”按钮
@@ -7,7 +8,6 @@
 
 <%@ page contentType="text/html; charset=UTF-8"  language="java" %>
 
-<!DOCTYPE html> 
 <html>
 <head>
 	<title>便条网 - 跳蚤市场</title>
@@ -37,7 +37,7 @@
 <script type="text/javascript">
 var oldLoad = window.onload;
 window.onload = function() {
-	if (!!oldLoad) oldLoad();
+	if (typeof(oldLoad) == "undefined") oldLoad();
 	
 	<%
 	String tip=request.getParameter("tip");

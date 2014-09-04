@@ -62,7 +62,7 @@ public class WXPutStateMgr {
 					
 					String goUrl = null;
 					try {
-						goUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/" + state.areaId + "?act=dispstate&stateId="+state.id+"&areaId="+state.areaId, "UTF-8");
+						goUrl = URLEncoder.encode("http://"+WXApiSession.serverip+"/btiao/tzsc/wx_managemine/" + state.areaId + "?act=dispstate&stateId="+state.id, "UTF-8");
 					} catch (UnsupportedEncodingException e) {
 						MyLogger.get().error(e);
 					}
