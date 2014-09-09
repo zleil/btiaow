@@ -4,19 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class ComDataMgr<DataType> {
+public class ComDataMgr<KeyType,DataType> {
 	static public interface IScan<DataType> {
 		boolean process(DataType d);
 	}
 	
-	static public synchronized <DataType> ComDataMgr<DataType> instance(String dbId, long areaId) {
+	static public synchronized <KeyType,DataType> ComDataMgr<KeyType,DataType> instance(String dbId, long areaId) {
 		String instId = dbId+"."+areaId;
 		
 		@SuppressWarnings("unchecked")
-		ComDataMgr<DataType> inst = (ComDataMgr<DataType>) insts.get(instId);
+		ComDataMgr<KeyType,DataType> inst = (ComDataMgr<KeyType,DataType>) insts.get(instId);
 		
 		if (inst == null) {
-			inst = new ComDataMgr<DataType>(dbId, areaId);
+			inst = new ComDataMgr<KeyType,DataType>(dbId, areaId);
 			insts.put(instId, inst);
 		}
 		
@@ -24,13 +24,13 @@ public class ComDataMgr<DataType> {
 	}
 	
 	static public void main(String[] args) {
-		ComDataMgr<UserInfo> a = ComDataMgr.<UserInfo>instance("UserInfo", 123);
+		ComDataMgr<String,UserInfo> a = ComDataMgr.<String,UserInfo>instance("UserInfo", 123);
 		System.out.println(a.all);
 	}
 	
-	static private Map<String,ComDataMgr<?>> insts = new HashMap<String,ComDataMgr<?>>();
+	static private Map<String,ComDataMgr<?,?>> insts = new HashMap<String,ComDataMgr<?,?>>();
 
-	public synchronized void add(String key, DataType one) {
+	public synchronized void add(KeyType key, DataType one) {
 		all.put(key, one);
 		this.changed = true;
 	}
@@ -53,7 +53,7 @@ public class ComDataMgr<DataType> {
 	 * @return 找不到返回null
 	 */
 	public synchronized DataType scan(IScan<DataType> scan) {
-		for (Entry<String,DataType> entry : all.entrySet()) {
+		for (Entry<KeyType,DataType> entry : all.entrySet()) {
 			DataType v = entry.getValue();
 			if (scan.process(v)) {
 				return v;
@@ -68,7 +68,7 @@ public class ComDataMgr<DataType> {
 		sb.append("{");
 		
 		boolean first = true;
-		for (Entry<String,DataType> entry : all.entrySet()) {
+		for (Entry<KeyType,DataType> entry : all.entrySet()) {
 			if (first) {
 				first = false;
 			} else {
@@ -91,7 +91,7 @@ public class ComDataMgr<DataType> {
 	
 	private ComDataMgr(final String dbId, final long areaId) {
 		this.areaId = areaId;
-		this.dbId = dbId;
+		this.dbId = dbId.toString();
 		
 		persistFn = "tzsc."+dbId+".db."+areaId;
 		
@@ -101,14 +101,14 @@ public class ComDataMgr<DataType> {
 			// add a internel test account
 			UserInfo zleil = new UserInfo("zleil");
 			zleil.nick = "zhanglei";
-			add(zleil.usrId, ((DataType)zleil));
+			add((KeyType)zleil.usrId, ((DataType)zleil));
 		}
 		
 		PersistObj.addBackTask(new Runnable() {
 			
 			@Override
 			public void run() {
-				ComDataMgr<?> inst = ComDataMgr.instance(dbId, areaId);
+				ComDataMgr<KeyType,DataType> inst = ComDataMgr.<KeyType,DataType>instance(dbId, areaId);
 				synchronized (inst) {
 					if (!inst.hasChanged()) {
 						return;
@@ -131,7 +131,7 @@ public class ComDataMgr<DataType> {
 			return;
 		}
 		
-		all = (HashMap<String,DataType>) persistAll;
+		all = (HashMap<KeyType,DataType>) persistAll;
 	}
 	
 	private void setUnchanged() {
@@ -142,7 +142,7 @@ public class ComDataMgr<DataType> {
 		return changed;
 	}
 	
-	private HashMap<String,DataType> all = new HashMap<String,DataType>();
+	private HashMap<KeyType,DataType> all = new HashMap<KeyType,DataType>();
 	
 	private volatile boolean changed = false;
 	

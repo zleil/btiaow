@@ -1,4 +1,5 @@
 <%@ page import="com.btiao.tzsc.service.*"%>
+<%@ page import="java.lang.Long"%>
 
 <%@ page contentType="text/html; charset=UTF-8"  language="java" %>
 
@@ -10,6 +11,11 @@
 <H3>ComDataMgr.instance("UserInfo", 65537):</H3>
 <p>
 <%=ComDataMgr.instance("UserInfo", 65537).getall()%>
+</p>
+
+<H3>ComDataMgr.<Long,WPState>instance(MetaDataId.deletewpPrefix+"oQZIBj4Gbn__DoSZwcdKe3SKt4BE", 65537):</H3>
+<p>
+<%=ComDataMgr.<Long,WPState>instance(MetaDataId.deletewpPrefix+"oQZIBj4Gbn__DoSZwcdKe3SKt4BE", 65537).getall()%>
 </p>
 
 <H3>StateMgr.instance(65537):</H3>

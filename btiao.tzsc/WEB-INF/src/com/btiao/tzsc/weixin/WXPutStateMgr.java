@@ -176,7 +176,7 @@ public class WXPutStateMgr {
 		
 		state.headFirst();
 		
-		ComDataMgr<UserInfo> uinfomgr = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), this.areaId);
+		ComDataMgr<String,UserInfo> uinfomgr = ComDataMgr.<String,UserInfo>instance(UserInfo.class.getSimpleName(), this.areaId);
 		UserInfo uinfo = uinfomgr.get(state.userId);
 		
 		WPState.Info phoneinfo = new WPState.Info(MsgType.phone, uinfo.telId);
@@ -307,8 +307,8 @@ public class WXPutStateMgr {
 	}
 	
 	private String checkPut(String name) {
-		ComDataMgr<UserInfo> uinfomgr = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), this.areaId);
-		ComDataMgr<UserInfo> dengjimgr = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, this.areaId);
+		ComDataMgr<String,UserInfo> uinfomgr = ComDataMgr.<String,UserInfo>instance(UserInfo.class.getSimpleName(), this.areaId);
+		ComDataMgr<String,UserInfo> dengjimgr = ComDataMgr.<String,UserInfo>instance(MetaDataId.dengji, this.areaId);
 		UserInfo uinfo = uinfomgr.get(name);
 		if (uinfo == null) {
 			if (dengjimgr.get(name) == null) {

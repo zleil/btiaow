@@ -84,8 +84,8 @@ public class WXServletManagMine extends HttpServlet {
 			if (act == null || act.equals("managmine")) {
 				newUrl = "../webs/managmine.jsp";
 			} else if (act != null && act.equals("dengji")) {
-				UserInfo reguinfo = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId).get(uinfo.openId);
-				UserInfo reguinfo2 = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), areaId).get(uinfo.openId);
+				UserInfo reguinfo = ComDataMgr.<String,UserInfo>instance(MetaDataId.dengji, areaId).get(uinfo.openId);
+				UserInfo reguinfo2 = ComDataMgr.<String,UserInfo>instance(UserInfo.class.getSimpleName(), areaId).get(uinfo.openId);
 				if (reguinfo != null) {
 					MyLogger.get().info("querystring is :\n"+request.getQueryString());
 					String tip = URLEncoder.encode("本微信账号正申请登记房屋"+reguinfo.homeId+"，请确认是否需要重新申请登记？", "UTF-8");
@@ -162,7 +162,7 @@ public class WXServletManagMine extends HttpServlet {
 		cookie3.setPath(path);
 		response.addCookie(cookie3);
 		
-		UserInfo reguinfo = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), areaId).get(usrId);
+		UserInfo reguinfo = ComDataMgr.<String,UserInfo>instance(UserInfo.class.getSimpleName(), areaId).get(usrId);
 		if (reguinfo != null) {
 			Cookie cookie4 = new Cookie("homeId", reguinfo.homeId);
 			cookie4.setMaxAge(timeout);

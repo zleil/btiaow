@@ -13,7 +13,7 @@ function act_switched(stateid) {
 		return;
 	}
 	
-	var args = "{\"act\":\"stateChange\",data:{\"stateid\":"+stateid+"}}";
+	var args = "{\"act\":\"stateChange\",data:{\"stateid\":"+stateid+",\"isDel\":true}}";
 	
 	$.ajax({
 		type: "POST",
@@ -35,7 +35,7 @@ function act_canceled(stateid) {
 		return;
 	}
 	
-	var args = "{\"act\":\"stateChange\",data:{\"stateid\":"+stateid+"}}";
+	var args = "{\"act\":\"stateChange\",data:{\"stateid\":"+stateid+",\"isDel\":true}}";
 	$.ajax({
 		type: "POST",
 		data: args,

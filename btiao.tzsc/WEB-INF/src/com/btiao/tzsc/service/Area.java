@@ -10,6 +10,7 @@ public class Area implements Serializable {
 	
 	public long id;
 	public String desc;
+	public String wxId;
 	
 	public String toString() {
 		return "{id:"+id+",desc:\""+desc+"\"}";

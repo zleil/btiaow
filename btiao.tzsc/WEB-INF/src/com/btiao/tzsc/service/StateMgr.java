@@ -117,31 +117,7 @@ public class StateMgr {
 		return states.size();
 	}
 	
-	/**
-	 * 删除一个物品
-	 * @param userName
-	 * @param idx
-	 * @return -1, 说明要删除的物品不存在
-	 * 		否则，说明删除后的物品总数
-	 */
-	public synchronized int delOneState(String userName, int idx) {
-		List<WPState> sts = all.get(userName);
-		if (idx >= 1 && idx <= sts.size()) {
-			WPState s = sts.remove(idx-1);
-			stateId2State.remove(s.id);
-			
-			if (sts.size() == 0) {
-				all.remove(userName);
-			}
-			
-			isChanged = true;
-			return sts.size();
-		} else {
-			return -1;
-		}
-	}
-	
-	public synchronized int delOneStateById(long stateid) {
+	public synchronized int delOneStateById(long stateid, boolean isDel) {
 		WPState state = stateId2State.get(stateid);
 		if (state == null) {
 			return ErrCode.no_such_state;
@@ -150,12 +126,20 @@ public class StateMgr {
 		List<WPState> states = all.get(state.userId);
 		for (int idx=0; idx<states.size(); ++idx) {
 			if (state.id == states.get(idx).id) {
-				states.remove(idx);
+				WPState s = states.remove(idx);
 				stateId2State.remove(stateid);
 				
 				if (states.size() == 0) {
 					all.remove(state.userId);
 				}
+				
+				//存储删除后的物品
+				if (isDel) {
+					s.cancelTime = System.currentTimeMillis();
+				} else {
+					s.switchedTime = System.currentTimeMillis();
+				}
+				ComDataMgr.<Long,WPState>instance(MetaDataId.deletewpPrefix+s.userId, s.areaId).add(s.id, s);
 				
 				isChanged = true;
 				return ErrCode.success;

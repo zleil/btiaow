@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="jm/jquery.mobile-1.4.3.min.css" />
 	<script src="jm/jquery-2.1.1.min.js"></script>
 	<script src="jm/jquery.mobile-1.4.3.min.js"></script>
+	<script src="dispstate.js"></script>
 	<style type="text/css">
 @font-face {
   font-family: "FontAwesome";
@@ -166,6 +167,22 @@ if (state == null) {
 }
 out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";");
 %>
+
+function addContact(areaId, cb) {
+	if (typeof WeixinJSBridge == 'undefined') return false;
+    WeixinJSBridge.invoke('addContact', {
+        webtype: '1',
+        username: '<%=AreaMgr.instance().get(areaId).wxId%>'
+    }, function(d) {
+        // 返回d.err_msg取值，d还有一个属性是err_desc
+        // add_contact:cancel 用户取消
+        // add_contact:fail　关注失败
+        // add_contact:ok 关注成功
+        // add_contact:added 已经关注
+        alert(d.err_msg);
+        typeof(cb) == "undefined" && cb(d.err_msg);
+    });
+}
 </script>
 <body>
 <div data-role="page">	
@@ -174,10 +191,10 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 	</div><!-- /header -->
 	<div role="main" class="ui-content">
 		<%
-		String timeStr = "";
-		long curTime = System.currentTimeMillis();
-		float hours = (curTime - state.publishTime)/(3600000);
-		if (hours < 1) {
+			String timeStr = "";
+				long curTime = System.currentTimeMillis();
+				float hours = (curTime - state.publishTime)/(3600000);
+				if (hours < 1) {
 			int minites = (int)((curTime - state.publishTime)/(60000));
 			if (minites <= 0) {
 				timeStr = Tip.get().rightNow;
@@ -185,38 +202,38 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 				timeStr = "" + (int)minites + Tip.get().minutesBefore;
 			}
 			
-		} else if (hours < 24) {
+				} else if (hours < 24) {
 			timeStr = "" + (int)hours + Tip.get().hoursBefore;
-		} else if (hours < 24*30) {
+				} else if (hours < 24*30) {
 			timeStr = "" + (int)(hours/24) + Tip.get().daysBefore;
-		} else {
+				} else {
 			Date date = new Date(state.publishTime);
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			timeStr = formatter.format(date);
-		}
-		
-		UserInfo uinfoWpOwner = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(state.userId);
-		UserInfo uinfo = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(cinfo.usrId);
-		
-		out.print("<p class=\"wpowner\">卖主认证级别：");
-		if (uinfoWpOwner.wuyeAuth) {
+				}
+				
+				UserInfo uinfoWpOwner = ComDataMgr.<Long,UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(state.userId);
+				UserInfo uinfo = ComDataMgr.<Long,UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(cinfo.usrId);
+				
+				out.print("<p class=\"wpowner\">卖主认证级别：");
+				if (uinfoWpOwner.wuyeAuth) {
 			out.print("<span style=\"color:green\">物业认证</span>");
-		} else if (uinfoWpOwner.doorNumPicAuth) {
+				} else if (uinfoWpOwner.doorNumPicAuth) {
 			out.print("<span style=\"color:green\">门牌认证</span>");
-		} else {
+				} else {
 			out.print("<span>普通认证</span>");
-		}
-		
-		out.print("</p>");
-		
-		//经过门牌认证的用户，才能查看物品主人的门牌信息
-		if ((uinfoWpOwner.wuyeAuth && (uinfo != null && uinfo.wuyeAuth)) ||
+				}
+				
+				out.print("</p>");
+				
+				//经过门牌认证的用户，才能查看物品主人的门牌信息
+				if ((uinfoWpOwner.wuyeAuth && (uinfo != null && uinfo.wuyeAuth)) ||
 			(!uinfoWpOwner.wuyeAuth && uinfoWpOwner.doorNumPicAuth && (uinfo != null && (uinfo.doorNumPicAuth || uinfo.wuyeAuth))) ||
 			(!uinfoWpOwner.wuyeAuth && !uinfoWpOwner.doorNumPicAuth && uinfo != null)) {
 			out.print("<p class=\"wpowner\">卖主的门牌号：");
 			out.print(uinfoWpOwner.homeId);
 			out.print("</p>");
-		} else {
+				} else {
 			out.print("<p class=\"wpowner\">卖主的门牌号：");
 			
 			String reason = "需关注微信号";
@@ -227,29 +244,29 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 			}
 			out.print(reason+"，才能查看，<a href=\"tzscdj.html\" target=\"_blank\" style=\"font:black\">我去注册!</a>");
 			out.print("</p>");
-		}
-		
-		out.print("<p class=\"fabuTime\">发布时间：");
-		out.print(timeStr);
-		out.print("</p>");
-		
-		out.print("<p class=\"pos\">发布地点：便条网 -> "+AreaMgr.instance().getArea(state.areaId).desc+" - 跳蚤市场</p>");
-		
-		
-		out.print("<div class=\"line\">&nbsp;</div>");
-		
-		String title = state.getInfos().get(0).content;
-		out.print("<p>");
-		out.print(title);
-		out.print("</p>");
-		
-		//sb.append("<span><a href=\"javascript:viewProfile();\">&nbsp;&nbsp;关注此跳蚤市场</a></span>");
-		
-		String phone = state.getPhoneNum();
-		out.println("<div class=\"bottom\"></div>");
-		out.println("<a class=\"tel\" href=\"tel:"+ phone +"\">"+phone+"</a>");
-		
-		for (int i=1; i<state.getInfos().size(); ++i) {
+				}
+				
+				out.print("<p class=\"fabuTime\">发布时间：");
+				out.print(timeStr);
+				out.print("</p>");
+				
+				out.print("<p class=\"pos\">发布地点：便条网 -> <a href=\"#\" onclick=\"addContact("+areaId+")\">"+AreaMgr.instance().get(state.areaId).desc+" - 跳蚤市场 [关注]</a></p>");
+				
+				
+				out.print("<div class=\"line\">&nbsp;</div>");
+				
+				String title = state.getInfos().get(0).content;
+				out.print("<p>");
+				out.print(title);
+				out.print("</p>");
+				
+				//sb.append("<span><a href=\"javascript:viewProfile();\">&nbsp;&nbsp;关注此跳蚤市场</a></span>");
+				
+				String phone = state.getPhoneNum();
+				out.println("<div class=\"bottom\"></div>");
+				out.println("<a class=\"tel\" href=\"tel:"+ phone +"\">"+phone+"</a>");
+				
+				for (int i=1; i<state.getInfos().size(); ++i) {
 			WPState.Info info = state.getInfos().get(i);
 			
 			if (info.t == WPState.Info.MsgType.text) {
@@ -261,7 +278,7 @@ out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";")
 				out.println(info.content);
 				out.println("\"/></div>");
 			}
-		}
+				}
 		%>
 		<p class="note">温馨提醒：小伙伴们，在交易前请认真核对好物品信息与价格，便条网目前仅负责给买卖双方搭建一个信息传递的桥梁，未对物品质量与价格的符合度做校验哦~</p>
 		<p class="note">当前认证分三种：普通认证、门牌认证、物业认证</p>

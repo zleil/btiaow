@@ -13,12 +13,12 @@ public class AreaMgr {
 	static public String persistFn = "areas";
 	static private AreaMgr inst = null;
 	
-	public synchronized void addArea(Area area) {
+	public synchronized void add(Area area) {
 		all.put(area.id, area);
 		this.changed = true;
 	}
 	
-	public synchronized Area getArea(long id) {
+	public synchronized Area get(long id) {
 		return this.all.get(id);
 	}
 	
@@ -29,7 +29,8 @@ public class AreaMgr {
 			Area area = new Area();
 			area.id = 65537;
 			area.desc = "望春园";
-			addArea(area);
+			area.wxId = "gh_3afc64ac9887";
+			add(area);
 		}
 		
 		PersistObj.addBackTask(new Runnable() {

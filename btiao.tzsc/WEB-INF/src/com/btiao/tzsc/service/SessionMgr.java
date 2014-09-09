@@ -30,7 +30,7 @@ public class SessionMgr {
 	
 	static public synchronized SessionMgr instance(long areaId) {
 		SessionMgr inst = insts.get(areaId);
-		if (inst == null && AreaMgr.instance().getArea(areaId) != null) {
+		if (inst == null && AreaMgr.instance().get(areaId) != null) {
 			inst = new SessionMgr(areaId);
 			insts.put(areaId, inst);
 			return inst;

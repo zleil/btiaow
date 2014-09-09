@@ -108,7 +108,8 @@ public class Api extends HttpServlet {
 			if (actType.equals("stateChange")) {
 				JSONObject argJso = (JSONObject)jso.get("data");
 				long stateid = argJso.getLong("stateid");
-				errcode= StateMgr.instance(areaId).delOneStateById(stateid);
+				boolean isDel = argJso.getBoolean("isDel");
+				errcode= StateMgr.instance(areaId).delOneStateById(stateid, isDel);
 			} else if (actType.equals("dengji")) {
 				JSONObject uinfoJo = (JSONObject)jso.get("data");
 				final UserInfo uinfo = new UserInfo(usrId);
@@ -116,7 +117,7 @@ public class Api extends HttpServlet {
 				uinfo.homeId = uinfoJo.getString("homeId");
 				uinfo.dengjiTime = System.currentTimeMillis();
 				
-				ComDataMgr<UserInfo> usrMgr = ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), areaId);
+				ComDataMgr<String,UserInfo> usrMgr = ComDataMgr.<String,UserInfo>instance(UserInfo.class.getSimpleName(), areaId);
 				UserInfo existUinfo = usrMgr.scan(new ComDataMgr.IScan<UserInfo>() {
 
 					@Override
@@ -134,21 +135,21 @@ public class Api extends HttpServlet {
 					//TODO 发送审核通过的信息
 				} else {
 					//1个homeId仅能被一个账号申请，此时需要管理员进行审核
-					ComDataMgr<UserInfo> dm = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId);
+					ComDataMgr<String,UserInfo> dm = ComDataMgr.<String,UserInfo>instance(MetaDataId.dengji, areaId);
 					dm.add(uinfo.usrId, uinfo);
 					
 					//TODO 发送待审核的信息
 				}
 			} else if (actType.equals("getalldengji")) {
-				String usrs = ComDataMgr.<UserInfo>instance(MetaDataId.dengji,areaId).getall();
+				String usrs = ComDataMgr.<String,UserInfo>instance(MetaDataId.dengji,areaId).getall();
 				errorRsp(ErrCode.success, usrs, response);
 				return;
 			} else if (actType.equals("approvedengji")) {
 				JSONObject uinfoJo = (JSONObject)jso.get("data");
 				String usrIdToApprove = uinfoJo.getString("usrId");
-				UserInfo uinfoApproved = ComDataMgr.<UserInfo>instance(MetaDataId.dengji, areaId).remove(usrIdToApprove);
+				UserInfo uinfoApproved = ComDataMgr.<String,UserInfo>instance(MetaDataId.dengji, areaId).remove(usrIdToApprove);
 				uinfoApproved.dengjiApproveTime = System.currentTimeMillis();
-				ComDataMgr.<UserInfo>instance(UserInfo.class.getSimpleName(), areaId).add(usrIdToApprove, uinfoApproved);
+				ComDataMgr.<String,UserInfo>instance(UserInfo.class.getSimpleName(), areaId).add(usrIdToApprove, uinfoApproved);
 			} else {
 				errcode = ErrCode.unkown_act_of_api;
 			}
