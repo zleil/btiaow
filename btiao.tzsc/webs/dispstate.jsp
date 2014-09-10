@@ -35,21 +35,12 @@ margin:1em 0 1em 0;
 height:0.1em;
 background-color:#cfcfcf;
 width:100%;
+border:solid 2px 0 0 0 #808080;
 }
-.pos,.fabuTime,.wpowner{
+.headLine{
 font-size:0.8em;
 font-weight:bold;
 color:#7f7f7f;
-}
-.pos{
-margin:0.2em 0 1em 0;
-padding:0 0 0 0;
-}
-.fabuTime{
-margin:0.2em 0 0.2em 0;
-padding:0 0 0 0;
-}
-.wpowner{
 margin:0.2em 0 0.2em 0;
 padding:0 0 0 0;
 }
@@ -60,7 +51,7 @@ img{
 width:100%;
 }
 .fabuTime{
-border:solid 0 0 2px 0 #808080;
+
 }
 .bottom{
 background-color:#f0f0f0;
@@ -75,7 +66,19 @@ font-family: FontAwesome;
 left:5px;
 position:absolute;
 }
-.tel{
+.tel:before{
+content:"\f095";
+font-family: FontAwesome;
+left:5px;
+position:absolute;
+}
+.talk:before {
+content: "\f0e5";
+font-family: FontAwesome;
+left:5px;
+position:absolute;
+}
+.tel,.talk{
 color:white;
 background-color:#ea5946;
 background-image:none;
@@ -90,9 +93,16 @@ position:fixed;
 bottom:0;
 left:0;
 display:block;
-width:100%;
-font-size:1.5em;
+width:70%;
+font-size:1.2em;
 z-index:100;
+}
+.talk{
+width:29.5%;
+left:70.5%;
+}
+.tel:link,.talk:link,.tel:visited,.talk:visited{
+color:#FFFFFF;
 }
 #footfake{
 height:2.5em;
@@ -166,6 +176,10 @@ if (state == null) {
 	return;
 }
 out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";");
+
+if (!state.userId.equals(cinfo.usrId)) {
+	++state.browseTimes;
+}
 %>
 
 function addContact(areaId, cb) {
@@ -215,7 +229,7 @@ function addContact(areaId, cb) {
 				UserInfo uinfoWpOwner = ComDataMgr.<Long,UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(state.userId);
 				UserInfo uinfo = ComDataMgr.<Long,UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(cinfo.usrId);
 				
-				out.print("<p class=\"wpowner\">卖主认证级别：");
+				out.print("<p class=\"headLine\">卖主认证级别：");
 				if (uinfoWpOwner.wuyeAuth) {
 			out.print("<span style=\"color:green\">物业认证</span>");
 				} else if (uinfoWpOwner.doorNumPicAuth) {
@@ -230,11 +244,11 @@ function addContact(areaId, cb) {
 				if ((uinfoWpOwner.wuyeAuth && (uinfo != null && uinfo.wuyeAuth)) ||
 			(!uinfoWpOwner.wuyeAuth && uinfoWpOwner.doorNumPicAuth && (uinfo != null && (uinfo.doorNumPicAuth || uinfo.wuyeAuth))) ||
 			(!uinfoWpOwner.wuyeAuth && !uinfoWpOwner.doorNumPicAuth && uinfo != null)) {
-			out.print("<p class=\"wpowner\">卖主的门牌号：");
+			out.print("<p class=\"headLine\">卖主的门牌号：");
 			out.print(uinfoWpOwner.homeId);
 			out.print("</p>");
 				} else {
-			out.print("<p class=\"wpowner\">卖主的门牌号：");
+			out.print("<p class=\"headLine\">卖主的门牌号：");
 			
 			String reason = "需关注微信号";
 			if (uinfoWpOwner.wuyeAuth) {
@@ -246,12 +260,13 @@ function addContact(areaId, cb) {
 			out.print("</p>");
 				}
 				
-				out.print("<p class=\"fabuTime\">发布时间：");
+				out.print("<p class=\"headLine\">发布地点：便条网 -> <a href=\"#\" onclick=\"addContact("+areaId+")\">"+AreaMgr.instance().get(state.areaId).desc+" - 跳蚤市场 [关注]</a></p>");
+				
+				out.print("<p class=\"headLine\">发布时间：");
 				out.print(timeStr);
 				out.print("</p>");
 				
-				out.print("<p class=\"pos\">发布地点：便条网 -> <a href=\"#\" onclick=\"addContact("+areaId+")\">"+AreaMgr.instance().get(state.areaId).desc+" - 跳蚤市场 [关注]</a></p>");
-				
+				out.print("<p class=\"headLine\">浏览次数："+state.browseTimes+"</p>");
 				
 				out.print("<div class=\"line\">&nbsp;</div>");
 				
@@ -265,6 +280,7 @@ function addContact(areaId, cb) {
 				String phone = state.getPhoneNum();
 				out.println("<div class=\"bottom\"></div>");
 				out.println("<a class=\"tel\" href=\"tel:"+ phone +"\">"+phone+"</a>");
+				out.println("<a class=\"talk\" href=\"#\">留言</a>");
 				
 				for (int i=1; i<state.getInfos().size(); ++i) {
 			WPState.Info info = state.getInfos().get(i);
@@ -280,6 +296,14 @@ function addContact(areaId, cb) {
 			}
 				}
 		%>
+		<div class="line">&nbsp;</div>
+		
+		<div class="replyArea">
+			<div class="replyThread"></div>
+			<div>查看更多留言</div>
+		</div>
+		
+		<div class="line">&nbsp;</div>
 		<p class="note">温馨提醒：小伙伴们，在交易前请认真核对好物品信息与价格，便条网目前仅负责给买卖双方搭建一个信息传递的桥梁，未对物品质量与价格的符合度做校验哦~</p>
 		<p class="note">当前认证分三种：普通认证、门牌认证、物业认证</p>
 		<p class="note">普通认证：在便条网成功登记门牌、手机信息</p>

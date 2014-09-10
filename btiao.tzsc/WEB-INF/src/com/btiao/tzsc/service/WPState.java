@@ -68,6 +68,8 @@ public class WPState implements Serializable {
 	public long switchedTime; //成交时间
 	public long cancelTime; //下架时间
 	
+	public long browseTimes;
+	
 	private List<Info> infos = new ArrayList<Info>(); //元信息描述
 	
 	public List<Info> getInfos() {

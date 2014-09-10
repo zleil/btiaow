@@ -45,7 +45,7 @@
         <filter-class>com.btiao.tzsc.restful.TZSCFilter</filter-class>  
         <init-param>  
             <param-name>noCheckUrls</param-name>  
-            <param-value>webs/jm|webs/font|webs/tzscimg|htmlconfirmtip.jsp|dispstate.jsp|wx_managemine|wx_act</param-value>  
+            <param-value>webs/baidu_light_app.html|webs/jm|webs/font|webs/tzscimg|htmlconfirmtip.jsp|dispstate.jsp|wx_managemine|wx_act</param-value>  
         </init-param>  
    </filter>
    <filter-mapping>  
