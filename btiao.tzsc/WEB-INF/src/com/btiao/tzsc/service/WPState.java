@@ -109,9 +109,9 @@ public class WPState implements Serializable {
 		return sb.toString();
 	}
 	
-	public WPState(String name) {
+	public WPState(String userId) {
 		id = genNextId();
-		this.userId = name;
+		this.userId = userId;
 	}
 	
 	public void headFirst() {

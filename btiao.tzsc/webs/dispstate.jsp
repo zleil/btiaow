@@ -123,8 +123,8 @@ color:#5f5f5f;
 	</style>
 </head>
 <script type="text/javascript">
-var dispdetail = {};
-dispdetail.state = {};
+var dispstate = {};
+dispstate.state = {};
 
 <%
 long areaIdFromQueryStr = 0;
@@ -175,11 +175,13 @@ if (state == null) {
 	((HttpServletResponse)response).sendRedirect(newUrl);
 	return;
 }
-out.println("dispdetail.state="+StateMgr.instance(areaId).getState(stateId)+";");
+out.println("dispstate.state="+StateMgr.instance(areaId).getState(stateId)+";");
 
 if (!state.userId.equals(cinfo.usrId)) {
 	++state.browseTimes;
 }
+
+out.println("dispstate.usrId=\""+cinfo.usrId+"\"");
 %>
 
 function addContact(areaId, cb) {
@@ -196,6 +198,27 @@ function addContact(areaId, cb) {
         alert(d.err_msg);
         typeof(cb) == "undefined" && cb(d.err_msg);
     });
+}
+
+function pushQuestion() {
+	var statement = $("#qsStatement").val();
+	var args = "{\"act\":\"question\",\"data\":{\"stateId\":"+dispstate.state.id+ "" +
+	",\"statement\":\""+statement+"\"" +
+	"}}";
+	$.ajax({
+	type: "POST",
+	data: args,
+	url:"../api",
+	success: function(msg) {
+		eval("var ret = " + msg);
+
+		alert(ret.errcode);
+		if (ret.errcode == 0) {
+			var str = "";
+			$("#replyArea").append("<div class=\"replyThread\"><p>from:"+dispstate.usrId+"</p><p>"+statement+"</p></div>");
+		}
+	}
+});
 }
 </script>
 <body>
@@ -226,8 +249,8 @@ function addContact(areaId, cb) {
 			timeStr = formatter.format(date);
 				}
 				
-				UserInfo uinfoWpOwner = ComDataMgr.<Long,UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(state.userId);
-				UserInfo uinfo = ComDataMgr.<Long,UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(cinfo.usrId);
+				UserInfo uinfoWpOwner = ComDataMgr.<String,UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(state.userId);
+				UserInfo uinfo = ComDataMgr.<String,UserInfo>instance(UserInfo.class.getSimpleName(), state.areaId).get(cinfo.usrId);
 				
 				out.print("<p class=\"headLine\">卖主认证级别：");
 				if (uinfoWpOwner.wuyeAuth) {
@@ -280,7 +303,7 @@ function addContact(areaId, cb) {
 				String phone = state.getPhoneNum();
 				out.println("<div class=\"bottom\"></div>");
 				out.println("<a class=\"tel\" href=\"tel:"+ phone +"\">"+phone+"</a>");
-				out.println("<a class=\"talk\" href=\"#\">留言</a>");
+				out.println("<a class=\"talk\" href=\"#questionDialog\" data-transition=\"pop\" data-rel=\"dialog\">留言</a>");
 				
 				for (int i=1; i<state.getInfos().size(); ++i) {
 			WPState.Info info = state.getInfos().get(i);
@@ -298,7 +321,7 @@ function addContact(areaId, cb) {
 		%>
 		<div class="line">&nbsp;</div>
 		
-		<div class="replyArea">
+		<div id="replyArea">
 			<div class="replyThread"></div>
 			<div>查看更多留言</div>
 		</div>
@@ -315,6 +338,15 @@ function addContact(areaId, cb) {
 		<h4>©2014 便条科技有限公司</h4>
 	</div><!-- /footer -->
 	<div id="footfake"><img/></div>
+</div>
+<div data-role="page" id="questionDialog">
+	<div data-role="header">
+		<h2>对本物品有啥疑惑？</h2>
+	</div><!-- /header -->
+	<div role="main" class="ui-content">
+		<textarea id="qsStatement" rows="5" cols=""></textarea>
+		<a href="#" data-rel="back" onclick="pushQuestion();" class="ui-btn ui-corner-all">确认</a>
+	</div>
 </div>
 <div data-role="popup" id="commonTip">
 </div>

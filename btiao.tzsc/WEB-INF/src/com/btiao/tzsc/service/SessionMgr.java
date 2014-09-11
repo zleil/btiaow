@@ -127,6 +127,8 @@ public class SessionMgr {
 								Map<String,Session> sessions = entry.getValue();
 								String usrId = entry.getKey();
 								
+								if (usrId.equals("zleil")) continue;
+								
 								Set<String> tokens = sessions.keySet();
 								for (String token : tokens) {
 									Session s = sessions.get(token);

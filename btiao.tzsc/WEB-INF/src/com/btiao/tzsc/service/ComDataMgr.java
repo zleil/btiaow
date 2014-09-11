@@ -9,14 +9,15 @@ public class ComDataMgr<KeyType,DataType> {
 		boolean process(DataType d);
 	}
 	
-	static public synchronized <KeyType,DataType> ComDataMgr<KeyType,DataType> instance(String dbId, Object ... ids) {
+	static public synchronized <KeyType,DataType> ComDataMgr<KeyType,DataType> instance(String dbId, Object ... subids) {
 		StringBuilder sb = new StringBuilder();
-		if (ids != null) for (Object id : ids) {
+		sb.append(dbId);
+		if (subids != null) for (Object id : subids) {
 			sb.append(".");
 			sb.append(id);
 		}
 		
-		String fulldbId = dbId+"."+sb.toString();
+		String fulldbId = sb.toString();
 		
 		@SuppressWarnings("unchecked")
 		ComDataMgr<KeyType,DataType> inst = (ComDataMgr<KeyType,DataType>) insts.get(fulldbId);
@@ -96,11 +97,11 @@ public class ComDataMgr<KeyType,DataType> {
 	}
 	
 	private ComDataMgr(final String fulldbId) {
-		persistFn = "tzsc."+fulldbId+".db";
+		persistFn = "comdata."+fulldbId+".db";
 		
 		load();
 
-		if (fulldbId.equals(UserInfo.class.getSimpleName())) {
+		if (fulldbId.startsWith(UserInfo.class.getSimpleName())) {
 			// add a internel test account
 			UserInfo zleil = new UserInfo("zleil");
 			zleil.nick = "zhanglei";
@@ -148,5 +149,5 @@ public class ComDataMgr<KeyType,DataType> {
 	private HashMap<KeyType,DataType> all = new HashMap<KeyType,DataType>();
 	
 	private volatile boolean changed = false;
-	private String persistFn;
+	private final String persistFn;
 }

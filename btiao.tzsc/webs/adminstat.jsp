@@ -8,6 +8,11 @@
 
 <body>
 
+<H3>ComDataMgr.instance(WPState.getQuestionPersistFileName(100000001)).getall():</H3>
+<p>
+<%=ComDataMgr.instance(WPState.getQuestionPersistFileName(100000001)).getall()%>
+</p>
+
 <H3>ComDataMgr.instance("UserInfo", 65537):</H3>
 <p>
 <%=ComDataMgr.instance("UserInfo", 65537).getall()%>
