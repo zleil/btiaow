@@ -206,10 +206,10 @@ class Attacker{
 	public long firstAttackTime;
 	public long attackTimes;
 	
-	public long ATTACK_TIME_MAX_INTERVAL = 50; //连续2次攻击的最大时间间隔，50ms
+	public long ATTACK_TIME_MAX_INTERVAL = 100; //连续2次攻击的最大时间间隔，即这个时间内若发起两次访问则认为他是攻击源
 	public long TOO_LONG_ATTACK_TIME = 10*1000; //遭受过久持续攻击后需要静默攻击源，10s
 	public long REFUSE_TIME = 30*1000; //静默时间，30s
-	public long ATTACK_TIMES_PER_SECOND = 50; //最大每秒攻击次数，超过此次数，系统认为遭受持久攻击，此时需要静默攻击源
+	public long ATTACK_TIMES_PER_SECOND = 10; //最大每秒访问次数，超过此次数，系统认为遭受持久攻击，此时需要静默攻击源
 }
 
 class AttackerMgr{

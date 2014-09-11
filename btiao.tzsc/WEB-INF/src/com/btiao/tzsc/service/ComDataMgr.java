@@ -9,15 +9,21 @@ public class ComDataMgr<KeyType,DataType> {
 		boolean process(DataType d);
 	}
 	
-	static public synchronized <KeyType,DataType> ComDataMgr<KeyType,DataType> instance(String dbId, long areaId) {
-		String instId = dbId+"."+areaId;
+	static public synchronized <KeyType,DataType> ComDataMgr<KeyType,DataType> instance(String dbId, Object ... ids) {
+		StringBuilder sb = new StringBuilder();
+		if (ids != null) for (Object id : ids) {
+			sb.append(".");
+			sb.append(id);
+		}
+		
+		String fulldbId = dbId+"."+sb.toString();
 		
 		@SuppressWarnings("unchecked")
-		ComDataMgr<KeyType,DataType> inst = (ComDataMgr<KeyType,DataType>) insts.get(instId);
+		ComDataMgr<KeyType,DataType> inst = (ComDataMgr<KeyType,DataType>) insts.get(fulldbId);
 		
 		if (inst == null) {
-			inst = new ComDataMgr<KeyType,DataType>(dbId, areaId);
-			insts.put(instId, inst);
+			inst = new ComDataMgr<KeyType,DataType>(fulldbId);
+			insts.put(fulldbId, inst);
 		}
 		
 		return inst;
@@ -35,15 +41,15 @@ public class ComDataMgr<KeyType,DataType> {
 		this.changed = true;
 	}
 	
-	public synchronized DataType remove(String key) {
+	public synchronized DataType remove(KeyType key) {
 		return all.remove(key);
 	}
 	
-	public synchronized DataType get(String id) {
+	public synchronized DataType get(KeyType id) {
 		return this.all.get(id);
 	}
 	
-	public synchronized boolean exist(String id) {
+	public synchronized boolean exist(KeyType id) {
 		return all.containsKey(id);
 	}
 	
@@ -89,15 +95,12 @@ public class ComDataMgr<KeyType,DataType> {
 		return all.size();
 	}
 	
-	private ComDataMgr(final String dbId, final long areaId) {
-		this.areaId = areaId;
-		this.dbId = dbId.toString();
-		
-		persistFn = "tzsc."+dbId+".db."+areaId;
+	private ComDataMgr(final String fulldbId) {
+		persistFn = "tzsc."+fulldbId+".db";
 		
 		load();
 
-		if (dbId.equals(UserInfo.class.getSimpleName())) {
+		if (fulldbId.equals(UserInfo.class.getSimpleName())) {
 			// add a internel test account
 			UserInfo zleil = new UserInfo("zleil");
 			zleil.nick = "zhanglei";
@@ -108,7 +111,7 @@ public class ComDataMgr<KeyType,DataType> {
 			
 			@Override
 			public void run() {
-				ComDataMgr<KeyType,DataType> inst = ComDataMgr.<KeyType,DataType>instance(dbId, areaId);
+				ComDataMgr<KeyType,DataType> inst = ComDataMgr.<KeyType,DataType>instance(fulldbId);
 				synchronized (inst) {
 					if (!inst.hasChanged()) {
 						return;
@@ -145,10 +148,5 @@ public class ComDataMgr<KeyType,DataType> {
 	private HashMap<KeyType,DataType> all = new HashMap<KeyType,DataType>();
 	
 	private volatile boolean changed = false;
-	
-	private long areaId;
-	
-	private String dbId;
-	
 	private String persistFn;
 }

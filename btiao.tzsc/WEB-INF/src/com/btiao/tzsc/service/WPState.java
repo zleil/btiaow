@@ -61,6 +61,10 @@ public class WPState implements Serializable {
 		return ret;
 	}
 	
+	static public String getQuestionPersistFileName(long stateId) {
+		return "state_questions_" + stateId + ".db";
+	}
+	
 	public final long id; //id of a state
 	public long areaId; //小区名称
 	public String userId; //用户名

@@ -16,10 +16,12 @@ import com.btiao.tzsc.service.ErrCode;
 import com.btiao.tzsc.service.GlobalParam;
 import com.btiao.tzsc.service.MetaDataId;
 import com.btiao.tzsc.service.MyLogger;
+import com.btiao.tzsc.service.Question;
 import com.btiao.tzsc.service.SessionMgr;
 import com.btiao.tzsc.service.StateMgr;
 import com.btiao.tzsc.service.UserInfo;
 import com.btiao.tzsc.service.Util;
+import com.btiao.tzsc.service.WPState;
 
 /*
  * 1. request
@@ -28,7 +30,7 @@ import com.btiao.tzsc.service.Util;
  * cookies: "usrId=xxx; accessToken=xxx; areaId=xxx; ...";
  * 
  * 2. response
- * {errcode:xxx;data:...}
+ * {errcode:xxx;errdesc:xxx;data:...}
  * @author zleil
  */
 public class Api extends HttpServlet {
@@ -142,7 +144,7 @@ public class Api extends HttpServlet {
 				}
 			} else if (actType.equals("getalldengji")) {
 				String usrs = ComDataMgr.<String,UserInfo>instance(MetaDataId.dengji,areaId).getall();
-				errorRsp(ErrCode.success, usrs, response);
+				errorRsp(ErrCode.success, null, usrs, response);
 				return;
 			} else if (actType.equals("approvedengji")) {
 				JSONObject uinfoJo = (JSONObject)jso.get("data");
@@ -150,6 +152,31 @@ public class Api extends HttpServlet {
 				UserInfo uinfoApproved = ComDataMgr.<String,UserInfo>instance(MetaDataId.dengji, areaId).remove(usrIdToApprove);
 				uinfoApproved.dengjiApproveTime = System.currentTimeMillis();
 				ComDataMgr.<String,UserInfo>instance(UserInfo.class.getSimpleName(), areaId).add(usrIdToApprove, uinfoApproved);
+			} else if (actType.equals("question")) {
+				JSONObject questionjso = (JSONObject)jso.get("data");
+				long stateId = questionjso.getLong("stateId");
+				String statement = questionjso.getString("statement");
+				
+				Question qs = new Question(stateId, usrId, statement);
+				
+				ComDataMgr<Long,Question> qsmgr = ComDataMgr.<Long,Question>instance(WPState.getQuestionPersistFileName(stateId));
+				qsmgr.add(qs.id, qs);
+			} else if (actType.equals("reply")) {
+				JSONObject replyjso = (JSONObject)jso.get("data");
+				long stateId = replyjso.getLong("stateId");
+				long qsId = replyjso.getLong("qsId");
+				String statement = replyjso.getString("statement");
+				
+				Question.Reply reply = new Question.Reply(usrId, statement);
+				ComDataMgr<Long,Question> qsmgr = ComDataMgr.<Long,Question>instance(WPState.getQuestionPersistFileName(stateId));
+				qsmgr.get(qsId).replies.add(reply);
+			} else if (actType.equals("getallquestion")) {
+				JSONObject replyjso = (JSONObject)jso.get("data");
+				long stateId = replyjso.getLong("stateId");
+				String dateStr = ComDataMgr.<Long,Question>instance(WPState.getQuestionPersistFileName(stateId)).getall();
+				
+				errorRsp(ErrCode.success, null, dateStr, response);
+				return;
 			} else {
 				errcode = ErrCode.unkown_act_of_api;
 			}
