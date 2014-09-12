@@ -140,7 +140,7 @@ public class Api extends HttpServlet {
 					ComDataMgr<String,UserInfo> dm = ComDataMgr.<String,UserInfo>instance(MetaDataId.dengji, areaId);
 					dm.add(uinfo.usrId, uinfo);
 					
-					//TODO 发送待审核的信息
+					//TODO 发送待审核的信息 
 				}
 			} else if (actType.equals("getalldengji")) {
 				String usrs = ComDataMgr.<String,UserInfo>instance(MetaDataId.dengji,areaId).getall();
